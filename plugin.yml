@@ -1,0 +1,18 @@
+name: WhatIs
+version: 1.0
+author: Schmoller
+
+description: WhatIs provides tools to find out what each plugin interfaces with.
+
+main: au.com.addstar.whatis.WhatIs
+
+softdepend: [WorldEdit]
+
+permissions:
+  whatis.command:
+    default: op
+
+commands:
+  whatis:
+    description: Allows you to find lots of information.
+    permission: whatis.command
