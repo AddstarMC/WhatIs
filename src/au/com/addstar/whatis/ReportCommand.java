@@ -15,6 +15,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.scheduler.BukkitTask;
 
 import au.com.addstar.whatis.EventHelper.EventCallback;
 import au.com.addstar.whatis.commands.CommandFinder;
@@ -134,11 +135,19 @@ public class ReportCommand implements ICommand
 				List<RegisteredServiceProvider<?>> services = Bukkit.getServicesManager().getRegistrations(plugin);
 				writer.println("   Services: " + services.size());
 				for(RegisteredServiceProvider<?> service : services)
-					writer.println("    - " + service.getService().getName() + "   Priority: " + service.getPriority().toString());
+					writer.println("     - " + service.getService().getName() + "   Priority: " + service.getPriority().toString());
+				
+				// Tasks
+				List<BukkitTask> tasks = WhatIs.getPluginTasks(plugin);
+				writer.println("   Tasks: " + tasks.size());
+				for(BukkitTask task : tasks)
+				{
+					String taskSource = WhatIs.getTaskSource(task);
+					writer.println("     - Task " + task.getTaskId() + " sync:" + task.isSync() + " class:" + taskSource);
+				}
 				
 				writer.println("===========================================");
 				
-				// Show tasks
 				// Show permissions
 				// Show generators
 			}
