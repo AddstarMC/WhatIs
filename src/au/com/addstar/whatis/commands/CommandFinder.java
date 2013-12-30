@@ -1,11 +1,17 @@
 package au.com.addstar.whatis.commands;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.Plugin;
 
 public class CommandFinder
 {
@@ -72,6 +78,52 @@ public class CommandFinder
 		}
 		
 		return "Unknown";
+	}
+	
+	public static Plugin getPluginSource( Command command )
+	{
+		for(CommandDisplayer info : mDisplayers)
+		{
+			String source = info.getSource(command);
+			if(source != null)
+				return Bukkit.getPluginManager().getPlugin(source);
+		}
+		
+		return null;
+	}
+	
+	private static CommandMap mCommandMap = null;
+	
+	public static CommandMap getCommandMap()
+	{
+		if(mCommandMap != null)
+			return mCommandMap;
+		
+		try
+		{
+			Method method = Bukkit.getServer().getClass().getMethod("getCommandMap");
+			mCommandMap = (CommandMap)method.invoke(Bukkit.getServer());
+		}
+		catch(Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+		return mCommandMap;
+	}
+	
+	public static List<Command> getCommands(Plugin plugin)
+	{
+		SimpleCommandMap commands = (SimpleCommandMap)getCommandMap();
+		HashSet<Command> matching = new HashSet<Command>();
+		
+		for(Command command : commands.getCommands())
+		{
+			Plugin source = getPluginSource(command);
+			if(source == plugin)
+				matching.add(command);
+		}
+		
+		return new ArrayList<Command>(matching);
 	}
 	
 	public static void registerCommandInfo( CommandDisplayer info )

@@ -2,7 +2,6 @@ package au.com.addstar.whatis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -11,7 +10,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 
@@ -109,19 +107,10 @@ public class EventViewCommand implements ICommand
 				return true;
 			}
 			
-			List<RegisteredListener> all = HandlerList.getRegisteredListeners(plugin);
-			HashSet<Listener> unique = new HashSet<Listener>();
+			List<EventCallback> callbacks = EventHelper.getEventCallbacks(plugin);
 			
-			for(RegisteredListener listener : all)
-				unique.add(listener.getListener());
-			
-			for(Listener listener : unique)
-			{
-				List<EventCallback> callbacks = EventHelper.getEventCallbacks(listener);
-				
-				for(EventCallback callback : callbacks)
-					sender.sendMessage(String.format("%s - %s", callback.eventClass.getSimpleName(), callback.priority.toString()));
-			}
+			for(EventCallback callback : callbacks)
+				sender.sendMessage(String.format("%s - %s", callback.eventClass.getSimpleName(), callback.priority.toString()));
 		}
 		return true;
 	}

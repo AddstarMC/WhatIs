@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 
 public class EventHelper
@@ -50,9 +51,34 @@ public class EventHelper
                 continue;
 
             Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
-            callbacks.add(new EventCallback(eventClass, handler.priority(), handler.ignoreCancelled()));
+            
+            String args = "";
+            for(Class<?> clazz : method.getParameterTypes())
+            {
+            	if(!args.isEmpty())
+            		args += ", ";
+            	
+            	args += clazz.getSimpleName();
+            }
+            
+            callbacks.add(new EventCallback(eventClass, handler.priority(), handler.ignoreCancelled(), String.format("%s.%s(%s)", listener.getClass().getName(), method.getName(), args)));
 		}
 		
+		return callbacks;
+	}
+	
+	public static List<EventCallback> getEventCallbacks(Plugin plugin)
+	{
+		ArrayList<EventCallback> callbacks = new ArrayList<EventHelper.EventCallback>();
+		List<RegisteredListener> all = HandlerList.getRegisteredListeners(plugin);
+		HashSet<Listener> unique = new HashSet<Listener>();
+		
+		for(RegisteredListener listener : all)
+			unique.add(listener.getListener());
+		
+		for(Listener listener : unique)
+			callbacks.addAll(getEventCallbacks(listener));
+
 		return callbacks;
 	}
 	
@@ -116,14 +142,22 @@ public class EventHelper
 	
 	public static class EventCallback
 	{
-		public EventCallback(Class<? extends Event> clazz, EventPriority eventPriority, boolean ignore)
+		public EventCallback(Class<? extends Event> clazz, EventPriority eventPriority, boolean ignore, String signature)
 		{
 			eventClass = clazz;
 			priority = eventPriority;
 			ignoreCancelled = ignore;
+			this.signature = signature;
 		}
 		public Class<? extends Event> eventClass;
 		public EventPriority priority;
 		public boolean ignoreCancelled;
+		public String signature;
+		
+		@Override
+		public String toString()
+		{
+			return String.format("%s: %s ignoresCancelled? %s", signature, priority.toString(), ignoreCancelled);
+		}
 	}
 }
