@@ -10,11 +10,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.messaging.PluginMessageListenerRegistration;
 import org.bukkit.scheduler.BukkitTask;
 
 import au.com.addstar.whatis.EventHelper.EventCallback;
@@ -148,10 +151,24 @@ public class ReportCommand implements ICommand
 					writer.println("     - Task " + task.getTaskId() + " sync:" + task.isSync() + " class:" + taskSource);
 				}
 				
-				writer.println("===========================================");
+				// Permissions
+				List<Permission> perms = plugin.getDescription().getPermissions();
+				writer.println("   Permissions (loadtime): " + perms.size());
+				for(Permission perm : perms)
+					writer.println("     - " + perm.getName() + "   Default: " + perm.getDefault());
+
+				// Plugin channels
+				Set<PluginMessageListenerRegistration> channels = Bukkit.getMessenger().getIncomingChannelRegistrations(plugin);
+				writer.println("   Incoming Channels: " + channels.size());
+				for(PluginMessageListenerRegistration channel : channels)
+					writer.println("     - " + channel.getChannel() + ": " + channel.getListener().getClass().getName());
 				
-				// Show permissions
-				// Show generators
+				Set<String> outChannels = Bukkit.getMessenger().getOutgoingChannels(plugin);
+				writer.println("   Outgoing Channels: " + outChannels.size());
+				for(String channel : outChannels)
+					writer.println("     - " + channel);
+				
+				writer.println("===========================================");
 			}
 			
 			
