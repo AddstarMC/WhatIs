@@ -120,15 +120,17 @@ public class ReportCommand implements ICommand
 					if(command.getPermission() != null)
 						writer.println("       Perm: " + command.getPermission());
 					
-					String aliases = "";
-					for(String alias : command.getAliases())
+					if(command.getAliases() != null && !command.getAliases().isEmpty())
 					{
-						if(!aliases.isEmpty())
-							aliases += ", ";
-						aliases += alias;
-					}
-					if(!command.getAliases().isEmpty())
+						String aliases = "";
+						for(String alias : command.getAliases())
+						{
+							if(!aliases.isEmpty())
+								aliases += ", ";
+							aliases += alias;
+						}
 						writer.println("       Aliases: " + aliases);
+					}
 				}
 				
 				// Services

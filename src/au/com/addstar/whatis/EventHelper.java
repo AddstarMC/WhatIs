@@ -74,7 +74,16 @@ public class EventHelper
 		HashSet<Listener> unique = new HashSet<Listener>();
 		
 		for(RegisteredListener listener : all)
-			unique.add(listener.getListener());
+		{
+			try
+			{
+				unique.add(listener.getListener());
+			}
+			catch(NullPointerException e)
+			{
+				// No idea why this happens
+			}
+		}
 		
 		for(Listener listener : unique)
 			callbacks.addAll(getEventCallbacks(listener));
@@ -157,7 +166,7 @@ public class EventHelper
 		@Override
 		public String toString()
 		{
-			return String.format("%s: %s ignoresCancelled? %s", signature, priority.toString(), ignoreCancelled);
+			return String.format("%s: %s ignoresCancelled? %s", signature, priority, ignoreCancelled);
 		}
 	}
 }
