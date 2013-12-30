@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import au.com.addstar.whatis.EventHelper.EventCallback;
 import au.com.addstar.whatis.commands.CommandFinder;
@@ -130,12 +130,16 @@ public class ReportCommand implements ICommand
 						writer.println("       Aliases: " + aliases);
 				}
 				
+				// Services
+				List<RegisteredServiceProvider<?>> services = Bukkit.getServicesManager().getRegistrations(plugin);
+				writer.println("   Services: " + services.size());
+				for(RegisteredServiceProvider<?> service : services)
+					writer.println("    - " + service.getService().getName() + "   Priority: " + service.getPriority().toString());
+				
 				writer.println("===========================================");
 				
-				// Show commands
 				// Show tasks
 				// Show permissions
-				// Show services
 				// Show generators
 			}
 			
