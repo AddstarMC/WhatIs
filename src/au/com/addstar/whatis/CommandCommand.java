@@ -2,12 +2,9 @@ package au.com.addstar.whatis;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
-
 import au.com.addstar.whatis.commands.CommandFinder;
 
 public class CommandCommand implements ICommand
@@ -62,7 +59,7 @@ public class CommandCommand implements ICommand
 		
 		String cmd = args[0];
 		
-		Command realCmd = ((CraftServer)Bukkit.getServer()).getCommandMap().getCommand(cmd);
+		Command realCmd = CommandFinder.getCommandMap().getCommand(cmd);
 		
 		if(realCmd == null)
 		{

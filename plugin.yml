@@ -1,5 +1,5 @@
 name: WhatIs
-version: 1.0
+version: ${pom.version}
 author: Schmoller
 
 description: WhatIs provides tools to find out what each plugin interfaces with.
