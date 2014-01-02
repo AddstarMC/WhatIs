@@ -15,9 +15,12 @@ import au.com.addstar.whatis.commands.CommandFinder;
 
 public class WhatIs extends JavaPlugin
 {
+	public static WhatIs instance;
+	
 	@Override
 	public void onEnable()
 	{
+		instance = this;
 		CommandFinder.init();
 		
 		CommandDispatcher whatis = new CommandDispatcher("whatis", "");
@@ -26,6 +29,7 @@ public class WhatIs extends JavaPlugin
 		File reportDir = new File(getDataFolder(), "reports");
 		reportDir.mkdirs();
 		whatis.registerCommand(new ReportCommand(reportDir));
+		whatis.registerCommand(new EventMonitorCommand());
 		
 		getCommand("whatis").setExecutor(whatis);
 		getCommand("whatis").setTabCompleter(whatis);
