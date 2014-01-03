@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.MultipleCommandAlias;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.command.defaults.VanillaCommand;
 
@@ -19,7 +19,7 @@ public class StandardCommandDisplayer implements CommandDisplayer
 			return true;
 		}
 		
-		if(command instanceof PluginCommand || command instanceof BukkitCommand || command instanceof VanillaCommand)
+		if(command instanceof PluginIdentifiableCommand || command instanceof BukkitCommand || command instanceof VanillaCommand)
 		{
 			if(command.getAliases().contains(label))
 				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eCommand: &f/%s (alias of /%s)", label, command.getName())));
@@ -92,8 +92,8 @@ public class StandardCommandDisplayer implements CommandDisplayer
 	@Override
 	public String getSource( Command command )
 	{
-		if(command instanceof PluginCommand)
-			return ((PluginCommand)command).getPlugin().getName();
+		if(command instanceof PluginIdentifiableCommand)
+			return ((PluginIdentifiableCommand)command).getPlugin().getName();
 		else if(command instanceof BukkitCommand)
 			return "CraftBukkit";
 		else if(command instanceof VanillaCommand)

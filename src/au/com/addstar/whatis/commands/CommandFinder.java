@@ -19,8 +19,6 @@ public class CommandFinder
 	
 	public static void init()
 	{
-		if(Bukkit.getPluginManager().isPluginEnabled("WorldEdit"))
-			registerCommandInfo(new WorldEditCommandDisplayer());
 	}
 	
 	public static void displayCommand( Command command, String label, CommandSender sender )
