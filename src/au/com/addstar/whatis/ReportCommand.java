@@ -47,7 +47,7 @@ public class ReportCommand implements ICommand
 	@Override
 	public String getPermission()
 	{
-		return null;
+		return "whatis.report";
 	}
 
 	@Override

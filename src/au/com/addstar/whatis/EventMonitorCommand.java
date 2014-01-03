@@ -28,7 +28,7 @@ public class EventMonitorCommand implements ICommand
 	@Override
 	public String getPermission()
 	{
-		return null;
+		return "whatis.eventmonitor";
 	}
 
 	@Override

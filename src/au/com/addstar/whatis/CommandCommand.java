@@ -24,7 +24,7 @@ public class CommandCommand implements ICommand
 	@Override
 	public String getPermission()
 	{
-		return null;
+		return "whatis.command";
 	}
 
 	@Override

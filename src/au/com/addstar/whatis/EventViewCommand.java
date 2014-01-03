@@ -32,7 +32,7 @@ public class EventViewCommand implements ICommand
 	@Override
 	public String getPermission()
 	{
-		return null;
+		return "whatis.events";
 	}
 
 	@Override

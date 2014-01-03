@@ -9,10 +9,26 @@ main: au.com.addstar.whatis.WhatIs
 softdepend: [WorldEdit]
 
 permissions:
+  whasis:
+    default: op
   whatis.command:
     default: op
+    children:
+      whatis: true
+  whatis.report:
+    default: op
+    children:
+      whatis: true
+  whatis.events:
+    default: op
+    children:
+      whatis: true
+  whatis.eventmonitor:
+    default: op
+    children:
+      whatis: true
 
 commands:
   whatis:
     description: Allows you to find lots of information.
-    permission: whatis.command
+    permission: whatis
