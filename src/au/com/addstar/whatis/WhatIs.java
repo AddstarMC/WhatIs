@@ -102,6 +102,10 @@ public class WhatIs extends JavaPlugin
 			
 			return clazz.getName();
 		}
+		catch(NullPointerException e)
+		{
+			return "Unknown";
+		}
 		catch(Exception e)
 		{
 			throw new RuntimeException(e);

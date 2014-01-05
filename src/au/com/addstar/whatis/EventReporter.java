@@ -157,9 +157,6 @@ public class EventReporter
 			int stepCount = 1;
 			for(Map.Entry<RegisteredListener, Map<String, Object>> step : report.getSteps())
 			{
-				if(step.getValue() == null)
-					continue;
-				
 				String location = "";
 				for(EventCallback callback : EventHelper.resolveListener(report.getEventType(), step.getKey()))
 				{
@@ -173,7 +170,7 @@ public class EventReporter
 				
 				writer.println(stepCount + ":");
 				writer.println("  Source: " + location);
-				writer.println("  State: " + step.getValue());
+				writer.println("  State: " + (step.getValue() != null ? "*SKIP*" : step.getValue()));
 				
 				++stepCount;
 			}
