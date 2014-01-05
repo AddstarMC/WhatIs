@@ -9,7 +9,7 @@ main: au.com.addstar.whatis.WhatIs
 softdepend: [WorldEdit]
 
 permissions:
-  whasis:
+  whatis:
     default: op
   whatis.command:
     default: op
