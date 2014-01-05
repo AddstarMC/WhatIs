@@ -6,8 +6,6 @@ description: WhatIs provides tools to find out what each plugin interfaces with.
 
 main: au.com.addstar.whatis.WhatIs
 
-softdepend: [WorldEdit]
-
 permissions:
   whatis:
     default: op
