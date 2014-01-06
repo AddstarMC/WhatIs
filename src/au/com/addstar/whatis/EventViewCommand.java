@@ -1,8 +1,10 @@
 package au.com.addstar.whatis;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -12,6 +14,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.util.ChatPaginator;
+import org.bukkit.util.ChatPaginator.ChatPage;
 
 import au.com.addstar.whatis.EventHelper.EventCallback;
 
@@ -38,7 +42,7 @@ public class EventViewCommand implements ICommand
 	@Override
 	public String getUsageString( String label, CommandSender sender )
 	{
-		return label + " (plugin <plugin>|<eventName>)";
+		return label + " (plugin <plugin>|count <eventName>|handlers <eventName>) [page]";
 	}
 
 	@Override
@@ -62,12 +66,34 @@ public class EventViewCommand implements ICommand
 	@Override
 	public boolean onCommand( CommandSender sender, String label, String[] args )
 	{
-		if(args.length != 1 && args.length != 2)
+		if(args.length != 2 && args.length != 3)
 			return false;
 		
-		if(args.length == 1)
+		int page = 1;
+		if(args.length == 3)
 		{
-			Class<? extends Event> eventClass = EventHelper.parseEvent(args[0]);
+			try
+			{
+				page = Integer.parseInt(args[2]);
+			}
+			catch(NumberFormatException e)
+			{
+				sender.sendMessage(ChatColor.RED + args[2] + " is not a page number");
+				return true;
+			}
+			
+			if(page <= 0)
+			{
+				sender.sendMessage(ChatColor.RED + "Page number must be 1 or higher");
+				return true;
+			}
+		}
+		
+		String raw = "";
+		
+		if(args[0].equalsIgnoreCase("count"))
+		{
+			Class<? extends Event> eventClass = EventHelper.parseEvent(args[1]);
 			
 			if(eventClass == null)
 			{
@@ -77,8 +103,15 @@ public class EventViewCommand implements ICommand
 			
 			HandlerList handlers = EventHelper.getHandlers(eventClass.asSubclass(Event.class));
 			
-			sender.sendMessage(String.format("Handlers for %s: %d", eventClass.getSimpleName(), handlers.getRegisteredListeners().length));
-			HashMap<Plugin, Integer> count = new HashMap<Plugin, Integer>();
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandler count for &c%s&e: &f%d", eventClass.getSimpleName(), handlers.getRegisteredListeners().length)));
+			TreeMap<Plugin, Integer> count = new TreeMap<Plugin, Integer>(new Comparator<Plugin>()
+			{
+				@Override
+				public int compare( Plugin o1, Plugin o2 )
+				{
+					return o1.getName().compareToIgnoreCase(o2.getName());
+				}
+			});
 			
 			for(RegisteredListener listener : handlers.getRegisteredListeners())
 			{
@@ -91,14 +124,47 @@ public class EventViewCommand implements ICommand
 				count.put(listener.getPlugin(), num);
 			}
 			
-			for(Entry<Plugin, Integer> entry : count.entrySet())
-				sender.sendMessage(String.format("* %s: %d", entry.getKey().getName(), entry.getValue()));
-		}
-		else
-		{
-			if(!args[0].equals("plugin"))
-				return false;
+			ArrayList<String> lines = new ArrayList<String>();
 			
+			for(Entry<Plugin, Integer> entry : count.entrySet())
+				lines.add(ChatColor.translateAlternateColorCodes('&', String.format("&7- &6%s&f %d", entry.getKey().getName(), entry.getValue())));
+			
+			for(String line : lines)
+			{
+				if(!raw.isEmpty())
+					raw += "\n";
+				
+				raw += line;
+			}
+		}
+		else if(args[0].equalsIgnoreCase("handlers"))
+		{
+			Class<? extends Event> eventClass = EventHelper.parseEvent(args[1]);
+			
+			if(eventClass == null)
+			{
+				sender.sendMessage(args[0] + " is not an event type");
+				return true;
+			}
+			
+			HandlerList handlers = EventHelper.getHandlers(eventClass.asSubclass(Event.class));
+			
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandlers for &c%s&e: &f%d", eventClass.getSimpleName(), handlers.getRegisteredListeners().length)));
+			
+			ArrayList<String> lines = new ArrayList<String>();
+			for(RegisteredListener listener : handlers.getRegisteredListeners())
+				lines.add(ChatColor.GRAY + "- " + ChatColor.GOLD + listener.getPlugin().getName() + ChatColor.GRAY + " " + listener.getPriority() + (listener.isIgnoringCancelled() ? " IgnoreCancel" : ""));
+			
+			for(String line : lines)
+			{
+				if(!raw.isEmpty())
+					raw += "\n";
+				
+				raw += line;
+			}
+		}
+		else if(args[0].equalsIgnoreCase("plugin"))
+		{
 			Plugin plugin = Bukkit.getPluginManager().getPlugin(args[1]);
 			
 			if(plugin == null)
@@ -108,10 +174,33 @@ public class EventViewCommand implements ICommand
 			}
 			
 			List<EventCallback> callbacks = EventHelper.getEventCallbacks(plugin);
+			ArrayList<String> lines = new ArrayList<String>();
+			
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandlers for plugin &c%s&e: &f%d", plugin.getName(), callbacks.size())));
 			
 			for(EventCallback callback : callbacks)
-				sender.sendMessage(String.format("%s - %s", callback.eventClass.getSimpleName(), callback.priority.toString()));
+				lines.add(ChatColor.translateAlternateColorCodes('&', String.format("&6%s &f%s %s", callback.eventClass.getSimpleName(), callback.priority.toString(), callback.ignoreCancelled ? "IgnoreCancel" : "")));
+			
+			Collections.sort(lines);
+			
+			for(String line : lines)
+			{
+				if(!raw.isEmpty())
+					raw += "\n";
+				
+				raw += line;
+			}
 		}
+		else
+			return false;
+		
+		ChatPage p = ChatPaginator.paginate(raw, page);
+		if(p.getPageNumber() < p.getTotalPages())
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Page &e%d&7 of &e%d &7(use &e/whatis %s %s %s %d&7 to get the next page)", p.getPageNumber(), p.getTotalPages(), label, args[0], args[1], p.getPageNumber() + 1)));
+		else
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Page &e%d&7 of &e%d", p.getPageNumber(), p.getTotalPages())));
+		sender.sendMessage(p.getLines());
+		
 		return true;
 	}
 
@@ -122,14 +211,25 @@ public class EventViewCommand implements ICommand
 		{
 			ArrayList<String> matching = new ArrayList<String>();
 			String toMatch = args[0].toLowerCase();
+
+			if("plugin".startsWith(toMatch))
+				matching.add("plugin");
+			if("count".startsWith(toMatch))
+				matching.add("count");
+			if("handlers".startsWith(toMatch))
+				matching.add("handlers");
+			
+			return matching;
+		}
+		else if(args.length == 2)
+		{
+			ArrayList<String> matching = new ArrayList<String>();
+			String toMatch = args[1].toLowerCase();
 			for(String name : EventHelper.getEventNames())
 			{
 				if(name.startsWith(toMatch))
 					matching.add(name);
 			}
-			
-			if("plugin".startsWith(toMatch))
-				matching.add("plugin");
 			
 			return matching;
 		}

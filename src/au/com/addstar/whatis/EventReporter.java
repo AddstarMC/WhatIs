@@ -150,31 +150,29 @@ public class EventReporter
 		
 		for(EventReport report : reports)
 		{
+			
+			writer.println("-----------------------------------------");
 			writer.println("Event: " + report.getEventType().getName());
-			writer.println("Steps: " + report.getSteps().size());
+			writer.println("Handlers: " + report.getSteps().size());
 			writer.println();
 			
-			int stepCount = 1;
 			for(Map.Entry<RegisteredListener, Map<String, Object>> step : report.getSteps())
 			{
 				String location = "";
 				for(EventCallback callback : EventHelper.resolveListener(report.getEventType(), step.getKey()))
 				{
 					if(!location.isEmpty())
-						location += " OR ";
-					location += String.format("%s [PRIORITY: %s IGNORECANCEL: %S]", callback.signature, callback.priority, callback.ignoreCancelled);
+						location += "\n OR \n";
+					location += String.format("[%s %s%s] %s", step.getKey().getPlugin().getName(), callback.priority, callback.ignoreCancelled ? " Ignores Cancel" : "", callback.signature);
 				}
 				
 				if(location.isEmpty())
-					location = "*UNKNOWN HANDLER*";
+					location = String.format("[%s %s%s] %s", step.getKey().getPlugin().getName(), step.getKey().getPriority(), step.getKey().isIgnoringCancelled() ? " Ignores Cancel" : "", step.getKey().getListener().getClass().getName() + ".???");
 				
-				writer.println(stepCount + ":");
-				writer.println("  Source: " + location);
-				writer.println("  State: " + (step.getValue() != null ? "*SKIP*" : step.getValue()));
-				
-				++stepCount;
+				writer.println(location);
+				writer.println(" - " + (step.getValue() == null ? "*SKIP*" : step.getValue()));
 			}
-			
+			writer.println();
 			writer.println();
 		}
 		
