@@ -171,8 +171,8 @@ public class EventReporter
 				
 				writer.println(location);
 				writer.println(" - " + (step.getValue() == null ? "*SKIP*" : step.getValue()));
+				writer.println();
 			}
-			writer.println();
 			writer.println();
 		}
 		
