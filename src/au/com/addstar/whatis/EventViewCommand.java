@@ -24,7 +24,7 @@ public class EventViewCommand implements ICommand
 	@Override
 	public String getName()
 	{
-		return "events";
+		return "event";
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class EventViewCommand implements ICommand
 	@Override
 	public String getPermission()
 	{
-		return "whatis.events";
+		return "whatis.event";
 	}
 
 	@Override

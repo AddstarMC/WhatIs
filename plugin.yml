@@ -17,7 +17,7 @@ permissions:
     default: op
     children:
       whatis: true
-  whatis.events:
+  whatis.event:
     default: op
     children:
       whatis: true
