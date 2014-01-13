@@ -97,7 +97,7 @@ public class EventViewCommand implements ICommand
 			
 			if(eventClass == null)
 			{
-				sender.sendMessage(args[0] + " is not an event type");
+				sender.sendMessage(args[1] + " is not an event type");
 				return true;
 			}
 			
@@ -143,7 +143,7 @@ public class EventViewCommand implements ICommand
 			
 			if(eventClass == null)
 			{
-				sender.sendMessage(args[0] + " is not an event type");
+				sender.sendMessage(args[1] + " is not an event type");
 				return true;
 			}
 			
