@@ -62,7 +62,7 @@ public class EventReporter
 	
 	private static IdentityHashMap<Event, EventReport> mCurrentReports = new IdentityHashMap<Event, EventReport>();
 	
-	public static void recordEventState(Event event, ReportingRegisteredListener listener)
+	public static void recordEventState(Event event, ReportingRegisteredListener listener, boolean cancelled)
 	{
 		synchronized (mCurrentReports)
 		{
@@ -73,7 +73,7 @@ public class EventReporter
 				mCurrentReports.put(event, report);
 			}
 			
-			report.recordStep(event, listener);
+			report.recordStep(event, listener, cancelled);
 		}
 	}
 	
@@ -190,9 +190,9 @@ public class EventReporter
 			mEventClass = eventClass;
 		}
 		
-		public synchronized void recordStep(Event event, ReportingRegisteredListener listener)
+		public synchronized void recordStep(Event event, ReportingRegisteredListener listener, boolean cancelled)
 		{
-			if(event instanceof Cancellable && ((Cancellable)event).isCancelled() && listener.isIgnoringCancelled())
+			if(cancelled)
 				mSteps.add(new AbstractMap.SimpleEntry<RegisteredListener, Map<String, Object>>(listener.getOriginal(), null));
 			else
 				mSteps.add(new AbstractMap.SimpleEntry<RegisteredListener, Map<String, Object>>(listener.getOriginal(), EventHelper.dumpClass(event)));
