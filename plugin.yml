@@ -25,6 +25,10 @@ permissions:
     default: op
     children:
       whatis: true
+  whatis.tps:
+    default: op
+    children:
+      whatis: true
 
 commands:
   whatis:

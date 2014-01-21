@@ -16,6 +16,7 @@ import au.com.addstar.whatis.commands.CommandFinder;
 public class WhatIs extends JavaPlugin
 {
 	public static WhatIs instance;
+	private TickMonitor mTickMonitor;
 	
 	@Override
 	public void onEnable()
@@ -30,6 +31,7 @@ public class WhatIs extends JavaPlugin
 		reportDir.mkdirs();
 		whatis.registerCommand(new ReportCommand(reportDir));
 		whatis.registerCommand(new EventMonitorCommand());
+		whatis.registerCommand(new TPSCommand());
 		
 		getCommand("whatis").setExecutor(whatis);
 		getCommand("whatis").setTabCompleter(whatis);
@@ -43,6 +45,14 @@ public class WhatIs extends JavaPlugin
 				EventHelper.buildEventMap();
 			}
 		});
+		
+		mTickMonitor = new TickMonitor(120);
+		Bukkit.getScheduler().runTaskTimer(this, mTickMonitor, 1, 1);
+	}
+	
+	public TickMonitor getTickMonitor()
+	{
+		return mTickMonitor;
 	}
 	
 	public static File getPluginSource(Plugin plugin)
