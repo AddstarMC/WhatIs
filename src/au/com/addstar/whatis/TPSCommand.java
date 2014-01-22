@@ -82,22 +82,24 @@ public class TPSCommand implements ICommand
 		
 		long max = monitor.getMaxTickTime();
 		long min = monitor.getMinTickTime();
+		long[] tickHistory = monitor.getHistory();
 		
-		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&6Last 40 Ticks&7: \u2206 &f%.4f&7 ms", (max - min) / 1000000D)));
+		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&6Last %d Ticks&7: \u2206 &f%.4f&7 ms", tickHistory.length, (max - min) / 1000000D)));
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format(" &6Min&7: &f%.2f &7ms", min / 1000000D)));
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format(" &6Max&7: &f%.2f &7ms", max / 1000000D)));
 		
-		mTickGraph.setData(monitor.getHistory(), 50000000, max);
+		mTickGraph.setData(tickHistory, 50000000, max);
 		mTickGraph.draw(sender);
 		
 		double maxTps = monitor.getMaxTPS();
 		double minTps = monitor.getMinTPS();
+		double[] tpsHistory = monitor.getTPSHistory();
 		
-		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&6TPS history&7: \u2206 &f%.2f&7tps", maxTps - minTps)));
+		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&6TPS over last %d seconds&7: \u2206 &f%.2f&7tps", tpsHistory.length, maxTps - minTps)));
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format(" &6Min&7: &f%.2f&7tps", minTps)));
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format(" &6Max&7: &f%.2f&7tps", maxTps)));
 		
-		mTPSGraph.setData(monitor.getTPSHistory(), minTps, 20);
+		mTPSGraph.setData(tpsHistory, minTps, 20);
 		mTPSGraph.draw(sender);
 		
 		return true;

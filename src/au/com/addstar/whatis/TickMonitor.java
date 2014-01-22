@@ -44,7 +44,7 @@ public class TickMonitor implements Runnable
 		if(mHistoryStart >= mHistory.length)
 			mHistoryStart = 0;
 		
-		if(currentTime - mLastTPSTime >= 1000000)
+		if(currentTime - mLastTPSTime >= 1000000000)
 		{
 			mLastTPSTime = currentTime;
 			
