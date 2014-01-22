@@ -1,29 +1,19 @@
 package au.com.addstar.whatis;
 
-import java.util.Arrays;
+import au.com.addstar.whatis.util.RollingList;
 
 public class TickMonitor implements Runnable
 {
-	private long[] mHistory;
-	private int mHistoryStart;
-	private int mHistoryCount;
-	
-	private double[] mTPSHistory;
-	private int mTPSHistoryStart;
-	private int mTPSHistoryCount;
+	private RollingList<Long> mTickHistory;
+	private RollingList<Double> mTPSHistory;
 	
 	private long mLastTime;
 	private long mLastTPSTime;
 	
 	public TickMonitor(int historySize)
 	{
-		mHistory = new long[40];
-		mHistoryStart = 0;
-		mHistoryCount = 0;
-		
-		mTPSHistory = new double[historySize];
-		mTPSHistoryStart = 0;
-		mTPSHistoryCount = 0;
+		mTickHistory = new RollingList<Long>(40);
+		mTPSHistory = new RollingList<Double>(historySize);
 		
 		mLastTime = mLastTPSTime = System.nanoTime();
 	}
@@ -36,44 +26,31 @@ public class TickMonitor implements Runnable
 		long elapsed = currentTime - mLastTime;
 		mLastTime = currentTime;
 		
-		mHistory[mHistoryStart++] = elapsed;
-		
-		if(mHistoryCount < mHistory.length)
-			++mHistoryCount;
-		
-		if(mHistoryStart >= mHistory.length)
-			mHistoryStart = 0;
+		mTickHistory.add(elapsed);
 		
 		if(currentTime - mLastTPSTime >= 1000000000)
 		{
 			mLastTPSTime = currentTime;
-			
-			mTPSHistory[mTPSHistoryStart++] = getCurrentTPS();
-			
-			if(mTPSHistoryCount < mTPSHistory.length)
-				++mTPSHistoryCount;
-			
-			if(mTPSHistoryStart >= mTPSHistory.length)
-				mTPSHistoryStart = 0;
+			mTPSHistory.add(getCurrentTPS());
 		}
 	}
 
 	public long getAverageTickTime()
 	{
 		long total = 0;
-		for(int i = 0; i < mHistoryCount; ++i)
-			total += mHistory[i];
+		for(long time : mTickHistory)
+			total += time;
 		
-		return total / mHistoryCount;
+		return total / mTickHistory.size();
 	}
 	
 	public long getMaxTickTime()
 	{
 		long max = 0;
-		for(int i = 0; i < mHistoryCount; ++i)
+		for(long time : mTickHistory)
 		{
-			if(mHistory[i] > max)
-				max = mHistory[i];
+			if(time > max)
+				max = time;
 		}
 		
 		return max;
@@ -82,68 +59,42 @@ public class TickMonitor implements Runnable
 	public long getMinTickTime()
 	{
 		long min = Long.MAX_VALUE;
-		for(int i = 0; i < mHistoryCount; ++i)
+		for(long time : mTickHistory)
 		{
-			if(mHistory[i] < min)
-				min = mHistory[i];
+			if(time < min)
+				min = time;
 		}
 		
 		return min;
 	}
 	
-	public int getMaxHistorySize()
+	public int getMaxTickHistorySize()
 	{
-		return mHistory.length;
+		return mTickHistory.capacity();
 	}
 	
 	public int getMaxTPSHistorySize()
 	{
-		return mTPSHistory.length;
+		return mTPSHistory.capacity();
 	}
 	
-	public long[] getHistory()
+	public Long[] getTickHistory()
 	{
-		if(mHistoryCount < mHistory.length)
-			return Arrays.copyOfRange(mHistory, 0, mHistoryCount);
-		else if(mHistoryStart == 0)
-			return mHistory;
-		else
-		{
-			long[] history = new long[mHistory.length];
-			int index = 0;
-			for(int i = mHistoryStart; i < mHistory.length; ++i)
-				history[index++] = mHistory[i];
-			for(int i = 0; i < mHistoryStart; ++i)
-				history[index++] = mHistory[i];
-			return history;
-		}
+		return mTickHistory.toArray();
 	}
 	
-	public double[] getTPSHistory()
+	public Double[] getTPSHistory()
 	{
-		if(mTPSHistoryCount < mTPSHistory.length)
-			return Arrays.copyOfRange(mTPSHistory, 0, mTPSHistoryCount);
-		else if(mTPSHistoryStart == 0)
-			return mTPSHistory;
-		else
-		{
-			double[] history = new double[mTPSHistory.length];
-			int index = 0;
-			for(int i = mTPSHistoryStart; i < mTPSHistory.length; ++i)
-				history[index++] = mTPSHistory[i];
-			for(int i = 0; i < mTPSHistoryStart; ++i)
-				history[index++] = mTPSHistory[i];
-			return history;
-		}
+		return mTPSHistory.toArray();
 	}
 	
 	public double getMaxTPS()
 	{
 		double max = 0;
-		for(int i = 0; i < mTPSHistoryCount; ++i)
+		for(double val : mTPSHistory)
 		{
-			if(mTPSHistory[i] > max)
-				max = mTPSHistory[i];
+			if(val > max)
+				max = val;
 		}
 		
 		return max;
@@ -152,10 +103,10 @@ public class TickMonitor implements Runnable
 	public double getMinTPS()
 	{
 		double min = Long.MAX_VALUE;
-		for(int i = 0; i < mTPSHistoryCount; ++i)
+		for(double val : mTPSHistory)
 		{
-			if(mTPSHistory[i] < min)
-				min = mTPSHistory[i];
+			if(val < min)
+				min = val;
 		}
 		
 		return min;

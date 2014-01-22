@@ -37,7 +37,7 @@ public class Graph
 		mColourStops.clear();
 	}
 	
-	public void setData(long[] data, long min, long max)
+	public void setData(Long[] data, long min, long max)
 	{
 		mData = new float[data.length];
 		for(int i = 0; i < data.length; ++i)
@@ -47,7 +47,7 @@ public class Graph
 		mMax = max;
 	}
 	
-	public void setData(double[] data, double min, double max)
+	public void setData(Double[] data, double min, double max)
 	{
 		mData = new float[data.length];
 		for(int i = 0; i < data.length; ++i)
