@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,6 +60,21 @@ public class EventReporter
 	}
 	
 	private static IdentityHashMap<Event, EventReport> mCurrentReports = new IdentityHashMap<Event, EventReport>();
+	
+	public static void recordEventInitialState(Event event, boolean cancelled)
+	{
+		synchronized (mCurrentReports)
+		{
+			EventReport report = mCurrentReports.get(event);
+			if(report == null)
+			{
+				report = new EventReport(event.getClass());
+				mCurrentReports.put(event, report);
+			}
+			
+			report.recordInitialStep(event, cancelled);
+		}
+	}
 	
 	public static void recordEventState(Event event, ReportingRegisteredListener listener, boolean cancelled)
 	{
@@ -128,6 +142,11 @@ public class EventReporter
 		}
 	}
 	
+	private static String makeDataBrief(Map<String, Object> data)
+	{
+		return data.toString();
+	}
+	
 	public static void writeReport(List<EventReport> reports, File file)
 	{
 		PrintWriter writer;
@@ -154,23 +173,32 @@ public class EventReporter
 			writer.println("-----------------------------------------");
 			writer.println("Event: " + report.getEventType().getName());
 			writer.println("Handlers: " + report.getSteps().size());
+			
+			if(report.getInitial().isCancelled())
+				writer.println(" - [Cancelled] " + makeDataBrief(report.getInitial().getData()));
+			else
+				writer.println(" - " + makeDataBrief(report.getInitial().getData()));
+			
 			writer.println();
 			
-			for(Map.Entry<RegisteredListener, Map<String, Object>> step : report.getSteps())
+			for(EventStep step : report.getSteps())
 			{
 				String location = "";
-				for(EventCallback callback : EventHelper.resolveListener(report.getEventType(), step.getKey()))
+				for(EventCallback callback : EventHelper.resolveListener(report.getEventType(), step.getListener()))
 				{
 					if(!location.isEmpty())
 						location += "\n OR \n";
-					location += String.format("[%s %s%s] %s", step.getKey().getPlugin().getName(), callback.priority, callback.ignoreCancelled ? " Ignores Cancel" : "", callback.signature);
+					location += String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), callback.priority, callback.ignoreCancelled ? " Ignores Cancel" : "", callback.signature);
 				}
 				
 				if(location.isEmpty())
-					location = String.format("[%s %s%s] %s", step.getKey().getPlugin().getName(), step.getKey().getPriority(), step.getKey().isIgnoringCancelled() ? " Ignores Cancel" : "", step.getKey().getListener().getClass().getName() + ".???");
+					location = String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), step.getListener().getPriority(), step.getListener().isIgnoringCancelled() ? " Ignores Cancel" : "", step.getListener().getListener().getClass().getName() + ".???");
 				
 				writer.println(location);
-				writer.println(" - " + (step.getValue() == null ? "*SKIP*" : step.getValue()));
+				if(step.isCancelled())
+					writer.println(" - [Cancelled] " + (step.getData() == null ? "*SKIP*" : makeDataBrief(step.getData())));
+				else
+					writer.println(" - " + (step.getData() == null ? "*SKIP*" : makeDataBrief(step.getData())));
 				writer.println();
 			}
 			writer.println();
@@ -180,22 +208,68 @@ public class EventReporter
 		writer.close();
 	}
 	
+	private static class EventStep
+	{
+		private RegisteredListener mListener;
+		private Map<String, Object> mData;
+		private boolean mIsCancelled;
+		
+		public EventStep(RegisteredListener listener, Map<String, Object> data, boolean cancelled)
+		{
+			mListener = listener;
+			mData = data;
+			mIsCancelled = cancelled;
+		}
+		
+		public boolean isCancelled()
+		{
+			return mIsCancelled;
+		}
+		
+		public Map<String, Object> getData()
+		{
+			return mData;
+		}
+		
+		public RegisteredListener getListener()
+		{
+			return mListener;
+		}
+	}
+	
 	public static class EventReport
 	{
 		private Class<? extends Event> mEventClass;
-		private ArrayList<Map.Entry<RegisteredListener, Map<String, Object>>> mSteps = new ArrayList<Map.Entry<RegisteredListener,Map<String, Object>>>();
+		private EventStep mInitial;
+		private ArrayList<EventStep> mSteps = new ArrayList<EventStep>();
 		
 		public EventReport(Class<? extends Event> eventClass)
 		{
 			mEventClass = eventClass;
 		}
 		
+		public synchronized void recordInitialStep(Event event, boolean cancelled)
+		{
+			if(mInitial != null)
+				return;
+			
+			boolean newCancel = false;
+			if(event instanceof Cancellable)
+				newCancel = ((Cancellable)event).isCancelled();
+			
+			mInitial = new EventStep(null, EventHelper.dumpClass(event), newCancel);
+		}
+		
 		public synchronized void recordStep(Event event, ReportingRegisteredListener listener, boolean cancelled)
 		{
-			if(cancelled)
-				mSteps.add(new AbstractMap.SimpleEntry<RegisteredListener, Map<String, Object>>(listener.getOriginal(), null));
+			boolean newCancel = false;
+			if(event instanceof Cancellable)
+				newCancel = ((Cancellable)event).isCancelled();
+			
+			if(cancelled && listener.isIgnoringCancelled())
+				mSteps.add(new EventStep(listener.getOriginal(), null, newCancel));
 			else
-				mSteps.add(new AbstractMap.SimpleEntry<RegisteredListener, Map<String, Object>>(listener.getOriginal(), EventHelper.dumpClass(event)));
+				mSteps.add(new EventStep(listener.getOriginal(), EventHelper.dumpClass(event), newCancel));
 		}
 		
 		public synchronized Class<? extends Event> getEventType()
@@ -203,9 +277,14 @@ public class EventReporter
 			return mEventClass;
 		}
 		
-		public synchronized List<Map.Entry<RegisteredListener, Map<String, Object>>> getSteps()
+		public synchronized List<EventStep> getSteps()
 		{
 			return mSteps;
+		}
+		
+		public synchronized EventStep getInitial()
+		{
+			return mInitial;
 		}
 		
 	}

@@ -2,8 +2,11 @@ package au.com.addstar.whatis;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,6 +14,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Chunk;
+import org.bukkit.Server;
+import org.bukkit.World;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +32,7 @@ import org.bukkit.plugin.RegisteredListener;
 
 public class EventHelper
 {
+	public static int maxDepth = 2;
 	public static HandlerList getHandlers(Class<? extends Event> clazz)
 	{
 		try
@@ -170,11 +182,51 @@ public class EventHelper
 		return eventMap.get(name.toLowerCase());
 	}
 	
-	private static void dumpFields(Field[] fields, Object instance, Map<String, Object> map)
+	private static Map<String, Object> dumpEntity(Entity ent)
+	{
+		HashMap<String, Object> subMap = new HashMap<String, Object>();
+		subMap.put("location", dumpClass(ent.getLocation(), 0));
+		subMap.put("velocity", ent.getVelocity());
+		subMap.put("ticks", ent.getTicksLived());
+		subMap.put("world", ent.getWorld().getName());
+
+		if(ent instanceof LivingEntity)
+		{
+			LivingEntity living = (LivingEntity)ent;
+			subMap.put("maxAir", living.getMaximumAir());
+			subMap.put("air", living.getRemainingAir());
+			subMap.put("customName", living.getCustomName());
+			subMap.put("canPickupItems", living.getCanPickupItems());
+		}
+		
+		if(ent instanceof Damageable)
+		{
+			subMap.put("maxHealth", ((Damageable)ent).getMaxHealth());
+			subMap.put("health", ((Damageable)ent).getHealth());
+		}
+		
+		if(ent instanceof ExperienceOrb)
+		{
+			subMap.put("xp", ((ExperienceOrb) ent).getExperience());
+		}
+		
+		if(ent instanceof HumanEntity)
+		{
+			HumanEntity human = (HumanEntity)ent;
+			subMap.put("name", human.getName());
+		}
+		
+		return subMap;
+	}
+	
+	private static void dumpFields(Field[] fields, Object instance, Map<String, Object> map, int depth)
 	{
 		for(Field field : fields)
 		{
 			if(field.getType().equals(HandlerList.class))
+				continue;
+			
+			if(Modifier.isStatic(field.getModifiers()))
 				continue;
 			
 			field.setAccessible(true);
@@ -184,12 +236,28 @@ public class EventHelper
 				
 				if(contained == null)
 					map.put(field.getName(), "null");
-				else if(contained.getClass().isPrimitive() || contained.getClass().equals(Integer.class) || contained.getClass().equals(Short.class) || contained.getClass().equals(Byte.class) || contained.getClass().equals(String.class) || contained.getClass().equals(Boolean.class) || contained.getClass().equals(Float.class) || contained.getClass().equals(Double.class))
+				else if(contained.getClass().isPrimitive() || contained.getClass().equals(Integer.class) || contained.getClass().equals(Short.class) || contained.getClass().equals(Byte.class) || contained.getClass().equals(String.class) || contained.getClass().equals(Boolean.class) || contained.getClass().equals(Float.class) || contained.getClass().equals(Double.class) || contained.getClass() == Character.class )
 					map.put(field.getName(), String.valueOf(contained));
 				else if(contained.getClass().isArray())
 					map.put(field.getName(), Arrays.toString((Object[])contained));
-				else
+				else if(contained instanceof Collection)
 					map.put(field.getName(), contained.toString());
+				else if(contained instanceof Server)
+					map.put(field.getName(), contained.toString());
+				else if(contained instanceof Entity)
+					map.put(field.getName(), dumpEntity((Entity)contained));
+				else if(contained instanceof Chunk)
+					map.put(field.getName(), String.format("[X=%d Z=%d]", ((Chunk)contained).getX(), ((Chunk)contained).getZ()));
+				else if(contained instanceof World)
+					map.put(field.getName(), ((World)contained).getName());
+				else
+				{
+					Map<String, Object> result = dumpClass(contained, depth + 1);
+					if(result.isEmpty())
+						map.put(field.getName(), contained.toString());
+					else
+						map.put(field.getName(), result);
+				}
 			}
 			catch(Exception e)
 			{
@@ -197,15 +265,26 @@ public class EventHelper
 			}
 		}
 	}
+	
 	public static Map<String, Object> dumpClass(Object object)
 	{
+		return dumpClass(object, 0);
+	}
+	
+	private static Map<String, Object> dumpClass(Object object, int depth)
+	{
+		if(depth > maxDepth)
+			return Collections.emptyMap();
+		
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		
 		Class<?> clazz = object.getClass();
 		
 		while(!clazz.equals(Object.class))
 		{
-			dumpFields(clazz.getDeclaredFields(), object, result);
+			Field[] fields = clazz.getDeclaredFields();
+			
+			dumpFields(fields, object, result, depth);
 			clazz = clazz.getSuperclass();
 		}
 		

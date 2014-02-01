@@ -22,6 +22,8 @@ public class ReportingRegisteredListener extends RegisteredListener
 		if(event instanceof Cancellable)
 			canceled = ((Cancellable)event).isCancelled();
 		
+		EventReporter.recordEventInitialState(event, canceled);
+		
 		mExisting.callEvent(event);
 		EventReporter.recordEventState(event, this, canceled);
 	}
