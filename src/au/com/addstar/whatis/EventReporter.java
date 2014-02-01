@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -147,6 +149,22 @@ public class EventReporter
 		return data.toString();
 	}
 	
+	@SuppressWarnings( "unchecked" )
+	private static void getChanges(Map<String, Object> data, Map<String, Object> last, List<Entry<String, Object>> changes)
+	{
+		for(String key : data.keySet())
+		{
+			Object newVal,oldVal;
+			newVal = data.get(key);
+			oldVal = last.get(key);
+
+			if(newVal instanceof Map && oldVal instanceof Map)
+				getChanges((Map<String,Object>)newVal, (Map<String,Object>)oldVal, changes);
+			else if((newVal == null && oldVal != null) || (newVal != null && !newVal.equals(oldVal)))
+				changes.add(new AbstractMap.SimpleEntry<String, Object>(key, newVal));
+		}
+	}
+	
 	public static void writeReport(List<EventReport> reports, File file)
 	{
 		PrintWriter writer;
@@ -181,6 +199,8 @@ public class EventReporter
 			
 			writer.println();
 			
+			Map<String, Object> lastState = report.getInitial().getData(); 
+			
 			for(EventStep step : report.getSteps())
 			{
 				String location = "";
@@ -199,6 +219,23 @@ public class EventReporter
 					writer.println(" - [Cancelled] " + (step.getData() == null ? "*SKIP*" : makeDataBrief(step.getData())));
 				else
 					writer.println(" - " + (step.getData() == null ? "*SKIP*" : makeDataBrief(step.getData())));
+				
+				if(step.getData() != null)
+				{
+					ArrayList<Entry<String, Object>> changes = new ArrayList<Map.Entry<String,Object>>();
+					getChanges(step.getData(), lastState, changes);
+					
+					if(!changes.isEmpty())
+					{
+						writer.println("Changes:");
+						
+						for(Entry<String, Object> change : changes)
+							writer.println(" - " + change.getKey() + ": " + change.getValue());
+					}
+					
+					lastState = step.getData();
+				}
+				
 				writer.println();
 			}
 			writer.println();
