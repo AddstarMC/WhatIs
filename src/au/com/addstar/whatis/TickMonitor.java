@@ -80,12 +80,12 @@ public class TickMonitor implements Runnable
 	
 	public Long[] getTickHistory()
 	{
-		return mTickHistory.toArray();
+		return mTickHistory.toArray(new Long[0]);
 	}
 	
 	public Double[] getTPSHistory()
 	{
-		return mTPSHistory.toArray();
+		return mTPSHistory.toArray(new Double[0]);
 	}
 	
 	public double getMaxTPS()

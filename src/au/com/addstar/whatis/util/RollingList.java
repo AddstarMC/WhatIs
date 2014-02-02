@@ -1,6 +1,6 @@
 package au.com.addstar.whatis.util;
 
-import java.util.Arrays;
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -49,8 +49,7 @@ public class RollingList<T> implements Iterable<T>
 			@Override
 			public T next()
 			{
-				++mIndex;
-				return get(mIndex);
+				return get(mIndex++);
 			}
 
 			@Override
@@ -83,22 +82,30 @@ public class RollingList<T> implements Iterable<T>
 	}
 	
 	@SuppressWarnings( "unchecked" )
-	public T[] toArray()
+	public T[] toArray(T[] template)
 	{
-		if(mCount < mData.length)
-			return Arrays.copyOfRange(mData, 0, mCount);
-		else if(mStart == 0)
-			return mData.clone();
+		T[] copy;
+		
+		if(template.length == mCount)
+			copy = template;
+		else
+			copy = (T[])Array.newInstance(template.getClass().getComponentType(), mCount);
+			
+		if(mCount < mData.length || mStart == 0)
+		{
+			for(int i = 0; i < mCount; ++i)
+				copy[i] = mData[i];
+		}
 		else
 		{
-			T[] copy = (T[])new Object[mData.length];
 			int index = 0;
 			for(int i = mStart; i < mData.length; ++i)
 				copy[index++] = mData[i];
 			for(int i = 0; i < mStart; ++i)
 				copy[index++] = mData[i];
-			return copy;
 		}
+		
+		return copy;
 	}
 
 	public void clear()
@@ -109,7 +116,7 @@ public class RollingList<T> implements Iterable<T>
 
 	public T get( int index )
 	{
-		if(index < 0 || index > mCount)
+		if(index < 0 || index >= mCount)
 			throw new IndexOutOfBoundsException();
 		
 		if(index >= mCount - mStart)
