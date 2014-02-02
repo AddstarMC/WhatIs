@@ -19,6 +19,7 @@ public class Graph
 	private double mMin;
 	private double mMax;
 	private TreeMap<Double, ChatColor> mColourStops;
+	private boolean mShowLowest = false;
 	
 	public Graph()
 	{
@@ -57,6 +58,11 @@ public class Graph
 		mMax = max;
 	}
 	
+	public void setShowLowest(boolean lowest)
+	{
+		mShowLowest = lowest;
+	}
+	
 	public void draw(CommandSender target)
 	{
 		Validate.notNull(mData);
@@ -69,22 +75,27 @@ public class Graph
 		for(int i = 0; i < mData.length; i += stepSize)
 		{
 			// Average those few data points
-			float total = 0;
-			int count = 0;
-			float stepMin = Long.MAX_VALUE;
+//			float total = 0;
+//			int count = 0;
+			float stepMin = Float.MAX_VALUE;
 			float stepMax = 0;
 			for(int j = i; j < i + stepSize && j < mData.length; ++j)
 			{
-				total += mData[j];
+				//total += mData[j];
 				if(mData[j] > stepMax)
 					stepMax = mData[j];
 				if(mData[j] < stepMin)
 					stepMin = mData[j];
 				
-				++count;
+				//++count;
 			}
 			
-			float average = total / count;
+			float value;
+			if(mShowLowest)
+				value = stepMin;
+			else
+				value = stepMax;
+			
 //			if (average < avg)
 //				average = stepMin;
 //			else
@@ -93,7 +104,7 @@ public class Graph
 			for(Entry<Double, ChatColor> stop : mColourStops.descendingMap().entrySet())
 			{
 				double val = (stop.getKey() - mMin) / (mMax - mMin);
-				if(average >= val)
+				if(value >= val)
 				{
 					graph.append(stop.getValue());
 					break;
@@ -101,9 +112,9 @@ public class Graph
 			}
 			
 			if(target instanceof Player || target instanceof BlockCommandSender)
-				graph.append(mCharsInGame[(int)(average * (mCharsInGame.length - 1))]);
+				graph.append(mCharsInGame[(int)(value * (mCharsInGame.length - 1))]);
 			else
-				graph.append(mCharsConsole[(int)(average * (mCharsConsole.length - 1))]);
+				graph.append(mCharsConsole[(int)(value * (mCharsConsole.length - 1))]);
 		}
 		
 		target.sendMessage(graph.toString());

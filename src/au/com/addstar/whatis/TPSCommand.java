@@ -19,6 +19,7 @@ public class TPSCommand implements ICommand
 		mTPSGraph.addColourStop(18, ChatColor.GREEN);
 		mTPSGraph.addColourStop(15, ChatColor.YELLOW);
 		mTPSGraph.addColourStop(0, ChatColor.RED);
+		mTPSGraph.setShowLowest(true);
 	}
 	
 	@Override
