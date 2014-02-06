@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -62,19 +63,32 @@ public class EventReporter
 	}
 	
 	private static IdentityHashMap<Event, EventReport> mCurrentReports = new IdentityHashMap<Event, EventReport>();
+	private static HashMap<Class<? extends Event>, ReportSession> mSessions = new HashMap<Class<? extends Event>, EventReporter.ReportSession>();
+	private static HashMap<Class<? extends Event>, List<EventReport>> mEventOrder = new HashMap<Class<? extends Event>, List<EventReport>>();
 	
 	public static void recordEventInitialState(Event event, boolean cancelled)
 	{
 		synchronized (mCurrentReports)
 		{
 			EventReport report = mCurrentReports.get(event);
+			ReportSession session = mSessions.get(event.getClass());
+			
 			if(report == null)
 			{
 				report = new EventReport(event.getClass());
 				mCurrentReports.put(event, report);
+				
+				List<EventReport> list = mEventOrder.get(event.getClass());
+				if(list == null)
+				{
+					list = new LinkedList<EventReporter.EventReport>();
+					mEventOrder.put(event.getClass(), list);
+				}
+				
+				list.add(report);
 			}
 			
-			report.recordInitialStep(event, cancelled);
+			report.recordInitialStep(event, cancelled, session.filters);
 		}
 	}
 	
@@ -83,36 +97,59 @@ public class EventReporter
 		synchronized (mCurrentReports)
 		{
 			EventReport report = mCurrentReports.get(event);
+			ReportSession session = mSessions.get(event.getClass());
+			
 			if(report == null)
 			{
 				report = new EventReport(event.getClass());
 				mCurrentReports.put(event, report);
+				
+				List<EventReport> list = mEventOrder.get(event.getClass());
+				if(list == null)
+				{
+					list = new LinkedList<EventReporter.EventReport>();
+					mEventOrder.put(event.getClass(), list);
+				}
+				
+				list.add(report);
 			}
 			
+			for(Filter filter : session.filters)
+			{
+				if(!filter.listenerMatches(listener.getOriginal()))
+					return;
+			}
 			report.recordStep(event, listener, cancelled);
 		}
 	}
 	
 	public static List<EventReport> popReports(Class<? extends Event> eventClass)
 	{
-		ArrayList<EventReport> reports = new ArrayList<EventReport>();
 		synchronized (mCurrentReports)
 		{
-			for(EventReport report : mCurrentReports.values())
-			{
-				if(report.getEventType().equals(eventClass))
-					reports.add(report);
-			}
+			LinkedList<EventReport> onlyValid = new LinkedList<EventReport>();
+			List<EventReport> reports = mEventOrder.remove(eventClass);
+			
+			if(reports == null)
+				reports = Collections.emptyList();
 			
 			mCurrentReports.values().removeAll(reports);
+			
+			mSessions.remove(eventClass);
+			
+			for(EventReport report : reports)
+			{
+				if(report.isValid())
+					onlyValid.add(report);
+			}
+			
+			return onlyValid;
 		}
-		
-		return reports;
 	}
 	
 	private static HashMap<Class<? extends Event>, ReportSession> mCurrentMonitors = new HashMap<Class<? extends Event>, ReportSession>();
 	
-	public static void monitorEvent(Class<? extends Event> eventClass, int forTicks, CommandSender sender, File reportLocation) throws IllegalArgumentException, IllegalStateException
+	public static void monitorEvent(Class<? extends Event> eventClass, int forTicks, CommandSender sender, File reportLocation, List<Filter> filters) throws IllegalArgumentException, IllegalStateException
 	{
 		if(mCurrentMonitors.containsKey(eventClass))
 			throw new IllegalStateException(eventClass.getName() + " is already being monitored");
@@ -120,12 +157,13 @@ public class EventReporter
 		if(forTicks <= 0)
 			throw new IllegalArgumentException("forTicks must be greater than 0");
 		
-		hookEvent(eventClass);
-		
 		if(sender == null)
 			sender = Bukkit.getConsoleSender();
 		
-		ReportSession session = new ReportSession(sender, reportLocation);
+		ReportSession session = new ReportSession(sender, reportLocation, filters);
+		mSessions.put(eventClass, session);
+		
+		hookEvent(eventClass);
 		
 		session.task = Bukkit.getScheduler().runTaskLater(WhatIs.instance, new EventReportTimer(eventClass, session), forTicks);
 		mCurrentMonitors.put(eventClass, session);
@@ -139,7 +177,7 @@ public class EventReporter
 			restoreEvent(eventClass);
 			List<EventReport> reports = popReports(eventClass);
 			session.task.cancel();
-			writeReport(reports, session.outputFile);
+			writeReport(reports, session.outputFile, session.filters);
 			session.output.sendMessage("Event report saved to " + session.outputFile.getPath());
 		}
 	}
@@ -165,7 +203,7 @@ public class EventReporter
 		}
 	}
 	
-	public static void writeReport(List<EventReport> reports, File file)
+	public static void writeReport(List<EventReport> reports, File file, List<Filter> filters)
 	{
 		PrintWriter writer;
 		
@@ -185,8 +223,13 @@ public class EventReporter
 		writer.println("-----------------------------------------");
 		writer.println();
 		
-		for(EventReport report : reports)
+		reportLoop: for(EventReport report : reports)
 		{
+			for(Filter filter : filters)
+			{
+				if(!filter.matches(report.getInitial().getData()))
+					continue reportLoop;
+			}
 			
 			writer.println("-----------------------------------------");
 			writer.println("Event: " + report.getEventType().getName());
@@ -279,13 +322,15 @@ public class EventReporter
 		private Class<? extends Event> mEventClass;
 		private EventStep mInitial;
 		private ArrayList<EventStep> mSteps = new ArrayList<EventStep>();
+		private boolean mAllow;
 		
 		public EventReport(Class<? extends Event> eventClass)
 		{
 			mEventClass = eventClass;
+			mAllow = true;
 		}
 		
-		public synchronized void recordInitialStep(Event event, boolean cancelled)
+		public synchronized void recordInitialStep(Event event, boolean cancelled, List<Filter> filters)
 		{
 			if(mInitial != null)
 				return;
@@ -294,11 +339,25 @@ public class EventReporter
 			if(event instanceof Cancellable)
 				newCancel = ((Cancellable)event).isCancelled();
 			
-			mInitial = new EventStep(null, EventHelper.dumpClass(event), newCancel);
+			Map<String, Object> dump = EventHelper.dumpClass(event);
+			
+			for(Filter filter : filters)
+			{
+				if(!filter.matches(dump))
+				{
+					mAllow = false;
+					return;
+				}
+			}
+			
+			mInitial = new EventStep(null, dump, newCancel);
 		}
 		
 		public synchronized void recordStep(Event event, ReportingRegisteredListener listener, boolean cancelled)
 		{
+			if(!mAllow)
+				return;
+			
 			boolean newCancel = false;
 			if(event instanceof Cancellable)
 				newCancel = ((Cancellable)event).isCancelled();
@@ -324,6 +383,11 @@ public class EventReporter
 			return mInitial;
 		}
 		
+		public synchronized boolean isValid()
+		{
+			return mAllow;
+		}
+		
 	}
 	
 	public static class EventReportTimer implements Runnable
@@ -342,7 +406,7 @@ public class EventReporter
 		{
 			restoreEvent(mClass);
 			List<EventReport> reports = popReports(mClass);
-			writeReport(reports, mSession.outputFile);
+			writeReport(reports, mSession.outputFile, mSession.filters);
 			mSession.output.sendMessage("Event report saved to " + mSession.outputFile.getPath());
 				
 			mCurrentMonitors.remove(mClass);
@@ -351,14 +415,16 @@ public class EventReporter
 	
 	private static class ReportSession
 	{
-		public ReportSession(CommandSender sender, File file)
+		public ReportSession(CommandSender sender, File file, List<Filter> filters)
 		{
 			output = sender;
 			outputFile = file;
+			this.filters = filters;
 		}
 		public BukkitTask task;
 		public CommandSender output;
 		public File outputFile;
+		public List<Filter> filters;
 	}
 	
 	

@@ -2,6 +2,8 @@ name: WhatIs
 version: ${pom.version}
 author: Schmoller
 
+website: http://dev.bukkit.org/bukkit-plugins/whatis/
+
 description: WhatIs provides tools to find out what each plugin interfaces with.
 
 main: au.com.addstar.whatis.WhatIs

@@ -3,16 +3,23 @@ package au.com.addstar.whatis;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 
+import au.com.addstar.whatis.Filter.Op;
+
 public class EventMonitorCommand implements ICommand
 {
-
+	private Pattern mFilterDefPattern = Pattern.compile("\\[(?:[a-zA-Z0-9_]+(?:=|!=)[a-zA-Z0-9_ ]+)(?:,[a-zA-Z0-9_]+(?:=|!=)[a-zA-Z0-9_ \\-]+)*\\]");
+	private Pattern mFilterPattern = Pattern.compile("([a-zA-Z0-9_]+)(=|!=)([a-zA-Z0-9_ \\-]+)");
+	
 	@Override
 	public String getName()
 	{
@@ -58,7 +65,7 @@ public class EventMonitorCommand implements ICommand
 	@Override
 	public boolean onCommand( CommandSender sender, String label, String[] args )
 	{
-		if(args.length != 2)
+		if(args.length < 2)
 			return false;
 		
 		Class<? extends Event> eventClass = EventHelper.parseEvent(args[0]);
@@ -81,13 +88,37 @@ public class EventMonitorCommand implements ICommand
 			return true;
 		}
 		
+		List<Filter> filters;
+		if(args.length > 2)
+		{
+			filters = new ArrayList<Filter>();
+			String argString = "";
+			for(int i = 2; i < args.length; i++)
+				argString += args[i] + " ";
+			
+			argString = argString.trim();
+			
+			Matcher match = mFilterDefPattern.matcher(argString);
+			if(!match.matches())
+			{
+				sender.sendMessage(ChatColor.RED + "Invalid filter specified.");
+				return true;
+			}
+			
+			match = mFilterPattern.matcher(argString);
+			while(match.find())
+				filters.add(new Filter(match.group(1), match.group(3), match.group(2).equals("=") ? Op.Contains : Op.NotContains));
+		}
+		else
+			filters = Collections.emptyList();
+		
 		File parent = new File(WhatIs.instance.getDataFolder(), "eventreports");
 		parent.mkdirs();
 		File dest = new File(parent, new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss").format(new Date()) + ".txt");
 		
 		try
 		{
-			EventReporter.monitorEvent(eventClass, count, sender, dest);
+			EventReporter.monitorEvent(eventClass, count, sender, dest, filters);
 			sender.sendMessage(ChatColor.GREEN + eventClass.getSimpleName() + " is now being monitored for " + count + " ticks");
 		}
 		catch(IllegalArgumentException e)
