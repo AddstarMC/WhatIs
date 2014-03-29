@@ -31,6 +31,10 @@ permissions:
     default: op
     children:
       whatis: true
+  whatis.dependencies:
+    default: op
+    children:
+      whatis: true
 
 commands:
   whatis:
