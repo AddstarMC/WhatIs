@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class Graph
 {
-	private static final char[] mCharsConsole = new char[] {'_','Ü','Û'};
+	private static final char[] mCharsConsole = new char[] {'_','\u00DC','\u00DB'};
 	private static final char[] mCharsInGame = new char[] {'\u2581', '\u2582', '\u2583', '\u2584', '\u2585', '\u2586', '\u2587', '\u2588'};
 	
 	private float[] mData;
