@@ -206,6 +206,10 @@ public class EntityConcentrationMap
 		
 		for(EntityGroup group : mAllGroups)
 		{
+			// These are not really groups
+			if(group.getTotalCount() < 2)
+				continue;
+			
 			int index = Collections.binarySearch(mOrdered, group);
 			if(index < 0)
 				index = (index + 1) * -1;

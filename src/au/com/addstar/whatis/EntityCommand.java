@@ -18,7 +18,7 @@ public class EntityCommand implements ICommand
 {
 	private WeakHashMap<CommandSender, EntityConcentrationMap> mStoredResults = new WeakHashMap<CommandSender, EntityConcentrationMap>();
 	
-	public static final int resultsPerPage = 2;
+	public static final int resultsPerPage = 4;
 	public static final int resutlsPerPageConsole = 10;
 	
 	@Override
@@ -95,7 +95,11 @@ public class EntityCommand implements ICommand
 			sender.sendMessage(ChatColor.WHITE + "  Total: " + ChatColor.YELLOW + group.getTotalCount());
 			
 			for(EntityCategory cat : EntityCategory.values())
-				sender.sendMessage(ChatColor.GRAY + "  " + cat.name() + ": " + ChatColor.YELLOW + group.getCount(cat));
+			{
+				int count = group.getCount(cat);
+				if(count != 0)
+					sender.sendMessage(ChatColor.GRAY + "  " + cat.name() + ": " + ChatColor.YELLOW + count);
+			}
 
 			sender.sendMessage("");
 		}
