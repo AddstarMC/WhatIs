@@ -1,5 +1,6 @@
 package au.com.addstar.whatis.entities;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +30,8 @@ public class EntityConcentrationMap
 	private HashMap<World, List<Entity>> mBuildBuffer;
 	private boolean mIsBuilding;
 	private Callback<EntityConcentrationMap> mCallback;
+	
+	private List<EntityGroup> mOrdered;
 	
 	public EntityConcentrationMap(Plugin plugin)
 	{
@@ -197,6 +200,21 @@ public class EntityConcentrationMap
 		ChunkCoord.clearCache();
 	}
 	
+	// WARNING: BuildThread only
+	private void orderGroups()
+	{
+		mOrdered = new ArrayList<EntityGroup>(mAllGroups.size());
+		
+		for(EntityGroup group : mAllGroups)
+		{
+			int index = Collections.binarySearch(mOrdered, group);
+			if(index < 0)
+				index = (index + 1) * -1;
+			
+			mOrdered.add(index, group);
+		}
+	}
+	
 	private void onBuildComplete()
 	{
 		mIsBuilding = false;
@@ -237,18 +255,11 @@ public class EntityConcentrationMap
 		mChunkGroups.clear();
 	}
 	
-	public Collection<EntityGroup> getAllGroups()
+	public List<EntityGroup> getAllGroups()
 	{
 		Validate.isTrue(!mIsBuilding, "A build is in progress!");
 		
-		return mAllGroups;
-	}
-	
-	public List<EntityGroup> getTopGroups(int count)
-	{
-		Validate.isTrue(!mIsBuilding, "A build is in progress!");
-		
-		throw new UnsupportedOperationException("Not yet implemented");
+		return mOrdered;
 	}
 	
 	private class BuildThread extends Thread
@@ -262,8 +273,11 @@ public class EntityConcentrationMap
 			for(World world : mBuildBuffer.keySet())
 				processWorld(world);
 			
+			orderGroups();
+			
 			mBuildBuffer.clear();
 			mChunkGroups.clear();
+			mAllGroups.clear();
 			
 			Bukkit.getScheduler().runTask(mPlugin, new Runnable()
 			{

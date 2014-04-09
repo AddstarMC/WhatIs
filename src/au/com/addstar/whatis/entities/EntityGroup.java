@@ -5,7 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
-public class EntityGroup
+public class EntityGroup implements Comparable<EntityGroup>
 {
 	public static double defaultRadius = 8;
 	
@@ -117,5 +117,11 @@ public class EntityGroup
 	public String toString()
 	{
 		return String.format("Group{%d,%d,%d,%s-%d Entities: %d}", mLocation.getBlockX(), mLocation.getBlockY(), mLocation.getBlockZ(), mLocation.getWorld().getName(), (int)getRadius(), mCount);
+	}
+
+	@Override
+	public int compareTo( EntityGroup o )
+	{
+		return Integer.valueOf(mCount).compareTo(o.mCount) * -1; // Higher first
 	}
 }

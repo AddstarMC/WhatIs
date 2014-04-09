@@ -1,17 +1,26 @@
 package au.com.addstar.whatis;
 
 import java.util.List;
+import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import au.com.addstar.whatis.entities.EntityCategory;
 import au.com.addstar.whatis.entities.EntityConcentrationMap;
+import au.com.addstar.whatis.entities.EntityGroup;
 import au.com.addstar.whatis.util.Callback;
 
 public class EntityCommand implements ICommand
 {
+	private WeakHashMap<CommandSender, EntityConcentrationMap> mStoredResults = new WeakHashMap<CommandSender, EntityConcentrationMap>();
+	
+	public static final int resultsPerPage = 2;
+	public static final int resutlsPerPageConsole = 10;
+	
 	@Override
 	public String getName()
 	{
@@ -33,7 +42,7 @@ public class EntityCommand implements ICommand
 	@Override
 	public String getUsageString( String label, CommandSender sender )
 	{
-		return label + " [world]";
+		return label + " [show [page]|[world]]";
 	}
 
 	@Override
@@ -53,12 +62,90 @@ public class EntityCommand implements ICommand
 	{
 		return false;
 	}
+	
+	private void displayResults(CommandSender sender, EntityConcentrationMap map, int page)
+	{
+		int perPage = (sender instanceof Player ? resultsPerPage : resutlsPerPageConsole);
+		
+		List<EntityGroup> groups = map.getAllGroups();
+		
+		if(groups.isEmpty())
+		{
+			sender.sendMessage(ChatColor.GOLD + "There are no results to display.");
+			return;
+		}
+		
+		int pages = (int)Math.ceil(groups.size() / (float)perPage);
+		
+		if(page >= pages)
+			page = pages-1;
+		
+		if(page < 0)
+			page = 0;
+		
+		
+		int start = page * perPage;
+		
+		sender.sendMessage(ChatColor.YELLOW + "Entity concentrations: ");
+		for(int i = start; i < start + perPage; ++i)
+		{
+			EntityGroup group = groups.get(i);
+			
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&e%d,%d,%d&7 (&f%s&7) r: &c%d&7 density: &c%.2f", group.getLocation().getBlockX(), group.getLocation().getBlockY(), group.getLocation().getBlockZ(), group.getLocation().getWorld().getName(), (int)group.getRadius(), group.getDensity())));
+			sender.sendMessage(ChatColor.WHITE + "  Total: " + ChatColor.YELLOW + group.getTotalCount());
+			
+			for(EntityCategory cat : EntityCategory.values())
+				sender.sendMessage(ChatColor.GRAY + "  " + cat.name() + ": " + ChatColor.YELLOW + group.getCount(cat));
+
+			sender.sendMessage("");
+		}
+		
+		if(page < pages)
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Page &e%d&7 of &e%d &7(use &e/whatis entities show %d&7 to get the next page)", page+1, pages, page+2)));
+		else
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Page &e%d&7 of &e%d", page+1, pages)));
+	}
 
 	@Override
 	public boolean onCommand( final CommandSender sender, String label, String[] args )
 	{
-		if(args.length != 0 && args.length != 1)
+		if(args.length != 0 && args.length != 1 && args.length != 2)
 			return false;
+		
+		if(args.length >= 1 && args[0].equalsIgnoreCase("show"))
+		{
+			int page = 0;
+			
+			if(args.length == 2)
+			{
+				try
+				{
+					page = Integer.parseInt(args[1]);
+					if(page <= 0)
+					{
+						sender.sendMessage(ChatColor.RED + "Page number must be 1 or greater");
+						return true;
+					}
+					
+					--page;
+				}
+				catch(NumberFormatException e)
+				{
+					sender.sendMessage(ChatColor.RED + "Page number must be a number 1 or greater");
+					return true;
+				}
+			}
+			
+			EntityConcentrationMap map = mStoredResults.get(sender);
+			if(map == null)
+			{
+				sender.sendMessage(ChatColor.RED + "You have no stored results");
+				return true;
+			}
+			
+			displayResults(sender, map, page);
+			return true;
+		}
 		
 		World world = null;
 		EntityConcentrationMap map = new EntityConcentrationMap(WhatIs.instance);
@@ -77,13 +164,18 @@ public class EntityCommand implements ICommand
 		else
 			map.queueAll();
 		
+		mStoredResults.remove(sender);
+		
 		map.build(new Callback<EntityConcentrationMap>()
 		{
 			@Override
 			public void onCompleted( EntityConcentrationMap data )
 			{
+				mStoredResults.put(sender, data);
 				sender.sendMessage(ChatColor.GOLD + "Generation complete");
-				System.out.println(data.getAllGroups());
+				sender.sendMessage(ChatColor.GRAY + "You can see these results at any time with /whatis entities show [page]");
+				
+				displayResults(sender, data, 0);
 			}
 		});
 		
