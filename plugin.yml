@@ -35,10 +35,6 @@ permissions:
     default: op
     children:
       whatis: true
-  whatis.heat:
-    default: op
-    children:
-      whatis: true
 
 commands:
   whatis:
