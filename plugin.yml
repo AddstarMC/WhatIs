@@ -35,6 +35,10 @@ permissions:
     default: op
     children:
       whatis: true
+  whatis.entity:
+    default: op
+    children:
+      whatis: true
 
 commands:
   whatis:

@@ -33,6 +33,7 @@ public class WhatIs extends JavaPlugin
 		whatis.registerCommand(new EventMonitorCommand());
 		whatis.registerCommand(new TPSCommand());
 		whatis.registerCommand(new DependencyCommand());
+		whatis.registerCommand(new EntityCommand());
 		
 		getCommand("whatis").setExecutor(whatis);
 		getCommand("whatis").setTabCompleter(whatis);
