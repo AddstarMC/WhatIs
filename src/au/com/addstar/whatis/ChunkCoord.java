@@ -2,6 +2,7 @@ package au.com.addstar.whatis;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.World;
 
 public class ChunkCoord
@@ -21,7 +22,7 @@ public class ChunkCoord
 	@Override
 	public int hashCode()
 	{
-		return x | z << 16 ^ world.hashCode();
+		return (x | z << 16) ^ world.hashCode();
 	}
 	
 	@Override
@@ -46,13 +47,15 @@ public class ChunkCoord
 	 */
 	public static ChunkCoord getChunkCoord(int x, int z, World world)
 	{
-		long hash = x | z << 32;
+		long hash = ((long)x & 0xFFFFFFFFL) | (((long)z & 0xFFFFFFFFL) << 32);
 		ChunkCoord coord = mCache.get(hash);
 		if(coord == null)
 		{
 			coord = new ChunkCoord(x, z, world);
 			mCache.put(hash, coord);
 		}
+		
+		Validate.isTrue(coord.x == x && coord.z == z, String.format("Bad Lookup! hash: %s (%d,%d) (%d,%d)",hash, x, z, coord.x, coord.z));
 		
 		return coord;
 	}

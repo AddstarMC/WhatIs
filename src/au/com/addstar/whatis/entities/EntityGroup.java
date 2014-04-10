@@ -8,6 +8,9 @@ import org.bukkit.util.Vector;
 public class EntityGroup implements Comparable<EntityGroup>
 {
 	public static double defaultRadius = 8;
+	private static int mNextId = 0;
+	
+	private int mId;
 	
 	private int mCount = 0;
 	
@@ -17,6 +20,8 @@ public class EntityGroup implements Comparable<EntityGroup>
 	
 	public EntityGroup(Location location)
 	{
+		mId = mNextId++;
+		
 		mLocation = location;
 		mRadius = defaultRadius * defaultRadius;
 		mTypeCounts = new int[EntityCategory.values().length];
@@ -123,5 +128,22 @@ public class EntityGroup implements Comparable<EntityGroup>
 	public int compareTo( EntityGroup o )
 	{
 		return Integer.valueOf(mCount).compareTo(o.mCount) * -1; // Higher first
+	}
+	
+	@Override
+	public boolean equals( Object obj )
+	{
+		if(!(obj instanceof EntityGroup))
+			return false;
+		
+		EntityGroup other = (EntityGroup)obj;
+		
+		return other.mId == mId;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return mId;
 	}
 }

@@ -85,7 +85,7 @@ public class EntityConcentrationMap
 	}
 	
 	// WARNING: BuildThread only
-	private void unregister(EntityGroup group, World world)
+	private void unregister(EntityGroup group, World world, boolean all)
 	{
 		double radius = group.getRadius();
 		int minX = ((int)(group.getLocation().getBlockX() - radius) >> 4);
@@ -94,7 +94,8 @@ public class EntityConcentrationMap
 		int maxX = ((int)(group.getLocation().getBlockX() + radius) >> 4);
 		int maxZ = ((int)(group.getLocation().getBlockZ() + radius) >> 4);
 		
-		mAllGroups.remove(group);
+		if(all)
+			mAllGroups.remove(group);
 		
 		for(int x = minX; x <= maxX; ++x)
 		{
@@ -104,10 +105,8 @@ public class EntityConcentrationMap
 	}
 	
 	// WARNING: BuildThread only
-	private EntityGroup expandToInclude(EntityGroup group, Location location)
+	private EntityGroup doMerges(EntityGroup group, World world)
 	{
-		group.mergeWith(location);
-		
 		double radius = group.getRadius();
 		int minX = ((int)(group.getLocation().getBlockX() - radius) >> 4);
 		int minZ = ((int)(group.getLocation().getBlockZ() - radius) >> 4);
@@ -119,7 +118,7 @@ public class EntityConcentrationMap
 		{
 			for(int z = minZ; z <= maxZ; ++z)
 			{
-				Set<EntityGroup> groups = mChunkGroups.get(ChunkCoord.getChunkCoord(x, z, location.getWorld()));
+				Set<EntityGroup> groups = mChunkGroups.get(ChunkCoord.getChunkCoord(x, z, world));
 				if(groups == null)
 					continue;
 				
@@ -127,18 +126,28 @@ public class EntityConcentrationMap
 				{
 					if(g != group && g.shouldMergeWith(group))
 					{
+						unregister(group, world, false);
 						group.mergeWith(g);
-						unregister(g, location.getWorld());
+						unregister(g, world, true);
+						updateChunkRegistrations(group, world);
 						
 						// Call again to merge with any other groups needed
-						return expandToInclude(group, location);
+						return doMerges(group, world);
 					}
 				}
 			}
 		}
-		
-		updateChunkRegistrations(group, location.getWorld());
 		return group;
+	}
+	
+	// WARNING: BuildThread only
+	private EntityGroup expandToInclude(EntityGroup group, Location location)
+	{
+		unregister(group, location.getWorld(), false);
+		group.mergeWith(location);
+		updateChunkRegistrations(group, location.getWorld());
+		
+		return doMerges(group, location.getWorld());
 	}
 	
 	// WARNING: BuildThread only
