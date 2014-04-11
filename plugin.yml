@@ -39,6 +39,10 @@ permissions:
     default: op
     children:
       whatis: true
+  whatis.chunk:
+    default: op
+    children:
+      whatis: true
 
 commands:
   whatis:
