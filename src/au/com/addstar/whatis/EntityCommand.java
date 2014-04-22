@@ -91,7 +91,29 @@ public class EntityCommand implements ICommand
 		{
 			EntityGroup group = groups.get(i);
 			
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&e%d,%d,%d&7 (&f%s&7) r: &c%d&7 density: &c%.2f", group.getLocation().getBlockX(), group.getLocation().getBlockY(), group.getLocation().getBlockZ(), group.getLocation().getWorld().getName(), (int)group.getRadius(), group.getDensity())));
+			String densityColor = null;
+			float density = group.getDensity();
+			if(density > 1)
+				densityColor = ChatColor.RED + ChatColor.BOLD.toString();
+			else if(density > 0.6)
+				densityColor = ChatColor.RED.toString();
+			else if(density > 0.3)
+				densityColor = ChatColor.YELLOW.toString();
+			else
+				densityColor = ChatColor.GREEN.toString();
+			
+			String spacingColor = null;
+			float spacing = group.getSpacing();
+			if(spacing < 0.5)
+				spacingColor = ChatColor.RED + ChatColor.BOLD.toString();
+			else if(spacing < 1)
+				spacingColor = ChatColor.RED.toString();
+			else if(spacing < 3)
+				spacingColor = ChatColor.YELLOW.toString();
+			else
+				spacingColor = ChatColor.GREEN.toString();
+			
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&e%d,%d,%d&7 (&f%s&7) r: &c%d&7 density: %s%.2f &7spacing: %s%.2f", group.getLocation().getBlockX(), group.getLocation().getBlockY(), group.getLocation().getBlockZ(), group.getLocation().getWorld().getName(), (int)group.getRadius(), densityColor, density, spacingColor, spacing)));
 			sender.sendMessage(ChatColor.WHITE + "  Total: " + ChatColor.YELLOW + group.getTotalCount());
 			
 			for(EntityCategory cat : EntityCategory.values())

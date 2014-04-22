@@ -190,7 +190,7 @@ public class EntityConcentrationMap
 			}
 		}
 		
-		group.addEntity(entity.getType());
+		group.addEntity(entity);
 	}
 	
 	// WARNING: BuildThread only
@@ -284,6 +284,13 @@ public class EntityConcentrationMap
 			
 			for(World world : mBuildBuffer.keySet())
 				processWorld(world);
+			
+			for(EntityGroup group : mAllGroups)
+			{
+				group.stripOutliers();
+				group.adjustBoundingSphere();
+				group.finalizeCounts();
+			}
 			
 			orderGroups();
 			
