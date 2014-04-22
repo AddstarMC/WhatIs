@@ -122,6 +122,48 @@ public class EntityCommand implements ICommand
 				if(count != 0)
 					sender.sendMessage(ChatColor.GRAY + "  " + cat.name() + ": " + ChatColor.YELLOW + count);
 			}
+			
+			String playerString = "";
+			boolean odd = true;
+			
+			int count = 0;
+			int maxPlayers = 2;
+			for(String cause : group.getCauses())
+			{
+				String part = null;
+				if(cause.startsWith("player:"))
+				{
+					if(count <= maxPlayers)
+					{
+						part = cause.substring(7);
+						++count;
+					}
+					else
+						continue;
+				}
+				else if(cause.equals("spawn"))
+					part = "Spawn Region";
+				else if(cause.equals("unknown:players"))
+					part = "Unknown Players";
+				else if(cause.equals("unknown"))
+					part = " Unknown (probably plugins)";
+				
+				if(!playerString.isEmpty())
+					playerString += ChatColor.GRAY + ", ";
+
+				if(odd)
+					playerString += ChatColor.GRAY;
+				else
+					playerString += ChatColor.WHITE;
+				
+				playerString += part; 
+				odd = !odd;
+			}
+			
+			if(count > maxPlayers)
+				playerString += ChatColor.GRAY + " and " + (count - maxPlayers) + " more";
+			
+			sender.sendMessage(ChatColor.YELLOW + "Cause: " + playerString);
 
 			sender.sendMessage("");
 		}

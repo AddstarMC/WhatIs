@@ -290,6 +290,7 @@ public class EntityConcentrationMap
 				group.stripOutliers();
 				group.adjustBoundingSphere();
 				group.finalizeCounts();
+				group.buildCauses();
 			}
 			
 			orderGroups();

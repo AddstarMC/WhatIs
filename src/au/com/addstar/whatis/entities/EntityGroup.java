@@ -1,12 +1,16 @@
 package au.com.addstar.whatis.entities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
+
+import au.com.addstar.whatis.ChunkUtil;
 
 public class EntityGroup implements Comparable<EntityGroup>
 {
@@ -24,6 +28,8 @@ public class EntityGroup implements Comparable<EntityGroup>
 	
 	private ArrayList<Entity> mEntities;
 	
+	private HashSet<String> mChunkCauses;
+	
 	public EntityGroup(Location location)
 	{
 		mId = mNextId++;
@@ -32,6 +38,7 @@ public class EntityGroup implements Comparable<EntityGroup>
 		mRadius = defaultRadius * defaultRadius;
 		mTypeCounts = new int[EntityCategory.values().length];
 		mEntities = new ArrayList<Entity>();
+		mChunkCauses = new HashSet<String>();
 	}
 	
 	public void addEntity(Entity entity)
@@ -257,6 +264,22 @@ public class EntityGroup implements Comparable<EntityGroup>
 		mEntities = null;
 	}
 	
+	public void buildCauses()
+	{
+		double radius = getRadius();
+		int minX = ((int)(mLocation.getBlockX() - radius) >> 4);
+		int minZ = ((int)(mLocation.getBlockZ() - radius) >> 4);
+		
+		int maxX = ((int)(mLocation.getBlockX() + radius) >> 4);
+		int maxZ = ((int)(mLocation.getBlockZ() + radius) >> 4);
+		
+		for(int x = minX; x <= maxX; ++x)
+		{
+			for(int z = minZ; z <= maxZ; ++z)
+				mChunkCauses.addAll(ChunkUtil.getChunkAnchors(mLocation.getWorld(), x, z));
+		}
+	}
+	
 	public int getTotalCount()
 	{
 		return mCount;
@@ -276,6 +299,11 @@ public class EntityGroup implements Comparable<EntityGroup>
 	public float getSpacing()
 	{
 		return (float)mMeanDistance;
+	}
+	
+	public Set<String> getCauses()
+	{
+		return mChunkCauses;
 	}
 	
 	@Override
