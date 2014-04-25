@@ -11,7 +11,16 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import au.com.addstar.whatis.commands.CommandFinder;
+import au.com.addstar.whatis.commands.ChunkCommand;
+import au.com.addstar.whatis.commands.CommandCommand;
+import au.com.addstar.whatis.commands.CommandDispatcher;
+import au.com.addstar.whatis.commands.DependencyCommand;
+import au.com.addstar.whatis.commands.EntityCommand;
+import au.com.addstar.whatis.commands.EventMonitorCommand;
+import au.com.addstar.whatis.commands.EventViewCommand;
+import au.com.addstar.whatis.commands.ReportCommand;
+import au.com.addstar.whatis.commands.TPSCommand;
+import au.com.addstar.whatis.util.CommandFinder;
 
 public class WhatIs extends JavaPlugin
 {

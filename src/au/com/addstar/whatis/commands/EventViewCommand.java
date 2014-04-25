@@ -1,4 +1,4 @@
-package au.com.addstar.whatis;
+package au.com.addstar.whatis.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +17,7 @@ import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.util.ChatPaginator;
 import org.bukkit.util.ChatPaginator.ChatPage;
 
+import au.com.addstar.whatis.EventHelper;
 import au.com.addstar.whatis.EventHelper.EventCallback;
 
 public class EventViewCommand implements ICommand

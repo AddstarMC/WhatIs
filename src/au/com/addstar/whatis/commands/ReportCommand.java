@@ -1,4 +1,4 @@
-package au.com.addstar.whatis;
+package au.com.addstar.whatis.commands;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,8 +20,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.messaging.PluginMessageListenerRegistration;
 import org.bukkit.scheduler.BukkitTask;
 
+import au.com.addstar.whatis.EventHelper;
+import au.com.addstar.whatis.WhatIs;
 import au.com.addstar.whatis.EventHelper.EventCallback;
-import au.com.addstar.whatis.commands.CommandFinder;
+import au.com.addstar.whatis.util.CommandFinder;
 
 public class ReportCommand implements ICommand
 {

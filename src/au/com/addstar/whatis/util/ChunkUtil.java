@@ -1,4 +1,4 @@
-package au.com.addstar.whatis;
+package au.com.addstar.whatis.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

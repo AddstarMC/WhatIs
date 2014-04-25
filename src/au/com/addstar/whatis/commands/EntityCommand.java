@@ -1,4 +1,4 @@
-package au.com.addstar.whatis;
+package au.com.addstar.whatis.commands;
 
 import java.util.List;
 import java.util.WeakHashMap;
@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import au.com.addstar.whatis.WhatIs;
 import au.com.addstar.whatis.entities.EntityCategory;
 import au.com.addstar.whatis.entities.EntityConcentrationMap;
 import au.com.addstar.whatis.entities.EntityGroup;

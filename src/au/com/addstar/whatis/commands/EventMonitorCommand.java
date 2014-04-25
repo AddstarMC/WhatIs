@@ -1,4 +1,4 @@
-package au.com.addstar.whatis;
+package au.com.addstar.whatis.commands;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -13,6 +13,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 
+import au.com.addstar.whatis.EventHelper;
+import au.com.addstar.whatis.EventReporter;
+import au.com.addstar.whatis.Filter;
+import au.com.addstar.whatis.WhatIs;
 import au.com.addstar.whatis.Filter.Op;
 
 public class EventMonitorCommand implements ICommand

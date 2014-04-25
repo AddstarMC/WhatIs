@@ -10,7 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
-import au.com.addstar.whatis.ChunkUtil;
+import au.com.addstar.whatis.util.ChunkUtil;
 
 public class EntityGroup implements Comparable<EntityGroup>
 {

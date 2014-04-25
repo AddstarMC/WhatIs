@@ -17,8 +17,8 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.HashMultimap;
 
-import au.com.addstar.whatis.ChunkCoord;
 import au.com.addstar.whatis.util.Callback;
+import au.com.addstar.whatis.util.ChunkCoord;
 
 public class EntityConcentrationMap
 {

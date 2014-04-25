@@ -1,4 +1,4 @@
-package au.com.addstar.whatis.commands;
+package au.com.addstar.whatis.util;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

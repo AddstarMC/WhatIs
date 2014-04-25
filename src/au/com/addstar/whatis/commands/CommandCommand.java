@@ -1,11 +1,12 @@
-package au.com.addstar.whatis;
+package au.com.addstar.whatis.commands;
 
 import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import au.com.addstar.whatis.commands.CommandFinder;
+
+import au.com.addstar.whatis.util.CommandFinder;
 
 public class CommandCommand implements ICommand
 {
