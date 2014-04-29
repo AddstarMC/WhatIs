@@ -31,6 +31,9 @@ public class EventReportHook extends EventHookSession
 	@Override
 	public synchronized void recordInitialStep( Event event )
 	{
+		if(!shouldInclude(event))
+			return;
+		
 		synchronized (mCurrentReports)
 		{
 			EventReport report = mCurrentReports.get(event);
@@ -49,6 +52,9 @@ public class EventReportHook extends EventHookSession
 	@Override
 	public synchronized void recordStep( Event event, RegisteredListener listener, boolean initallyCancelled )
 	{
+		if(!shouldInclude(event))
+			return;
+		
 		synchronized (mCurrentReports)
 		{
 			EventReport report = mCurrentReports.get(event);
@@ -67,6 +73,8 @@ public class EventReportHook extends EventHookSession
 			
 			report.recordStep(event, listener, initallyCancelled);
 		}
+		
+		super.recordStep(event, listener, initallyCancelled);
 	}
 	
 	public synchronized List<EventReport> getReports()
