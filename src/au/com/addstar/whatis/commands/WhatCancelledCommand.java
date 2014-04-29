@@ -262,7 +262,7 @@ public class WhatCancelledCommand implements ICommand
 						}
 					}
 				}
-			}, DurationTarget.forTicksOrCancel(ticks), eventClass);
+			}, DurationTarget.forTicksOrCancel(ticks), filters, eventClass);
 			sender.sendMessage(ChatColor.GREEN + eventClass.getSimpleName() + " is now being monitored for " + ticks + " ticks");
 		}
 		catch(IllegalArgumentException e)
