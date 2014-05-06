@@ -4,11 +4,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -17,14 +13,11 @@ import org.bukkit.event.Event;
 
 import au.com.addstar.whatis.EventGroups;
 import au.com.addstar.whatis.EventHelper;
-import au.com.addstar.whatis.Filter;
 import au.com.addstar.whatis.QuickMonitor;
 import au.com.addstar.whatis.QuickMonitor.CancelReport;
-import au.com.addstar.whatis.Filter.Op;
 import au.com.addstar.whatis.eventhook.CancelHook;
 import au.com.addstar.whatis.eventhook.DurationTarget;
 import au.com.addstar.whatis.util.Callback;
-import au.com.addstar.whatis.util.filters.CompiledFilter;
 import au.com.addstar.whatis.util.filters.FilterCompiler;
 import au.com.addstar.whatis.util.filters.FilterSet;
 

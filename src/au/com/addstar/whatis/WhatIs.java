@@ -20,6 +20,7 @@ import au.com.addstar.whatis.commands.EventMonitorCommand;
 import au.com.addstar.whatis.commands.EventViewCommand;
 import au.com.addstar.whatis.commands.ReportCommand;
 import au.com.addstar.whatis.commands.TPSCommand;
+import au.com.addstar.whatis.commands.TasksCommand;
 import au.com.addstar.whatis.commands.WhatCancelledCommand;
 import au.com.addstar.whatis.util.CommandFinder;
 
@@ -46,6 +47,7 @@ public class WhatIs extends JavaPlugin
 		whatis.registerCommand(new EntityCommand());
 		whatis.registerCommand(new ChunkCommand());
 		whatis.registerCommand(new WhatCancelledCommand());
+		whatis.registerCommand(new TasksCommand());
 		
 		getCommand("whatis").setExecutor(whatis);
 		getCommand("whatis").setTabCompleter(whatis);

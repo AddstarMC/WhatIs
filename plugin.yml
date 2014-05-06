@@ -47,6 +47,10 @@ permissions:
     default: op
     children:
       whatis: true
+  whatis.tasks:
+    default: op
+    children:
+      whatis: true
 
 commands:
   whatis:
