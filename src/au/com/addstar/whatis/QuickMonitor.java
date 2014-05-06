@@ -1,6 +1,5 @@
 package au.com.addstar.whatis;
 
-import java.util.List;
 import java.util.Map;
 
 import org.bukkit.event.Event;
@@ -13,6 +12,7 @@ import au.com.addstar.whatis.eventhook.CancelHook;
 import au.com.addstar.whatis.eventhook.DurationTarget;
 import au.com.addstar.whatis.eventhook.HookRunner;
 import au.com.addstar.whatis.util.Callback;
+import au.com.addstar.whatis.util.filters.FilterSet;
 
 public class QuickMonitor
 {
@@ -25,9 +25,9 @@ public class QuickMonitor
 		new HookRunner<CancelHook>(target, hook, callback);
 	}
 	
-	public static void checkForCancel(Callback<CancelHook> callback, DurationTarget target, List<Filter> filters, Class<? extends Event>... events)
+	public static void checkForCancel(Callback<CancelHook> callback, DurationTarget target, FilterSet filters, Class<? extends Event>... events)
 	{
-		CancelHook hook = new CancelHook();
+		CancelHook hook = new CancelHook(filters);
 		for(Class<? extends Event> eventClass : events)
 			hook.hook(eventClass);
 		

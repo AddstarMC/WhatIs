@@ -24,12 +24,12 @@ import au.com.addstar.whatis.Filter.Op;
 import au.com.addstar.whatis.eventhook.CancelHook;
 import au.com.addstar.whatis.eventhook.DurationTarget;
 import au.com.addstar.whatis.util.Callback;
+import au.com.addstar.whatis.util.filters.CompiledFilter;
+import au.com.addstar.whatis.util.filters.FilterCompiler;
+import au.com.addstar.whatis.util.filters.FilterSet;
 
 public class WhatCancelledCommand implements ICommand
 {
-	private Pattern mFilterDefPattern = Pattern.compile("\\[(?:[a-zA-Z0-9_]+(?:=|!=)[a-zA-Z0-9_ ]+)(?:,[a-zA-Z0-9_]+(?:=|!=)[a-zA-Z0-9_ \\-]+)*\\]");
-	private Pattern mFilterPattern = Pattern.compile("([a-zA-Z0-9_]+)(=|!=)([a-zA-Z0-9_ \\-]+)");
-	
 	@Override
 	public String getName()
 	{
@@ -209,30 +209,26 @@ public class WhatCancelledCommand implements ICommand
 			{
 			}
 		}
-		
-		List<Filter> filters;
+
+		FilterSet filters = null; 
 		if((args.length >= 2 && !hasTicks) || (args.length >= 3 && hasTicks))
 		{
-			filters = new ArrayList<Filter>();
 			String argString = "";
-			for(int i = (hasTicks ? 3 : 2); i < args.length; i++)
+			for(int i = (hasTicks ? 2 : 1); i < args.length; i++)
 				argString += args[i] + " ";
 			
 			argString = argString.trim();
-			
-			Matcher match = mFilterDefPattern.matcher(argString);
-			if(!match.matches())
+		
+			try
 			{
-				sender.sendMessage(ChatColor.RED + "Invalid filter specified.");
+				filters = FilterCompiler.compile(eventClass, argString);
+			}
+			catch(IllegalArgumentException e)
+			{
+				sender.sendMessage(ChatColor.RED + e.getMessage());
 				return true;
 			}
-			
-			match = mFilterPattern.matcher(argString);
-			while(match.find())
-				filters.add(new Filter(match.group(1), match.group(3), match.group(2).equals("=") ? Op.Contains : Op.NotContains));
 		}
-		else
-			filters = Collections.emptyList();
 		
 		try
 		{
