@@ -177,6 +177,11 @@ public class EventHelper
 		return eventMap.keySet();
 	}
 	
+	public static Collection<Class<? extends Event>> getEvents()
+	{
+		return eventMap.values();
+	}
+	
 	public static Class<? extends Event> parseEvent(String name)
 	{
 		return eventMap.get(name.toLowerCase());

@@ -51,6 +51,10 @@ permissions:
     default: op
     children:
       whatis: true
+  whatis.find:
+    default: op
+    children:
+      whatis: true
 
 commands:
   whatis:
