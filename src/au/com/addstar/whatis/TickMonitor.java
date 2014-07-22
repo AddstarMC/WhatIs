@@ -33,6 +33,8 @@ public class TickMonitor implements Runnable
 			mLastTPSTime = currentTime;
 			mTPSHistory.add(getCurrentTPS());
 		}
+		
+		ThreadLockChecker.ping();
 	}
 
 	public long getAverageTickTime()

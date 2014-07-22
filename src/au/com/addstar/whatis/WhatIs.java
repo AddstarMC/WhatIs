@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,6 +28,7 @@ public class WhatIs extends JavaPlugin
 {
 	public static WhatIs instance;
 	private TickMonitor mTickMonitor;
+	private ThreadLockChecker mThreadChecker;
 	
 	@Override
 	public void onEnable()
@@ -66,6 +66,11 @@ public class WhatIs extends JavaPlugin
 		
 		mTickMonitor = new TickMonitor(120);
 		Bukkit.getScheduler().runTaskTimer(this, mTickMonitor, 1, 1);
+		
+		mThreadChecker = new ThreadLockChecker();
+		mThreadChecker.start();
+		ThreadLockChecker.ignore();
+		Bukkit.getPluginManager().registerEvents(new ThreadLockIgnoreEvents(), this);
 	}
 	
 	public TickMonitor getTickMonitor()
