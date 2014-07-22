@@ -33,6 +33,8 @@ public class ThreadLockChecker extends Thread
 	private LockInfo mLastLockInfo;
 	private int mStuckCount;
 	
+	private FriendlyNameGenerator mNameGen;
+	
 	public static void ping()
 	{
 		mLastPing = System.currentTimeMillis();
@@ -93,6 +95,7 @@ public class ThreadLockChecker extends Thread
 		if(mLastTrace == null)
 		{
 			mLogger.warning("The main thread failed to respond after 10 seconds");
+			mNameGen = new FriendlyNameGenerator();
 			
 			ThreadInfo[] allThreads = mManager.dumpAllThreads(true, true);
 			checkForDeadlock(allThreads);
@@ -236,18 +239,23 @@ public class ThreadLockChecker extends Thread
 		{
 			mLogger.warning("Owned monitors:");
 			for(MonitorInfo monitor : thread.getLockedMonitors())
-				mLogger.warning("  " + monitor.getLockedStackFrame());
+				mLogger.warning(String.format(" - %s[%s] at %s", monitor.getClassName(), mNameGen.getNameId(monitor.getIdentityHashCode()), monitor.getLockedStackFrame()));
 		}
 		
 		if(thread.getLockedSynchronizers().length != 0)
 		{
 			mLogger.warning("Owned locks:");
 			for(LockInfo lock : thread.getLockedSynchronizers())
-				mLogger.warning("  " + lock.getClassName());
+				mLogger.warning(String.format(" - %s[%s]", lock.getClassName(), mNameGen.getNameId(lock.getIdentityHashCode())));
 		}
 		
 		if(thread.getLockInfo() != null)
-			mLogger.warning(String.format("Waiting for: %s (owned by %d-%s)", thread.getLockInfo().getClassName(), thread.getLockOwnerId(), thread.getLockOwnerName()));
+		{
+			if(thread.getLockOwnerId() == -1)
+				mLogger.warning(String.format("Waiting for: %s[%s] (unowned)", thread.getLockInfo().getClassName(), mNameGen.getNameId(thread.getLockInfo().getIdentityHashCode())));
+			else
+				mLogger.warning(String.format("Waiting for: %s[%s] (owned by %d-%s)", thread.getLockInfo().getClassName(), mNameGen.getNameId(thread.getLockInfo().getIdentityHashCode()), thread.getLockOwnerId(), thread.getLockOwnerName()));
+		}
 		
 		mLogger.warning("Stack trace:");
 		printStackTrace(thread.getStackTrace());
@@ -263,5 +271,4 @@ public class ThreadLockChecker extends Thread
 		
 		throw new IllegalStateException("Server thread is missing for some reason");
 	}
-	
 }
