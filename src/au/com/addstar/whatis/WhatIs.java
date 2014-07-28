@@ -62,7 +62,6 @@ public class WhatIs extends JavaPlugin
 			@Override
 			public void run()
 			{
-				getLogger().info("Building event name map");
 				EventHelper.buildEventMap();
 			}
 		});

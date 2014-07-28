@@ -12,18 +12,19 @@ import java.util.List;
 
 import org.bukkit.event.Event;
 import org.bukkit.plugin.RegisteredListener;
-import au.com.addstar.whatis.Filter;
+
+import au.com.addstar.whatis.util.filters.FilterSet;
 
 public class EventReportHook extends EventHookSession
 {
-	private List<Filter> mFilters;
+	private FilterSet mFilter;
 	private IdentityHashMap<Event, EventReport> mCurrentReports;
 	
 	private ArrayList<EventReport> mEvents;
 	
-	public EventReportHook(List<Filter> filters)
+	public EventReportHook(FilterSet filter)
 	{
-		mFilters = filters;
+		mFilter = filter;
 		mCurrentReports = new IdentityHashMap<Event, EventReport>();
 		mEvents = new ArrayList<EventReport>();
 	}
@@ -40,12 +41,12 @@ public class EventReportHook extends EventHookSession
 			
 			if(report == null)
 			{
-				report = new EventReport(event.getClass());
+				report = new EventReport(event.getClass(), mFilter);
 				mCurrentReports.put(event, report);
 				mEvents.add(report);
 			}
 			
-			report.recordInitialStep(event, mFilters);
+			report.recordInitialStep(event);
 		}
 	}
 	
@@ -65,11 +66,8 @@ public class EventReportHook extends EventHookSession
 				return;
 			}
 			
-			for(Filter filter : mFilters)
-			{
-				if(!filter.listenerMatches(listener))
-					return;
-			}
+			if(!mFilter.matchesHandler(listener))
+				return;
 			
 			report.recordStep(event, listener, initallyCancelled);
 		}
@@ -90,11 +88,6 @@ public class EventReportHook extends EventHookSession
 		return onlyValid;
 	}
 	
-	public List<Filter> getFilters()
-	{
-		return mFilters;
-	}
-	
 	public void print(PrintWriter writer)
 	{
 		writer.println("-----------------------------------------");
@@ -103,15 +96,10 @@ public class EventReportHook extends EventHookSession
 		writer.println("-----------------------------------------");
 		writer.println();
 		
-		reportLoop: for(EventReport report : mEvents)
+		for(EventReport report : mEvents)
 		{
-			for(Filter filter : mFilters)
-			{
-				if(!filter.matches(report.getInitial().getData()))
-					continue reportLoop;
-			}
-			
-			report.print(writer);
+			if(report.isValid())
+				report.print(writer);
 		}
 		
 		writer.flush();

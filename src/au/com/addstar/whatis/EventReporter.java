@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -20,6 +19,7 @@ import au.com.addstar.whatis.eventhook.DelegatingRegisteredListener;
 import au.com.addstar.whatis.eventhook.EventHookSession;
 import au.com.addstar.whatis.eventhook.EventReportHook;
 import au.com.addstar.whatis.eventhook.ReportingRegisteredListener;
+import au.com.addstar.whatis.util.filters.FilterSet;
 
 public class EventReporter
 {
@@ -65,7 +65,7 @@ public class EventReporter
 	
 	private static HashMap<Class<? extends Event>, ReportSession> mCurrentMonitors = new HashMap<Class<? extends Event>, ReportSession>();
 	
-	public static void monitorEvent(Class<? extends Event> eventClass, int forTicks, CommandSender sender, File reportLocation, List<Filter> filters) throws IllegalArgumentException, IllegalStateException
+	public static void monitorEvent(Class<? extends Event> eventClass, int forTicks, CommandSender sender, File reportLocation, FilterSet filter) throws IllegalArgumentException, IllegalStateException
 	{
 		if(mCurrentMonitors.containsKey(eventClass))
 			throw new IllegalStateException(eventClass.getName() + " is already being monitored");
@@ -76,7 +76,7 @@ public class EventReporter
 		if(sender == null)
 			sender = Bukkit.getConsoleSender();
 		
-		EventReportHook hook = new EventReportHook(filters);
+		EventReportHook hook = new EventReportHook(filter);
 		ReportSession session = new ReportSession(hook, sender, reportLocation, eventClass);
 		mCurrentMonitors.put(eventClass, session);
 		

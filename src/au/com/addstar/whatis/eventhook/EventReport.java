@@ -13,8 +13,8 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.RegisteredListener;
 
 import au.com.addstar.whatis.EventHelper;
-import au.com.addstar.whatis.Filter;
 import au.com.addstar.whatis.EventHelper.EventCallback;
+import au.com.addstar.whatis.util.filters.FilterSet;
 
 public class EventReport
 {
@@ -23,14 +23,16 @@ public class EventReport
 	private ArrayList<EventStep> mSteps = new ArrayList<EventStep>();
 	private boolean mAllow;
 	private long mTimestamp;
+	private FilterSet mFilter;
 	
-	public EventReport(Class<? extends Event> eventClass)
+	public EventReport(Class<? extends Event> eventClass, FilterSet filter)
 	{
 		mEventClass = eventClass;
 		mAllow = true;
+		mFilter = filter;
 	}
 	
-	public synchronized void recordInitialStep(Event event, List<Filter> filters)
+	public synchronized void recordInitialStep(Event event)
 	{
 		if(mInitial != null)
 			return;
@@ -43,22 +45,15 @@ public class EventReport
 		
 		Map<String, Object> dump = EventHelper.dumpClass(event);
 		
-		for(Filter filter : filters)
-		{
-			if(!filter.matches(dump))
-			{
-				mAllow = false;
-				return;
-			}
-		}
-		
 		mInitial = new EventStep(null, dump, newCancel);
+		if(mFilter != null && !mFilter.matches(event))
+			mAllow = false;
 	}
 	
 	public synchronized void recordStep(Event event, RegisteredListener listener, boolean cancelled)
 	{
-		if(!mAllow)
-			return;
+		if(!mAllow && mFilter != null && mFilter.matchesHandler(listener) && mFilter.matches(event))
+			mAllow = true;
 		
 		boolean newCancel = false;
 		if(event instanceof Cancellable)
