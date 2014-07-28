@@ -16,6 +16,7 @@ public class CompiledFilter
 		mValue = value;
 	}
 	
+	@SuppressWarnings( "unchecked" )
 	public boolean matches(Object instance)
 	{
 		Object current = mHandle.invoke(instance);
@@ -41,6 +42,26 @@ public class CompiledFilter
 			boolean matches = sCur.toLowerCase().contains(sVal.toLowerCase());
 			
 			return (mOperation == Contains ? matches : !matches);
+		}
+		else if(mOperation == LessThan || mOperation == GreaterThanEqual)
+		{
+			boolean matches = false;
+			if(!(current instanceof Comparable<?>) || current.getClass() != mValue.getClass())
+				return false;
+			else
+				matches = ((Comparable<Object>)current).compareTo(mValue) < 0;
+			
+			return (mOperation == LessThan ? matches : !matches);
+		}
+		else if(mOperation == GreaterThan || mOperation == LessThanEqual)
+		{
+			boolean matches = false;
+			if(!(current instanceof Comparable<?>) || current.getClass() != mValue.getClass())
+				return false;
+			else
+				matches = ((Comparable<Object>)current).compareTo(mValue) > 0;
+			
+			return (mOperation == GreaterThan ? matches : !matches);
 		}
 		else
 			throw new AssertionError("Missing operation type " + mOperation);

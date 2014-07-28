@@ -13,14 +13,15 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.util.Vector;
 
 import au.com.addstar.whatis.util.FilterHelper;
 import au.com.addstar.whatis.util.FilterHelper.ClassConnector;
 
 public abstract class FilterCompiler
 {
-	private static Pattern mFilterDefPattern = Pattern.compile("\\[(?:@?[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*(?:=|!=|\\:|!\\:)@?[a-zA-Z0-9_ \\-\\.]+)(?:,[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*(?:=|!=|\\:|!\\:)[a-zA-Z0-9_ \\-\\.]+)*\\]");
-	private static Pattern mFilterPattern = Pattern.compile("(@?[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*)(=|!=|\\:|!\\:)([a-zA-Z0-9_ \\-\\.]+)");
+	private static Pattern mFilterDefPattern = Pattern.compile("\\[(?:@?[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*(?:=|!=|\\:|!\\:|<|>|<=|>=)@?[a-zA-Z0-9_ \\-\\.]+)(?:,[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*(?:=|!=|\\:|!\\:|<|>|<=|>=)[a-zA-Z0-9_ \\-\\.]+)*\\]");
+	private static Pattern mFilterPattern = Pattern.compile("(@?[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*)(=|!=|\\:|!\\:|<|>|<=|>=)([a-zA-Z0-9_ \\-\\.]+)");
 	
 	public static FilterSet compile(Class<?> clazz, String filterString)
 	{
@@ -63,6 +64,9 @@ public abstract class FilterCompiler
 				value = match.group(3).toLowerCase();
 			else
 				value = compileToMatch(match.group(3), path.getReturnType());
+			
+			if(!op.isValueOk(value))
+				throw new IllegalArgumentException(name + ": The value " + match.group(3) + " is not valid with the operator " + op.toString());
 			
 			if(handler)
 				handlerFilters.add(new CompiledFilter(path, op, value));
@@ -166,6 +170,8 @@ public abstract class FilterCompiler
 		}
 		else if(Location.class.isAssignableFrom(clazz))
 			value = toLocation(string);
+		else if(Vector.class.isAssignableFrom(clazz))
+			value = toVector(string);
 		else if(Enum.class.isAssignableFrom(clazz))
 		{
 			value = null;
@@ -214,5 +220,27 @@ public abstract class FilterCompiler
 		}
 		
 		return new Location(world, x, y, z);
+	}
+	
+	private static Vector toVector(String string)
+	{
+		String[] parts = string.split(" ");
+		if(parts.length != 3)
+			throw new IllegalArgumentException("Vector should be specified as 'x y z'. Got '" + string + "'");
+		
+		double x, y, z;
+		
+		try
+		{
+			x = Double.parseDouble(parts[0]);
+			y = Double.parseDouble(parts[1]);
+			z = Double.parseDouble(parts[2]);
+		}
+		catch(NumberFormatException e)
+		{
+			throw new IllegalArgumentException("Vector should be specified as 'x y z'. Invalid coordinate. Got '" + string + "'");
+		}
+		
+		return new Vector(x, y, z);
 	}
 }

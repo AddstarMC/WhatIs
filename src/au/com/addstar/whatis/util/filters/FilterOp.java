@@ -5,13 +5,23 @@ public enum FilterOp
 	Equals("="),
 	NotEquals("!="),
 	Contains(":"),
-	NotContains("!:");
+	NotContains("!:"),
+	LessThan("<"),
+	LessThanEqual("<="),
+	GreaterThan(">"),
+	GreaterThanEqual(">=");
 	
 	private String mOperator;
 	
 	private FilterOp(String operator)
 	{
 		mOperator = operator;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return mOperator;
 	}
 	
 	public static FilterOp from(String operator)
@@ -23,5 +33,19 @@ public enum FilterOp
 		}
 		
 		throw new IllegalArgumentException("No such operator " + operator);
+	}
+	
+	public boolean isValueOk(Object object)
+	{
+		switch(this)
+		{
+		case LessThan:
+		case GreaterThan:
+		case LessThanEqual:
+		case GreaterThanEqual:
+			return (object instanceof Comparable<?>);
+		default:
+			return true;
+		}
 	}
 }
