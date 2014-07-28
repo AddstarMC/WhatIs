@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +18,7 @@ import au.com.addstar.whatis.commands.DependencyCommand;
 import au.com.addstar.whatis.commands.EntityCommand;
 import au.com.addstar.whatis.commands.EventMonitorCommand;
 import au.com.addstar.whatis.commands.EventViewCommand;
+import au.com.addstar.whatis.commands.FiltersCommand;
 import au.com.addstar.whatis.commands.FindCommand;
 import au.com.addstar.whatis.commands.ReportCommand;
 import au.com.addstar.whatis.commands.TPSCommand;
@@ -50,6 +52,7 @@ public class WhatIs extends JavaPlugin
 		whatis.registerCommand(new WhatCancelledCommand());
 		whatis.registerCommand(new TasksCommand());
 		whatis.registerCommand(new FindCommand());
+		whatis.registerCommand(new FiltersCommand());
 		
 		getCommand("whatis").setExecutor(whatis);
 		getCommand("whatis").setTabCompleter(whatis);

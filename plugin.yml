@@ -55,6 +55,10 @@ permissions:
     default: op
     children:
       whatis: true
+  whatis.filters:
+    default: op
+    children:
+      whatis: true
 
 commands:
   whatis:
