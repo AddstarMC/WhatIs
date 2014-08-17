@@ -140,8 +140,9 @@ public class EventReporter
 				if(hook.getReportCount() != 0)
 				{
 					hook.save(output);
-					sender.sendMessage("Event report saved to " + output.getPath());
-					sender.sendMessage(ChatColor.GRAY + "Recorded " + hook.getReportCount() + " reports");
+					sender.sendMessage(ChatColor.GOLD + "[WhatIs]" + ChatColor.WHITE + " Event report saved");
+					sender.sendMessage(ChatColor.YELLOW + output.getPath());
+					sender.sendMessage(ChatColor.GRAY + "Recorded " + hook.getReportCount() + " events");
 				}
 				else
 					sender.sendMessage("No matching events were detected");
