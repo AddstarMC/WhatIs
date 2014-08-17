@@ -66,7 +66,7 @@ public class EventReportHook extends EventHookSession
 				return;
 			}
 			
-			if(!mFilter.matchesHandler(listener))
+			if(mFilter != null && !mFilter.matchesHandler(listener))
 				return;
 			
 			report.recordStep(event, listener, initallyCancelled);
