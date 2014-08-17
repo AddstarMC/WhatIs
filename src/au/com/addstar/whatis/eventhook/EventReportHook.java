@@ -29,6 +29,11 @@ public class EventReportHook extends EventHookSession
 		mEvents = new ArrayList<EventReport>();
 	}
 	
+	public int getReportCount()
+	{
+		return mCurrentReports.size();
+	}
+	
 	@Override
 	public synchronized void recordInitialStep( Event event )
 	{
@@ -41,6 +46,9 @@ public class EventReportHook extends EventHookSession
 			
 			if(report == null)
 			{
+				if (mFilter != null && !mFilter.matches(event))
+					return;
+				
 				report = new EventReport(event.getClass(), mFilter);
 				mCurrentReports.put(event, report);
 				mEvents.add(report);
