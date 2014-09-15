@@ -59,6 +59,10 @@ permissions:
     default: op
     children:
       whatis: true
+  whatis.version:
+    default: op
+    children:
+      whatis: true
 
 commands:
   whatis:

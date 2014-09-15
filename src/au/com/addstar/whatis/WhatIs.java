@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,6 +25,7 @@ import au.com.addstar.whatis.commands.FindCommand;
 import au.com.addstar.whatis.commands.ReportCommand;
 import au.com.addstar.whatis.commands.TPSCommand;
 import au.com.addstar.whatis.commands.TasksCommand;
+import au.com.addstar.whatis.commands.VersionCommand;
 import au.com.addstar.whatis.commands.WhatCancelledCommand;
 import au.com.addstar.whatis.util.CommandFinder;
 
@@ -53,6 +56,7 @@ public class WhatIs extends JavaPlugin
 		whatis.registerCommand(new TasksCommand());
 		whatis.registerCommand(new FindCommand());
 		whatis.registerCommand(new FiltersCommand());
+		whatis.registerCommand(new VersionCommand());
 		
 		getCommand("whatis").setExecutor(whatis);
 		getCommand("whatis").setTabCompleter(whatis);
@@ -144,6 +148,33 @@ public class WhatIs extends JavaPlugin
 		catch(Exception e)
 		{
 			throw new RuntimeException(e);
+		}
+	}
+	
+	private static String mCBVersion;
+	public static Class<?> getVersionedClass(String name)
+	{
+		if (mCBVersion == null)
+		{
+			String clss = Bukkit.getServer().getClass().getName();
+			String[] parts = clss.split("\\.");
+			mCBVersion = parts[3];
+		}
+		
+		String[] parts = name.split("\\.");
+		if (name.startsWith("net.minecraft.server"))
+			parts = (String[]) ArrayUtils.add(parts, 3, mCBVersion);
+		else if (name.startsWith("org.bukkit.craftbukkit"))
+			parts = (String[]) ArrayUtils.add(parts, 3, mCBVersion);
+		
+		name = StringUtils.join(parts, ".");
+		try
+		{
+			return Class.forName(name);
+		}
+		catch(ClassNotFoundException e)
+		{
+			return null;
 		}
 	}
 }
