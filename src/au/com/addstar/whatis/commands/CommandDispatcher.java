@@ -16,6 +16,8 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.Lists;
+
 /**
  * This allows sub commands to be handled in a clean easily expandable way.
  * Just create a new command that implements ICommand
@@ -196,7 +198,20 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 		{
 			for(ICommand registeredCommand : mCommands.values())
 			{
+				List<String> okNames = Lists.newArrayList();
 				if(registeredCommand.getName().toLowerCase().startsWith(args[0].toLowerCase()))
+					okNames.add(registeredCommand.getName());
+				
+				if (registeredCommand.getAliases() != null)
+				{
+					for (String alias : registeredCommand.getAliases())
+					{
+						if (alias.toLowerCase().startsWith(args[0].toLowerCase()))
+							okNames.add(alias);
+					}
+				}
+				
+				if (!okNames.isEmpty())
 				{
 					// Check that the sender is correct
 					if(!registeredCommand.canBeConsole() && (sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender))
@@ -206,7 +221,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 					if(registeredCommand.getPermission() != null && !sender.hasPermission(registeredCommand.getPermission()))
 						continue;
 					
-					results.add(registeredCommand.getName());
+					results.addAll(okNames);
 				}
 			}
 		}
