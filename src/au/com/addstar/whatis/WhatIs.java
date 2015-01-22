@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitTask;
 import au.com.addstar.whatis.commands.ChunkCommand;
 import au.com.addstar.whatis.commands.CommandCommand;
 import au.com.addstar.whatis.commands.CommandDispatcher;
+import au.com.addstar.whatis.commands.PrintFieldCommand;
 import au.com.addstar.whatis.commands.DependencyCommand;
 import au.com.addstar.whatis.commands.EntityCommand;
 import au.com.addstar.whatis.commands.EventMonitorCommand;
@@ -57,6 +58,7 @@ public class WhatIs extends JavaPlugin
 		whatis.registerCommand(new FindCommand());
 		whatis.registerCommand(new FiltersCommand());
 		whatis.registerCommand(new VersionCommand());
+		whatis.registerCommand(new PrintFieldCommand());
 		
 		getCommand("whatis").setExecutor(whatis);
 		getCommand("whatis").setTabCompleter(whatis);
