@@ -128,7 +128,7 @@ public class DependencyCommand implements ICommand
 		{
 			// Show plugins that have plugin as a dependency
 			
-			sender.sendMessage(ChatColor.YELLOW + "Plugins depedent on " + plugin.getName() + ":");
+			sender.sendMessage(ChatColor.YELLOW + "Plugins dependent on " + plugin.getName() + ":");
 			
 			ArrayList<String> requiredBy = new ArrayList<String>();
 			ArrayList<String> optionalBy = new ArrayList<String>();
