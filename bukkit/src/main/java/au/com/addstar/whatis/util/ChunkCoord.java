@@ -1,9 +1,9 @@
 package au.com.addstar.whatis.util;
 
-import java.util.HashMap;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.World;
+
+import java.util.HashMap;
 
 public class ChunkCoord
 {

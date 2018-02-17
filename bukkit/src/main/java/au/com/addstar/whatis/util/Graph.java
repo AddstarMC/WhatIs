@@ -1,13 +1,13 @@
 package au.com.addstar.whatis.util;
 
-import java.util.TreeMap;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class Graph
 {

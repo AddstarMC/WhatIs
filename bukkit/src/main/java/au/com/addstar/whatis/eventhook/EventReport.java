@@ -1,5 +1,12 @@
 package au.com.addstar.whatis.eventhook;
 
+import au.com.addstar.whatis.EventHelper;
+import au.com.addstar.whatis.EventHelper.EventCallback;
+import au.com.addstar.whatis.util.filters.FilterSet;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.RegisteredListener;
+
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.AbstractMap;
@@ -7,14 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.plugin.RegisteredListener;
-
-import au.com.addstar.whatis.EventHelper;
-import au.com.addstar.whatis.EventHelper.EventCallback;
-import au.com.addstar.whatis.util.filters.FilterSet;
 
 public class EventReport
 {

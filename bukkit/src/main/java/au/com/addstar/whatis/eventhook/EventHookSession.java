@@ -1,11 +1,10 @@
 package au.com.addstar.whatis.eventhook;
 
-import java.util.ArrayList;
-
+import au.com.addstar.whatis.EventReporter;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.RegisteredListener;
 
-import au.com.addstar.whatis.EventReporter;
+import java.util.ArrayList;
 
 public abstract class EventHookSession
 {

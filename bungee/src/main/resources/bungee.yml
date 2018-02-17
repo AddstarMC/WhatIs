@@ -1,0 +1,6 @@
+name: WhatIs
+author: Schmoller
+
+version: ${plugin.version}
+
+main: au.com.addstar.whatis.WhatIsBungee

@@ -1,13 +1,8 @@
 package au.com.addstar.whatis.entities;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import au.com.addstar.whatis.util.Callback;
+import au.com.addstar.whatis.util.ChunkCoord;
+import com.google.common.collect.HashMultimap;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,10 +10,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
-import com.google.common.collect.HashMultimap;
-
-import au.com.addstar.whatis.util.Callback;
-import au.com.addstar.whatis.util.ChunkCoord;
+import java.util.*;
 
 public class EntityConcentrationMap
 {

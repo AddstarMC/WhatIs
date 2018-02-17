@@ -1,16 +1,15 @@
 package au.com.addstar.whatis.entities;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
+import au.com.addstar.whatis.util.ChunkUtil;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
-import au.com.addstar.whatis.util.ChunkUtil;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class EntityGroup implements Comparable<EntityGroup>
 {

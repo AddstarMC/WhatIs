@@ -1,11 +1,7 @@
 package au.com.addstar.whatis;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
+import au.com.addstar.whatis.commands.*;
+import au.com.addstar.whatis.util.CommandFinder;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -13,22 +9,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import au.com.addstar.whatis.commands.ChunkCommand;
-import au.com.addstar.whatis.commands.CommandCommand;
-import au.com.addstar.whatis.commands.CommandDispatcher;
-import au.com.addstar.whatis.commands.PrintFieldCommand;
-import au.com.addstar.whatis.commands.DependencyCommand;
-import au.com.addstar.whatis.commands.EntityCommand;
-import au.com.addstar.whatis.commands.EventMonitorCommand;
-import au.com.addstar.whatis.commands.EventViewCommand;
-import au.com.addstar.whatis.commands.FiltersCommand;
-import au.com.addstar.whatis.commands.FindCommand;
-import au.com.addstar.whatis.commands.ReportCommand;
-import au.com.addstar.whatis.commands.TPSCommand;
-import au.com.addstar.whatis.commands.TasksCommand;
-import au.com.addstar.whatis.commands.VersionCommand;
-import au.com.addstar.whatis.commands.WhatCancelledCommand;
-import au.com.addstar.whatis.util.CommandFinder;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WhatIs extends JavaPlugin
 {

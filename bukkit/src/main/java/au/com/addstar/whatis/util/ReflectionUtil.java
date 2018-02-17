@@ -1,9 +1,9 @@
 package au.com.addstar.whatis.util;
 
+import com.google.common.collect.Iterables;
+
 import java.lang.reflect.Field;
 import java.util.Arrays;
-
-import com.google.common.collect.Iterables;
 
 public class ReflectionUtil
 {

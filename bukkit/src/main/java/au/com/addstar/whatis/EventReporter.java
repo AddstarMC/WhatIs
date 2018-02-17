@@ -1,11 +1,10 @@
 package au.com.addstar.whatis;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-
+import au.com.addstar.whatis.eventhook.DelegatingRegisteredListener;
+import au.com.addstar.whatis.eventhook.EventHookSession;
+import au.com.addstar.whatis.eventhook.EventReportHook;
+import au.com.addstar.whatis.eventhook.ReportingRegisteredListener;
+import au.com.addstar.whatis.util.filters.FilterSet;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,11 +14,11 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
-import au.com.addstar.whatis.eventhook.DelegatingRegisteredListener;
-import au.com.addstar.whatis.eventhook.EventHookSession;
-import au.com.addstar.whatis.eventhook.EventReportHook;
-import au.com.addstar.whatis.eventhook.ReportingRegisteredListener;
-import au.com.addstar.whatis.util.filters.FilterSet;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public class EventReporter
 {
