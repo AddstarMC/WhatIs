@@ -91,7 +91,7 @@ public class HookRunner<T extends EventHookSession>
 		
 		if(mTarget.onlyWorld != null)
 		{
-			if(!mTarget.onlyWorld.equals(getWorld(event)))
+			if(mTarget.onlyWorld != (getWorld(event)))
 				return;
 		}
 		
@@ -105,21 +105,14 @@ public class HookRunner<T extends EventHookSession>
 		});
 	}
 	
-	public boolean shouldInclude(Event event)
-	{
-		if(mTarget.onlyPlayer != null)
-		{
-			if(!mTarget.onlyPlayer.equals(getPlayer(event)))
+	public boolean shouldInclude(Event event) {
+		if (mTarget.onlyPlayer != null) {
+			if (!mTarget.onlyPlayer.equals(getPlayer(event)))
 				return false;
 		}
-		
-		if(mTarget.onlyWorld != null)
-		{
-			if(!mTarget.onlyWorld.equals(getWorld(event)))
-				return false;
-		}
-		
-		return true;
+
+		return mTarget.onlyWorld == null || mTarget.onlyWorld.equals(getWorld(event));
+
 	}
 	
 	private static Player getPlayer(Event event)

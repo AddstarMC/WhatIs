@@ -3,7 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>au.com.addstar</groupId>
     <artifactId>Whatis-bukkit</artifactId>
     <name>WhatIs</name>
     <parent>
@@ -50,12 +49,6 @@
             <artifactId>bukkit</artifactId>
             <version>${spigot.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-bukkit</artifactId>
-            <version>6.1.5</version>
-        </dependency>
-
     </dependencies>
     <build>
         <resources>

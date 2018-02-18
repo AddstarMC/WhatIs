@@ -1,16 +1,16 @@
 package au.com.addstar.whatis.eventhook;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
 public class DurationTarget
 {
 	public int ticks = -1;
 	public boolean untilCancel = false;
 	public Player onlyPlayer = null;
-	public BukkitWorld onlyWorld = null;
+	public World onlyWorld = null;
 	
-	private DurationTarget(int ticks, boolean cancel, Player player, BukkitWorld world)
+	private DurationTarget(int ticks, boolean cancel, Player player, World world)
 	{
 		this.ticks = ticks;
 		untilCancel = cancel;
@@ -42,25 +42,25 @@ public class DurationTarget
 		return new DurationTarget(ticks, true, player, null);
 	}
 	
-	public static DurationTarget worldForTicks(int ticks, BukkitWorld world)
+	public static DurationTarget worldForTicks(int ticks, World world)
 	{
 		Validate.isTrue(ticks > 0, "Ticks must be more than 0");
 		return new DurationTarget(ticks, false, null, world);
 	}
 	
-	public static DurationTarget worldForTicksOrCancel(int ticks, BukkitWorld world)
+	public static DurationTarget worldForTicksOrCancel(int ticks, World world)
 	{
 		Validate.isTrue(ticks > 0, "Ticks must be more than 0");
 		return new DurationTarget(ticks, true, null, world);
 	}
 	
-	public static DurationTarget playerInWorldForTicks(int ticks, Player player, BukkitWorld world)
+	public static DurationTarget playerInWorldForTicks(int ticks, Player player, World world)
 	{
 		Validate.isTrue(ticks > 0, "Ticks must be more than 0");
 		return new DurationTarget(ticks, false, player, world);
 	}
 	
-	public static DurationTarget playerInWorldForTicksOrCancel(int ticks, Player player, BukkitWorld world)
+	public static DurationTarget playerInWorldForTicksOrCancel(int ticks, Player player, World world)
 	{
 		Validate.isTrue(ticks > 0, "Ticks must be more than 0");
 		return new DurationTarget(ticks, true, player, world);
