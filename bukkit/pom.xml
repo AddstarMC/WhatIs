@@ -48,6 +48,7 @@
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>${spigot.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
@@ -55,9 +56,9 @@
             <resource>
                 <targetPath>.</targetPath>
                 <filtering>true</filtering>
-                <directory>${basedir}/.</directory>
+                <directory>${basedir}/src/main/resources</directory>
                 <includes>
-                    <include>plugin.yml</include>
+                    <include>*.yml</include>
                 </includes>
             </resource>
             <resource>
