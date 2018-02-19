@@ -48,8 +48,7 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <targetPath>.</targetPath>
-                <includes>*.yml</includes>
+                <includes><include>*.yml</include></includes>
             </resource>
         </resources>
     </build>
