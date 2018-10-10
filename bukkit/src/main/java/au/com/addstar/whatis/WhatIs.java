@@ -44,7 +44,7 @@ public class WhatIs extends JavaPlugin
 		whatis.registerCommand(new FiltersCommand());
 		whatis.registerCommand(new VersionCommand());
 		whatis.registerCommand(new PrintFieldCommand());
-		
+		whatis.registerCommand(new ChannelCommand());
 		getCommand("whatis").setExecutor(whatis);
 		getCommand("whatis").setTabCompleter(whatis);
 		
