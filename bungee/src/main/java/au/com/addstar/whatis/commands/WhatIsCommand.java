@@ -13,6 +13,7 @@ public class WhatIsCommand extends Command implements TabExecutor {
 		dispatcher = new CommandDispatcher();
 		
 		dispatcher.registerCommand(new PrintFieldCommand());
+		dispatcher.registerCommand(new ChannelCommand());
 	}
 	
 	@Override
