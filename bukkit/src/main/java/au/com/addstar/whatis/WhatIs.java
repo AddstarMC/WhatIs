@@ -27,35 +27,30 @@ public class WhatIs extends JavaPlugin
 		instance = this;
 		CommandFinder.init();
 		
-		CommandDispatcher whatis = new CommandDispatcher("whatis", "");
-		whatis.registerCommand(new EventViewCommand());
-		whatis.registerCommand(new CommandCommand());
+		CommandDispatcher whatIs = new CommandDispatcher("whatis", "");
+		whatIs.registerCommand(new EventViewCommand());
+		whatIs.registerCommand(new CommandCommand());
 		File reportDir = new File(getDataFolder(), "reports");
-		reportDir.mkdirs();
-		whatis.registerCommand(new ReportCommand(reportDir));
-		whatis.registerCommand(new EventMonitorCommand());
-		whatis.registerCommand(new TPSCommand());
-		whatis.registerCommand(new DependencyCommand());
-		whatis.registerCommand(new EntityCommand());
-		whatis.registerCommand(new ChunkCommand());
-		whatis.registerCommand(new WhatCancelledCommand());
-		whatis.registerCommand(new TasksCommand());
-		whatis.registerCommand(new FindCommand());
-		whatis.registerCommand(new FiltersCommand());
-		whatis.registerCommand(new VersionCommand());
-		whatis.registerCommand(new PrintFieldCommand());
-		whatis.registerCommand(new ChannelCommand());
-		getCommand("whatis").setExecutor(whatis);
-		getCommand("whatis").setTabCompleter(whatis);
+		if(!reportDir.exists() && reportDir.mkdirs()){
+			this.getLogger().warning("Whatis - Could not create report directory");
+		}
+		whatIs.registerCommand(new ReportCommand(reportDir));
+		whatIs.registerCommand(new EventMonitorCommand());
+		whatIs.registerCommand(new TPSCommand());
+		whatIs.registerCommand(new DependencyCommand());
+		whatIs.registerCommand(new EntityCommand());
+		whatIs.registerCommand(new ChunkCommand());
+		whatIs.registerCommand(new WhatCancelledCommand());
+		whatIs.registerCommand(new TasksCommand());
+		whatIs.registerCommand(new FindCommand());
+		whatIs.registerCommand(new FiltersCommand());
+		whatIs.registerCommand(new VersionCommand());
+		whatIs.registerCommand(new PrintFieldCommand());
+		whatIs.registerCommand(new ChannelCommand());
+		getCommand("whatis").setExecutor(whatIs);
+		getCommand("whatis").setTabCompleter(whatIs);
 		
-		Bukkit.getScheduler().runTask(this, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				EventHelper.buildEventMap();
-			}
-		});
+		Bukkit.getScheduler().runTask(this, EventHelper::buildEventMap);
 		
 		mTickMonitor = new TickMonitor(120);
 		Bukkit.getScheduler().runTaskTimer(this, mTickMonitor, 1, 1);
@@ -93,7 +88,7 @@ public class WhatIs extends JavaPlugin
 	
 	public static List<BukkitTask> getPluginTasks(Plugin plugin)
 	{
-		ArrayList<BukkitTask> tasks = new ArrayList<BukkitTask>();
+		List<BukkitTask> tasks = new ArrayList<>();
 		
 		for(BukkitTask pending : Bukkit.getScheduler().getPendingTasks())
 		{
