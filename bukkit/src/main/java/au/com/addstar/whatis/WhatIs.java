@@ -2,6 +2,7 @@ package au.com.addstar.whatis;
 
 import au.com.addstar.whatis.commands.*;
 import au.com.addstar.whatis.util.CommandFinder;
+import au.com.addstar.whatis.util.ReflectionUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -34,6 +35,7 @@ public class WhatIs extends JavaPlugin
 		if(!reportDir.exists() && reportDir.mkdirs()){
 			this.getLogger().warning("Whatis - Could not create report directory");
 		}
+		ReflectionUtil.setLogger(getLogger());
 		whatIs.registerCommand(new ReportCommand(reportDir));
 		whatIs.registerCommand(new EventMonitorCommand());
 		whatIs.registerCommand(new TPSCommand());

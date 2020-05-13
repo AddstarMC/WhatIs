@@ -23,7 +23,7 @@ public class Graph
 	
 	public Graph()
 	{
-		mColourStops = new TreeMap<Double, ChatColor>();
+		mColourStops = new TreeMap<>();
 	}
 	
 	public void addColourStop(double value, ChatColor colour)
