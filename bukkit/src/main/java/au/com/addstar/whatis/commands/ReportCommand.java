@@ -23,6 +23,7 @@ import au.com.addstar.whatis.EventHelper;
 import au.com.addstar.whatis.WhatIs;
 import au.com.addstar.whatis.EventHelper.EventCallback;
 import au.com.addstar.whatis.util.CommandFinder;
+import org.kitteh.pastegg.Paste;
 import org.kitteh.pastegg.PasteBuilder;
 import org.kitteh.pastegg.PasteContent;
 import org.kitteh.pastegg.PasteFile;
@@ -87,18 +88,24 @@ public class ReportCommand implements ICommand {
                 writer.flush();
                 PasteContent content  = new PasteContent(PasteContent.ContentType.TEXT,out.toString());
                 PasteFile report  = new PasteFile("What Is Report",content);
-                PasteBuilder.PasteResult result = new PasteBuilder().addFile(report)
-                        .name("What Is Report")
-                        .expireIn(60*60*1000)
-                        .build();
-                if (result.getPaste().isPresent()) {
-                    sender.sendMessage("Report pasted to https://paste.gg/" + result.getPaste().get().getId());
-                    sender.sendMessage("Report deletion key: " + result.getPaste().get().getDeletionKey());
-                    sender.sendMessage("Report Expiry: "
-                            + new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss").format(result.getPaste().get().getExpires()));
-                }else{
-                    sender.sendMessage("Error creating paste");
-                }
+                Bukkit.getScheduler().runTaskAsynchronously(WhatIs.instance, () -> {
+                    PasteBuilder.PasteResult result = new PasteBuilder().addFile(report)
+                          .name("What Is Report")
+                          .expireIn(60*60*1000)
+                          .build();
+                    if (result.getPaste().isPresent()) {
+                        Paste paste = result.getPaste().get();
+                        String date = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss").format(paste.getExpires());
+                        WhatIs.instance.getLogger().info(
+                              "Paste: "+paste.getId() +" / Deletion Key: " + paste.getDeletionKey() + " / Expires: "
+                                    + date);
+                        sender.sendMessage("Report pasted to https://paste.gg/" +paste.getId());
+                        sender.sendMessage("Report deletion key: " + paste.getDeletionKey());
+                        sender.sendMessage("Report Expiry: " + date);
+                    }else{
+                        sender.sendMessage("Error creating paste");
+                    }
+                });
                 break;
             case "report":
             default:
@@ -200,8 +207,6 @@ public class ReportCommand implements ICommand {
 
             writer.println("===========================================");
         }
-
-
         return writer;
     }
     @Override

@@ -119,9 +119,9 @@ public class EventHelper
 	
 	public static void buildEventMap()
 	{
-		eventMap = new HashMap<String, Class<? extends Event>>();
-		HashSet<Class<? extends Event>> unique = new HashSet<Class<? extends Event>>();
-		HashSet<Listener> listeners = new HashSet<Listener>();
+		eventMap = new HashMap<>();
+		HashSet<Class<? extends Event>> unique = new HashSet<>();
+		HashSet<Listener> listeners = new HashSet<>();
 		
 		for(HandlerList list : HandlerList.getHandlerLists())
 		{

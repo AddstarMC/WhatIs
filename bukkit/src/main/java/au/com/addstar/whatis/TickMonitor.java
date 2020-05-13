@@ -12,8 +12,8 @@ public class TickMonitor implements Runnable
 	
 	public TickMonitor(int historySize)
 	{
-		mTickHistory = new RollingList<Long>(40);
-		mTPSHistory = new RollingList<Double>(historySize);
+		mTickHistory = new RollingList<>(40);
+		mTPSHistory = new RollingList<>(historySize);
 		
 		mLastTime = mLastTPSTime = System.nanoTime();
 	}

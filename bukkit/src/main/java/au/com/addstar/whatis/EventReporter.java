@@ -2,7 +2,9 @@ package au.com.addstar.whatis;
 
 import au.com.addstar.whatis.eventhook.DelegatingRegisteredListener;
 import au.com.addstar.whatis.eventhook.EventHookSession;
+import au.com.addstar.whatis.eventhook.EventOutput;
 import au.com.addstar.whatis.eventhook.EventReportHook;
+import au.com.addstar.whatis.eventhook.PasteEventOutput;
 import au.com.addstar.whatis.eventhook.ReportingRegisteredListener;
 import au.com.addstar.whatis.util.filters.FilterSet;
 import org.apache.commons.lang.Validate;
@@ -12,9 +14,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+import org.kitteh.pastegg.Paste;
+import org.kitteh.pastegg.PasteBuilder;
+import org.kitteh.pastegg.PasteFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,7 +69,7 @@ public class EventReporter
 	
 	private static HashMap<Class<? extends Event>, ReportSession> mCurrentMonitors = new HashMap<Class<? extends Event>, ReportSession>();
 	
-	public static void monitorEvent(Class<? extends Event> eventClass, int forTicks, CommandSender sender, File reportLocation, FilterSet filter) throws IllegalArgumentException, IllegalStateException
+	public static void monitorEvent(Class<? extends Event> eventClass, int forTicks, CommandSender sender, EventOutput reportLocation, FilterSet filter) throws IllegalArgumentException, IllegalStateException
 	{
 		if(mCurrentMonitors.containsKey(eventClass))
 			throw new IllegalStateException(eventClass.getName() + " is already being monitored");
@@ -93,11 +98,11 @@ public class EventReporter
 	{
 		public EventReportHook hook;
 		public CommandSender sender;
-		public File output;
+		public EventOutput output;
 		private BukkitTask mTask;
 		private Class<? extends Event> mClass;
 		
-		public ReportSession(EventReportHook hook, CommandSender sender, File output, Class<? extends Event> eventClass)
+		public ReportSession(EventReportHook hook, CommandSender sender, EventOutput output, Class<? extends Event> eventClass)
 		{
 			this.hook = hook;
 			this.sender = sender;
@@ -138,9 +143,25 @@ public class EventReporter
 			{
 				if(hook.getReportCount() != 0)
 				{
-					hook.save(output);
+					hook.save(output.getWriter());
+					if(output instanceof PasteEventOutput) {
+						Bukkit.getScheduler().runTaskAsynchronously(WhatIs.instance, () -> {
+							PasteBuilder.PasteResult result = new PasteBuilder()
+								.addFile(new PasteFile("Whatis Event Report - " + mClass.getSimpleName(),((PasteEventOutput) output).getContent()))
+								.expireIn(60*60*1000)
+								.build();
+							if(result.getPaste().isPresent()) {
+								Paste paste = result.getPaste().get();
+								sender.sendMessage(ChatColor.GOLD + "[WhatIs]" + ChatColor.WHITE + " Event report saved");
+								sender.sendMessage(ChatColor.GOLD + "[WhatIs]" + ChatColor.WHITE + " https://paste.gg/"+paste.getId());
+								sender.sendMessage(ChatColor.GOLD + "[WhatIs]" + ChatColor.WHITE + " Deletion Key: "+paste.getDeletionKey());
+								sender.sendMessage(ChatColor.GRAY + "Recorded " + hook.getReportCount() + " events");
+							}
+						});
+						return;
+					}
 					sender.sendMessage(ChatColor.GOLD + "[WhatIs]" + ChatColor.WHITE + " Event report saved");
-					sender.sendMessage(ChatColor.YELLOW + output.getPath());
+					sender.sendMessage(ChatColor.YELLOW + output.getDescription());
 					sender.sendMessage(ChatColor.GRAY + "Recorded " + hook.getReportCount() + " events");
 				}
 				else

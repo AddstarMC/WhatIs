@@ -1,8 +1,7 @@
 package au.com.addstar.whatis.eventhook;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,16 +16,16 @@ import au.com.addstar.whatis.util.filters.FilterSet;
 
 public class EventReportHook extends EventHookSession
 {
-	private FilterSet mFilter;
-	private IdentityHashMap<Event, EventReport> mCurrentReports;
+	private final FilterSet mFilter;
+	private final  IdentityHashMap<Event, EventReport> mCurrentReports;
 	
-	private ArrayList<EventReport> mEvents;
+	private final ArrayList<EventReport> mEvents;
 	
 	public EventReportHook(FilterSet filter)
 	{
 		mFilter = filter;
-		mCurrentReports = new IdentityHashMap<Event, EventReport>();
-		mEvents = new ArrayList<EventReport>();
+		mCurrentReports = new IdentityHashMap<>();
+		mEvents = new ArrayList<>();
 	}
 	
 	public int getReportCount()
@@ -85,7 +84,7 @@ public class EventReportHook extends EventHookSession
 	
 	public synchronized List<EventReport> getReports()
 	{
-		LinkedList<EventReport> onlyValid = new LinkedList<EventReport>();
+		LinkedList<EventReport> onlyValid = new LinkedList<>();
 		
 		for(EventReport report : mEvents)
 		{
@@ -113,8 +112,7 @@ public class EventReportHook extends EventHookSession
 		writer.flush();
 	}
 	
-	public void save(File file) throws IOException
-	{
+	public void save(Writer file) {
 		PrintWriter writer = new PrintWriter(file);
 		print(writer);
 		writer.close();

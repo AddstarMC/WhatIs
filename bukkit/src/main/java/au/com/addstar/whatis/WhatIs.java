@@ -50,7 +50,7 @@ public class WhatIs extends JavaPlugin
 		getCommand("whatis").setExecutor(whatIs);
 		getCommand("whatis").setTabCompleter(whatIs);
 		
-		Bukkit.getScheduler().runTask(this, EventHelper::buildEventMap);
+		Bukkit.getScheduler().runTaskLaterAsynchronously(this, EventHelper::buildEventMap,10);
 		
 		mTickMonitor = new TickMonitor(120);
 		Bukkit.getScheduler().runTaskTimer(this, mTickMonitor, 1, 1);

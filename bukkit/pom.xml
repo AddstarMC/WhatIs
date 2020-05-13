@@ -45,6 +45,12 @@
             <artifactId>bukkit</artifactId>
             <version>${spigot.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kitteh</groupId>
@@ -76,14 +82,22 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.3</version>
+                <configuration>
+                   <!-- <relocations>
+                        <relocation>
+                            <pattern>org.kitteh</pattern>
+                            <shadedPattern>au.com.addstar.whatis.libs</shadedPattern>
+                        </relocation>
+                    </relocations>-->
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
