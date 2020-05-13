@@ -62,14 +62,14 @@ public class ReflectionUtil
 	private static Method defineClass = null; //probably going to call it a lot, cache it.
 
 	protected static void loadDefineClass() throws NoSuchMethodException {
-		defineClass = ClassLoader.class.getDeclaredMethod("defineClass", new Class[]{String.class, byte[].class, int.class, int.class});
+		defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
 		defineClass.setAccessible(true);
 	}
 
 	private static void loadClass(String className, byte[] bytecode) { //could change return type to Class
 		try {
 			ClassLoader loader = ClassLoader.getSystemClassLoader();
-			defineClass.invoke(loader, new Object[]{className, bytecode, 0, bytecode.length});
+			defineClass.invoke(loader, className, bytecode, 0, bytecode.length);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 			throw new RuntimeException("Could not load class " + className + ": ", ex);
 		}

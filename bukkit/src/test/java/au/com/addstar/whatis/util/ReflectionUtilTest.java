@@ -7,6 +7,7 @@ import sun.reflect.Reflection;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import static org.junit.Assert.*;
 
@@ -17,13 +18,25 @@ import static org.junit.Assert.*;
 public class ReflectionUtilTest {
 
     @Test
-    public  void getDeclaredFieldName() throws IOException,NoSuchMethodException {
-        ReflectionUtil.loadDefineClass();
-        ReflectionUtil.substituteClassDefs(Prism.class);
+    public  void getDeclaredFieldName() throws NoSuchMethodException {
         try {
-            Field field = ReflectionUtil.getDeclaredField("plugin_name",Prism.class);
+            ReflectionUtil.getDeclaredField("plugin_name",Prism.class);   // should throw error
+            assert(false);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
+        } catch (NoClassDefFoundError err) {
+            assert(true);
+            ReflectionUtil.loadDefineClass();
+            ReflectionUtil.substituteClassDef(err);
+        }
+        try {
+            String name = "dataFolder";
+            Field field = ReflectionUtil.getDeclaredField(name, Prism.class);
+            assert (name.equals(field.getName()));
+        } catch (NoSuchFieldException ex) {
+            ex.printStackTrace();
+        }catch (NoClassDefFoundError err) {
+            assert(false);
         }
     }
 
@@ -40,10 +53,31 @@ public class ReflectionUtilTest {
             }
             ReflectionUtil.substituteClassDef(error);
             fields = ReflectionUtil.getAllFields(Prism.class);
-
         }
+        boolean result = false;
+        String test = "dataFolder";
         for(Field field: fields) {
-            System.out.println(field.getName());
+            StringBuilder modifiers = new StringBuilder();
+            if(test.equals(field.getName())) {
+                result = true;
+            }
+            if(Modifier.isPrivate(field.getModifiers())) {
+                modifiers.append("PRIVATE ");
+            }
+            if(Modifier.isPublic(field.getModifiers())) {
+                modifiers.append("PUBLIC ");
+            }
+            if(Modifier.isProtected(field.getModifiers())) {
+                modifiers.append("PROTECTED ");
+            }
+            if(Modifier.isFinal(field.getModifiers())) {
+                modifiers.append("FINAL ");
+            }
+            if(Modifier.isStatic(field.getModifiers())){
+                modifiers.append("STATIC ");
+            }
+            System.out.println(modifiers +" " + field.getName() +" / "+ field.getType() );
         }
+        assert(result);
     }
 }
