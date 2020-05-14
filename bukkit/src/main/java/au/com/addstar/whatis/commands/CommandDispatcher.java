@@ -30,15 +30,15 @@ import com.google.common.collect.Lists;
  */
 public class CommandDispatcher implements CommandExecutor, TabCompleter
 {
-	private String mRootCommandName;
-	private String mRootCommandDescription;
-	private HashMap<String, ICommand> mCommands;
+	private final String mRootCommandName;
+	private final String mRootCommandDescription;
+	private final HashMap<String, ICommand> mCommands;
 	
 	private ICommand mDefaultCommand = null;
 	
 	public CommandDispatcher(String commandName, String description)
 	{
-		mCommands = new HashMap<String, ICommand>();
+		mCommands = new HashMap<>();
 		
 		mRootCommandName = commandName;
 		mRootCommandDescription = description;
@@ -193,7 +193,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 	@Override
 	public List<String> onTabComplete( CommandSender sender, Command command, String label, String[] args )
 	{
-		List<String> results = new ArrayList<String>();
+		List<String> results = new ArrayList<>();
 		if(args.length == 1) // Tab completing the sub command
 		{
 			for(ICommand registeredCommand : mCommands.values())
@@ -276,7 +276,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 			
 			results = com.onTabComplete(sender, subCommand, subArgs);
 			if(results == null)
-				return new ArrayList<String>();
+				return new ArrayList<>();
 		}
 		return results;
 	}

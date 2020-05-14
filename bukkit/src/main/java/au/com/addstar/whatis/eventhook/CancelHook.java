@@ -12,17 +12,17 @@ import au.com.addstar.whatis.util.filters.FilterSet;
 
 public class CancelHook extends EventHookSession
 {
-	private IdentityHashMap<Event, CancelReport> mCancelled;
+	private final IdentityHashMap<Event, CancelReport> mCancelled;
 	private FilterSet mFilters;
 	
 	public CancelHook()
 	{
-		mCancelled = new IdentityHashMap<Event, CancelReport>();
+		mCancelled = new IdentityHashMap<>();
 	}
 	
 	public CancelHook(FilterSet filters)
 	{
-		mCancelled = new IdentityHashMap<Event, CancelReport>();
+		mCancelled = new IdentityHashMap<>();
 		mFilters = filters;
 	}
 	

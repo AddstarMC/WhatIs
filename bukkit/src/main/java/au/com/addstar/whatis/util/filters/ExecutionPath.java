@@ -6,8 +6,8 @@ import org.apache.commons.lang.Validate;
 
 public class ExecutionPath
 {
-	private MethodHandle[] mHandles;
-	private Class<?>[] mExpected;
+	private final MethodHandle[] mHandles;
+	private final Class<?>[] mExpected;
 	
 	public ExecutionPath(MethodHandle[] handles, Class<?>[] expected)
 	{

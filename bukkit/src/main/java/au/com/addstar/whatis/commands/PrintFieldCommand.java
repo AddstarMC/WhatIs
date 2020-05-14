@@ -63,11 +63,11 @@ public class PrintFieldCommand implements ICommand
 		return false;
 	}
 	
-	private Pattern mPathPattern = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)$");
-	private Pattern mPathPatternPartial = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)(\\.)?$");
-	private Pattern mPathSectionPattern = Pattern.compile("(?:\\.([a-zA-Z_][a-zA-Z_0-9]*)(?:\\[([^\\[\\]]+)\\])?)");
+	private final Pattern mPathPattern = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)$");
+	private final Pattern mPathPatternPartial = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)(\\.)?$");
+	private final Pattern mPathSectionPattern = Pattern.compile("(?:\\.([a-zA-Z_][a-zA-Z_0-9]*)(?:\\[([^\\[\\]]+)\\])?)");
 	
-	private Object resolve(String fullPath) throws IllegalArgumentException, IllegalStateException
+	private Object resolve(CharSequence fullPath) throws IllegalArgumentException, IllegalStateException
 	{
 		Matcher matcher = mPathPattern.matcher(fullPath);
 		
@@ -190,14 +190,7 @@ public class PrintFieldCommand implements ICommand
 				pathBuilder.append('.');
 				
 				final String path = pathBuilder.toString();
-				return Lists.transform(matchField(pathMatcher.group(1), object.getClass()), new Function<String, String>()
-				{
-					@Override
-					public String apply( String fieldName )
-					{
-						return path + fieldName;
-					}
-				});
+				return Lists.transform(matchField(pathMatcher.group(1), object.getClass()), fieldName -> path + fieldName);
 			}
 			
 			pathBuilder.append(pathMatcher.group(0));
@@ -244,16 +237,10 @@ public class PrintFieldCommand implements ICommand
 						}
 					}
 				}
-			}
-			catch(NumberFormatException e)
+			} catch( NoSuchFieldException e )
 			{
 				return null;
-			}
-			catch( NoSuchFieldException e )
-			{
-				return null;
-			}
-			catch ( Exception e )
+			} catch(Exception e)
 			{
 				return null;
 			}
@@ -262,14 +249,7 @@ public class PrintFieldCommand implements ICommand
 		pathBuilder.append('.');
 		
 		final String path = pathBuilder.toString();
-		return Lists.transform(matchField("", object.getClass()), new Function<String, String>()
-		{
-			@Override
-			public String apply( String fieldName )
-			{
-				return path + fieldName;
-			}
-		});
+		return Lists.transform(matchField("", object.getClass()), fieldName -> path + fieldName);
 	}
 
 	@Override

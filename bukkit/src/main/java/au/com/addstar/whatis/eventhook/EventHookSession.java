@@ -9,11 +9,11 @@ import java.util.ArrayList;
 public abstract class EventHookSession
 {
 	private HookRunner<? extends EventHookSession> mRunner;
-	private ArrayList<Class<? extends Event>> events;
+	private final ArrayList<Class<? extends Event>> events;
 	
 	public EventHookSession()
 	{
-		events = new ArrayList<Class<? extends Event>>();
+		events = new ArrayList<>();
 	}
 	
 	public final void setRunner(HookRunner<? extends EventHookSession> runner)

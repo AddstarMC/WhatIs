@@ -4,7 +4,7 @@ import org.bukkit.plugin.Plugin;
 
 public class PluginObject implements IObject
 {
-	private Plugin mPlugin;
+	private final Plugin mPlugin;
 	
 	public PluginObject(Plugin plugin)
 	{

@@ -25,7 +25,7 @@ public class ChunkUtil
 		if(!world.isChunkLoaded(x, z))
 			return Collections.emptyList();
 		
-		ArrayList<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		
 		if(isChunkIsSpawnRange(world, x, z))
 			list.add("spawn");
@@ -84,7 +84,7 @@ public class ChunkUtil
 			Object playerChunk = getPlayerChunk(playerChunkMap, x, z);
 			List<Object> rawPlayers = getChunkPlayers(playerChunk);
 			
-			ArrayList<Player> players = new ArrayList<Player>(rawPlayers.size());
+			List<Player> players = new ArrayList<>(rawPlayers.size());
 			for(Object player : rawPlayers)
 				players.add(ChunkUtil.<Player>getBukkitEntity(player));
 

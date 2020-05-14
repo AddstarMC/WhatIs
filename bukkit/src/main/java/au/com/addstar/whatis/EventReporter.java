@@ -21,13 +21,11 @@ import org.kitteh.pastegg.PasteBuilder;
 import org.kitteh.pastegg.PasteFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 
 public class EventReporter
 {
-	private static HashSet<Class<? extends Event>> mHookedEvents = new HashSet<Class<? extends Event>>();  
+	private static final Set<Class<? extends Event>> mHookedEvents = new HashSet<>();
 	public static void hookEvent(Class<? extends Event> eventClass, EventHookSession hook)
 	{
 		Validate.isTrue(!mHookedEvents.contains(eventClass), "The specified event is already hooked");
@@ -35,7 +33,7 @@ public class EventReporter
 		mHookedEvents.add(eventClass);
 		HandlerList list = EventHelper.getHandlers(eventClass);
 		
-		LinkedList<RegisteredListener> toRegister = new LinkedList<RegisteredListener>();
+		Deque<RegisteredListener> toRegister = new LinkedList<>();
 		RegisteredListener[] listeners = list.getRegisteredListeners();
 		for(RegisteredListener listener : listeners)
 		{
@@ -54,7 +52,7 @@ public class EventReporter
 		mHookedEvents.remove(eventClass);
 		HandlerList list = EventHelper.getHandlers(eventClass);
 		
-		LinkedList<RegisteredListener> toRegister = new LinkedList<RegisteredListener>();
+		Deque<RegisteredListener> toRegister = new LinkedList<>();
 		for(RegisteredListener listener : list.getRegisteredListeners())
 		{
 			if(!(listener instanceof DelegatingRegisteredListener))
@@ -67,7 +65,7 @@ public class EventReporter
 		list.registerAll(toRegister);
 	}
 	
-	private static HashMap<Class<? extends Event>, ReportSession> mCurrentMonitors = new HashMap<Class<? extends Event>, ReportSession>();
+	private static final HashMap<Class<? extends Event>, ReportSession> mCurrentMonitors = new HashMap<>();
 	
 	public static void monitorEvent(Class<? extends Event> eventClass, int forTicks, CommandSender sender, EventOutput reportLocation, FilterSet filter) throws IllegalArgumentException, IllegalStateException
 	{
@@ -96,11 +94,11 @@ public class EventReporter
 	
 	private static class ReportSession implements Runnable
 	{
-		public EventReportHook hook;
-		public CommandSender sender;
-		public EventOutput output;
+		public final EventReportHook hook;
+		public final CommandSender sender;
+		public final EventOutput output;
 		private BukkitTask mTask;
-		private Class<? extends Event> mClass;
+		private final Class<? extends Event> mClass;
 		
 		public ReportSession(EventReportHook hook, CommandSender sender, EventOutput output, Class<? extends Event> eventClass)
 		{

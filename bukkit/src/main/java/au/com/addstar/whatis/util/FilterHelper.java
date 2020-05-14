@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class FilterHelper
 {
-	private static HashMap<Class<?>, ClassConnector> mConnectors = new HashMap<Class<?>, FilterHelper.ClassConnector>();
+	private static final HashMap<Class<?>, ClassConnector> mConnectors = new HashMap<>();
 	
 	public static ClassConnector getConnector(Object instance)
 	{
@@ -32,13 +32,13 @@ public class FilterHelper
 	
 	public static class ClassConnector
 	{
-		private Class<?> mClass;
-		private HashMap<String, MethodHandle> mHandles;
+		private final Class<?> mClass;
+		private final HashMap<String, MethodHandle> mHandles;
 		
 		public ClassConnector(Class<?> clazz)
 		{
 			mClass = clazz;
-			mHandles = new HashMap<String, MethodHandle>();
+			mHandles = new HashMap<>();
 			for(Method method : clazz.getMethods())
 			{
 				if(Modifier.isStatic(method.getModifiers()))

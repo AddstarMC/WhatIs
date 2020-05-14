@@ -13,7 +13,7 @@ import java.io.Writer;
 public class PasteEventOutput implements EventOutput{
 
     final StringWriter writer =  new StringWriter();
-    PasteContent.ContentType format;
+    final PasteContent.ContentType format;
 
     public PasteEventOutput() {
         this.format = PasteContent.ContentType.TEXT;
@@ -25,7 +25,7 @@ public class PasteEventOutput implements EventOutput{
     }
 
     @Override
-    public Writer getWriter() throws IOException {
+    public Writer getWriter() {
         return writer;
     }
 

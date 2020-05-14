@@ -118,7 +118,7 @@ public class EventViewCommand implements ICommand
 				count.put(listener.getPlugin(), num);
 			}
 			
-			ArrayList<String> lines = new ArrayList<>();
+			List<String> lines = new ArrayList<>();
 			
 			for(Entry<Plugin, Integer> entry : count.entrySet())
 				lines.add(ChatColor.translateAlternateColorCodes('&', String.format("&7- &6%s&f %d", entry.getKey().getName(), entry.getValue())));
@@ -145,7 +145,7 @@ public class EventViewCommand implements ICommand
 			
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandlers for &c%s&e: &f%d", eventClass.getSimpleName(), handlers.getRegisteredListeners().length)));
 			
-			ArrayList<String> lines = new ArrayList<>();
+			List<String> lines = new ArrayList<>();
 			for(RegisteredListener listener : handlers.getRegisteredListeners())
 				lines.add(ChatColor.GRAY + "- " + ChatColor.GOLD + listener.getPlugin().getName() + ChatColor.GRAY + " " + listener.getPriority() + (listener.isIgnoringCancelled() ? " IgnoreCancel" : ""));
 			
@@ -168,7 +168,7 @@ public class EventViewCommand implements ICommand
 			}
 			
 			List<EventCallback> callbacks = EventHelper.getEventCallbacks(plugin);
-			ArrayList<String> lines = new ArrayList<>();
+			List<String> lines = new ArrayList<>();
 			
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandlers for plugin &c%s&e: &f%d", plugin.getName(), callbacks.size())));
 			
@@ -203,7 +203,7 @@ public class EventViewCommand implements ICommand
 	{
 		if(args.length == 1)
 		{
-			ArrayList<String> matching = new ArrayList<>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[0].toLowerCase();
 
 			if("plugin".startsWith(toMatch))
@@ -217,7 +217,7 @@ public class EventViewCommand implements ICommand
 		}
 		else if(args.length == 2)
 		{
-			ArrayList<String> matching = new ArrayList<>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[1].toLowerCase();
 			for(String name : EventHelper.getEventNames())
 			{

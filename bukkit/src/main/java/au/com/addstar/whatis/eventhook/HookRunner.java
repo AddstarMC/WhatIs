@@ -36,9 +36,9 @@ import au.com.addstar.whatis.util.Callback;
 
 public class HookRunner<T extends EventHookSession>
 {
-	private DurationTarget mTarget;
-	private T mHook;
-	private Callback<T> mCallback;
+	private final DurationTarget mTarget;
+	private final T mHook;
+	private final Callback<T> mCallback;
 	
 	private BukkitTask mTask;
 	
@@ -49,14 +49,7 @@ public class HookRunner<T extends EventHookSession>
 		mHook.setRunner(this);
 		mCallback = callback;
 		
-		mTask = Bukkit.getScheduler().runTaskLater(WhatIs.instance, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				stop();
-			}
-		}, target.ticks);
+		mTask = Bukkit.getScheduler().runTaskLater(WhatIs.instance, () -> stop(), target.ticks);
 	}
 	
 	public HookRunner(DurationTarget target, T hook)
@@ -95,14 +88,7 @@ public class HookRunner<T extends EventHookSession>
 				return;
 		}
 		
-		Bukkit.getScheduler().runTask(WhatIs.instance, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				stop();
-			}
-		});
+		Bukkit.getScheduler().runTask(WhatIs.instance, () -> stop());
 	}
 	
 	public boolean shouldInclude(Event event) {

@@ -17,7 +17,7 @@ import au.com.addstar.whatis.util.Callback;
 
 public class EntityCommand implements ICommand
 {
-	private WeakHashMap<CommandSender, EntityConcentrationMap> mStoredResults = new WeakHashMap<CommandSender, EntityConcentrationMap>();
+	private final WeakHashMap<CommandSender, EntityConcentrationMap> mStoredResults = new WeakHashMap<>();
 	
 	public static final int resultsPerPage = 4;
 	public static final int resutlsPerPageConsole = 10;
@@ -235,17 +235,12 @@ public class EntityCommand implements ICommand
 		
 		mStoredResults.remove(sender);
 		
-		map.build(new Callback<EntityConcentrationMap>()
-		{
-			@Override
-			public void onCompleted( EntityConcentrationMap data )
-			{
-				mStoredResults.put(sender, data);
-				sender.sendMessage(ChatColor.GOLD + "Generation complete");
-				sender.sendMessage(ChatColor.GRAY + "You can see these results at any time with /whatis entities show [page]");
-				
-				displayResults(sender, data, 0);
-			}
+		map.build(data -> {
+			mStoredResults.put(sender, data);
+			sender.sendMessage(ChatColor.GOLD + "Generation complete");
+			sender.sendMessage(ChatColor.GRAY + "You can see these results at any time with /whatis entities show [page]");
+
+			displayResults(sender, data, 0);
 		});
 		
 		sender.sendMessage(ChatColor.GOLD + "Started generating the entity concentration map. Please wait...");

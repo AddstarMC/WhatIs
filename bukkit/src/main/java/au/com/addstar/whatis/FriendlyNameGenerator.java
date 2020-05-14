@@ -7,8 +7,8 @@ public class FriendlyNameGenerator
 	private static final String[] colors = new String[] {"Red", "Blue", "Black", "White", "Green", "Yellow", "Gold", "Purple", "Magenta", "Cyan", "Silver", "Pink", "Brown", "Gray", "Lime", "Orange"};
 	private static final String[] alphabet = new String[] {"Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliett", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "Xray", "Yankee", "Zulu"};
 	
-	private HashMap<Integer, String> mNames;
-	private int[] mUsageCount;
+	private final HashMap<Integer, String> mNames;
+	private final int[] mUsageCount;
 	
 	public FriendlyNameGenerator()
 	{

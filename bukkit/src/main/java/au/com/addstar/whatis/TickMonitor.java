@@ -4,8 +4,8 @@ import au.com.addstar.whatis.util.RollingList;
 
 public class TickMonitor implements Runnable
 {
-	private RollingList<Long> mTickHistory;
-	private RollingList<Double> mTPSHistory;
+	private final RollingList<Long> mTickHistory;
+	private final RollingList<Double> mTPSHistory;
 	
 	private long mLastTime;
 	private long mLastTPSTime;

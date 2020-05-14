@@ -1,50 +1,25 @@
 package au.com.addstar.whatis.util;
 
+import au.com.addstar.whatis.helpers.SeparateClassloaderTestRunner;
 import me.botsko.prism.Prism;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.junit.Assert;
 import org.junit.Test;
-import sun.reflect.Reflection;
+import org.junit.runner.RunWith;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import static org.junit.Assert.*;
-
 /**
  * Created for the Charlton IT Project.
- * Created by benjicharlton on 13/05/2020.
+ * Created by benjicharlton on 14/05/2020.
  */
-public class ReflectionUtilTest {
-
-    @Test
-    public  void getDeclaredFieldName() throws NoSuchMethodException {
-        try {
-            ReflectionUtil.getDeclaredField("plugin_name",Prism.class);   // should throw error
-            assert(false);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (NoClassDefFoundError err) {
-            assert(true);
-            ReflectionUtil.loadDefineClass();
-            ReflectionUtil.substituteClassDef(err);
-        }
-        try {
-            String name = "dataFolder";
-            Field field = ReflectionUtil.getDeclaredField(name, Prism.class);
-            assert (name.equals(field.getName()));
-        } catch (NoSuchFieldException ex) {
-            ex.printStackTrace();
-        }catch (NoClassDefFoundError err) {
-            assert(false);
-        }
-    }
-
+@RunWith(SeparateClassloaderTestRunner.class)
+public class ReflectionUtil2Test {
     @Test
     public void getDeclaredField() {
         Iterable<Field> fields;
         try{
-           fields = ReflectionUtil.getAllFields(Prism.class);
+            fields = ReflectionUtil.getAllFields(Prism.class);
         }catch (NoClassDefFoundError error){
             try {
                 ReflectionUtil.loadDefineClass();
@@ -78,6 +53,6 @@ public class ReflectionUtilTest {
             }
             System.out.println(modifiers +" " + field.getName() +" / "+ field.getType() );
         }
-        assert(result);
+        Assert.assertTrue(result);
     }
 }

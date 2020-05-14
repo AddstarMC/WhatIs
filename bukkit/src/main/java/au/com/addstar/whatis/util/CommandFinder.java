@@ -15,7 +15,7 @@ import org.bukkit.plugin.Plugin;
 
 public class CommandFinder
 {
-	private static ArrayList<CommandDisplayer> mDisplayers = new ArrayList<CommandDisplayer>();
+	private static final List<CommandDisplayer> mDisplayers = new ArrayList<>();
 	
 	public static void init()
 	{
@@ -112,7 +112,7 @@ public class CommandFinder
 	public static List<Command> getCommands(Plugin plugin)
 	{
 		SimpleCommandMap commands = (SimpleCommandMap)getCommandMap();
-		HashSet<Command> matching = new HashSet<Command>();
+		HashSet<Command> matching = new HashSet<>();
 		
 		for(Command command : commands.getCommands())
 		{
@@ -121,7 +121,7 @@ public class CommandFinder
 				matching.add(command);
 		}
 		
-		return new ArrayList<Command>(matching);
+		return new ArrayList<>(matching);
 	}
 	
 	public static void registerCommandInfo( CommandDisplayer info )

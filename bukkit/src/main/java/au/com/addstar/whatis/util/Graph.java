@@ -18,7 +18,7 @@ public class Graph
 	
 	private double mMin;
 	private double mMax;
-	private TreeMap<Double, ChatColor> mColourStops;
+	private final TreeMap<Double, ChatColor> mColourStops;
 	private boolean mShowLowest = false;
 	
 	public Graph()

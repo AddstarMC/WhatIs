@@ -34,7 +34,7 @@ public class ChunkCoord
 		return x == ((ChunkCoord)obj).x && z == ((ChunkCoord)obj).z && world.equals(((ChunkCoord)obj).world);
 	}
 	
-	private static HashMap<Long, ChunkCoord> mCache = new HashMap<Long, ChunkCoord>();
+	private static final HashMap<Long, ChunkCoord> mCache = new HashMap<>();
 	
 	public static void clearCache()
 	{

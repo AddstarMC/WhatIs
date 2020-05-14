@@ -21,9 +21,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PrintFieldCommand implements SubCommand {
-	private Pattern pathPattern = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)$");
-	private Pattern pathPatternPartial = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)(\\.)?$");
-	private Pattern pathSectionPattern = Pattern.compile("(?:\\.([a-zA-Z_][a-zA-Z_0-9]*)(?:\\[([^\\[\\]]+)\\])?)");
+	private final Pattern pathPattern = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)$");
+	private final Pattern pathPatternPartial = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)(\\.)?$");
+	private final Pattern pathSectionPattern = Pattern.compile("(?:\\.([a-zA-Z_][a-zA-Z_0-9]*)(?:\\[([^\\[\\]]+)\\])?)");
 
 	@Override
 	public String getName() {
@@ -50,7 +50,7 @@ public class PrintFieldCommand implements SubCommand {
 		return "whatisbungee.printfield";
 	}
 
-	private Object resolve(String fullPath) throws IllegalArgumentException, IllegalStateException {
+	private Object resolve(CharSequence fullPath) throws IllegalArgumentException, IllegalStateException {
 		Matcher matcher = pathPattern.matcher(fullPath);
 
 		if (!matcher.matches()) {
@@ -204,14 +204,12 @@ public class PrintFieldCommand implements SubCommand {
 						}
 					}
 				}
-			} catch (NumberFormatException e) {
-				return null;
 			} catch (NoSuchFieldException e) {
 				return null;
 			} catch (Exception e) {
 				return null;
 			}
-		}
+        }
 
 		pathBuilder.append('.');
 

@@ -142,7 +142,7 @@ public class EventMonitorCommand implements ICommand
 	{
 		if(args.length == 1)
 		{
-			ArrayList<String> matching = new ArrayList<>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[0].toLowerCase();
 			for(String name : EventHelper.getEventNames())
 			{

@@ -4,10 +4,10 @@ import static au.com.addstar.whatis.util.filters.FilterOp.*;
 
 public class CompiledFilter
 {
-	private ExecutionPath mHandle;
-	private FilterOp mOperation;
+	private final ExecutionPath mHandle;
+	private final FilterOp mOperation;
 	
-	private Object mValue;
+	private final Object mValue;
 	
 	public CompiledFilter(ExecutionPath path, FilterOp op, Object value)
 	{

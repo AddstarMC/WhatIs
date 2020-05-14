@@ -29,7 +29,7 @@ import org.kitteh.pastegg.PasteContent;
 import org.kitteh.pastegg.PasteFile;
 
 public class ReportCommand implements ICommand {
-    private File mParent;
+    private final File mParent;
 
     public ReportCommand(File parent) {
         mParent = parent;

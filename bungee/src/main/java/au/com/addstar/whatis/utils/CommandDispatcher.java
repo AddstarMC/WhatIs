@@ -1,11 +1,12 @@
 package au.com.addstar.whatis.utils;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,9 +14,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-public class CommandDispatcher {
-	public static Pattern usageArgumentPattern = Pattern.compile("(\\[<.*?>\\])|(\\[.*?\\])|(<.*?>)");
+public class
+CommandDispatcher {
+	public static final Pattern usageArgumentPattern = Pattern.compile("(\\[<.*?>\\])|(\\[.*?\\])|(<.*?>)");
 	
 	private final Map<String, SubCommand> commandMap;
 	private final List<SubCommand> commands;
@@ -83,16 +86,20 @@ public class CommandDispatcher {
 		}
 		
 		if (commandName == null) {
-			sender.sendMessage(ChatColor.RED + "No command specified:");
+			sendMessage(sender,ChatColor.RED + "No command specified:");
 		} else {
-			sender.sendMessage(ChatColor.RED + "Unknown command: " + ChatColor.GOLD + commandName);
+			sendMessage(sender,ChatColor.RED + "Unknown command: " + ChatColor.GOLD + commandName);
 		}
-		
-		sender.sendMessage("Available commands:");
-		sender.sendMessage(builder.toString());
+
+		sendMessage(sender,"Available commands:");
+		sendMessage(sender,builder.toString());
+	}
+	private void sendMessage(CommandSender sender, String message){
+		BaseComponent[] component =  TextComponent.fromLegacyText(message);
+		sender.sendMessage(component);
 	}
 	
-	private String colorUsage(String usage) {
+	private String colorUsage(CharSequence usage) {
 		Matcher matcher = usageArgumentPattern.matcher(usage);
 		StringBuffer buffer = new StringBuffer();
 		
@@ -131,7 +138,7 @@ public class CommandDispatcher {
 		
 		if (!Strings.isNullOrEmpty(command.getPermission()) && !sender.hasPermission(command.getPermission())) {
 			// Display no permission
-			sender.sendMessage(ChatColor.RED + String.format("You do not have permission to use %s", args[0]));
+			sendMessage(sender,ChatColor.RED + String.format("You do not have permission to use %s", args[0]));
 			return;
 		}
 		
@@ -139,33 +146,33 @@ public class CommandDispatcher {
 		try {
 			if (!command.onCommand(sender, Arrays.copyOfRange(args, 1, args.length))) {
 				// Display usage
-				sender.sendMessage(ChatColor.RED + "Incorrect number of arguments:");
-				sender.sendMessage(ChatColor.WHITE + "Usage: " + ChatColor.YELLOW + args[0] + ChatColor.GRAY + " " + colorUsage(command.getUsage()));
+				sendMessage(sender,ChatColor.RED + "Incorrect number of arguments:");
+				sendMessage(sender,ChatColor.WHITE + "Usage: " + ChatColor.YELLOW + args[0] + ChatColor.GRAY + " " + colorUsage(command.getUsage()));
 			}
 		} catch (BadArgumentException e) {
-			String cmdString = ChatColor.GRAY.toString();
+			StringBuilder cmdString = new StringBuilder(ChatColor.GRAY.toString());
 			for (int i = 0; i < args.length; ++i) {
 				if (i == e.getIndex() + 1) {
-					cmdString += ChatColor.RED + args[i] + ChatColor.GRAY;
+					cmdString.append(ChatColor.RED).append(args[i]).append(ChatColor.GRAY);
 				} else {
-					cmdString += args[i];
+					cmdString.append(args[i]);
 				}
 				
-				cmdString += " ";
+				cmdString.append(" ");
 			}
 			
 			if (e.getIndex() >= args.length - 1) {
-				cmdString += ChatColor.RED + "?";
+				cmdString.append(ChatColor.RED + "?");
 			}
-			
-			sender.sendMessage(ChatColor.RED + "Error in command: " + cmdString);
-			sender.sendMessage(ChatColor.RED + " " + e.getMessage());
+
+			sendMessage(sender,ChatColor.RED + "Error in command: " + cmdString);
+			sendMessage(sender,ChatColor.RED + " " + e.getMessage());
 			
 			for (String line : e.getInfo()) {
-				sender.sendMessage(ChatColor.GRAY + " " + line);
+				sendMessage(sender,ChatColor.GRAY + " " + line);
 			}
 		} catch (IllegalArgumentException e) {
-			sender.sendMessage(ChatColor.RED + e.getMessage());
+			sendMessage(sender,ChatColor.RED + e.getMessage());
 		}
 	}
 	
@@ -180,7 +187,7 @@ public class CommandDispatcher {
 				}
 			}
 			
-			return Iterables.filter(commands, (entry) -> entry.startsWith(input));
+			return commands.stream().filter((entry) -> entry.startsWith(input)).collect(Collectors.toList());
 		} else {
 			SubCommand command = getCommand(args[0]);
 			if (command == null) {

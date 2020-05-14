@@ -6,7 +6,7 @@ import org.bukkit.plugin.RegisteredListener;
 
 public class DelegatingRegisteredListener extends RegisteredListener
 {
-	private RegisteredListener mExisting;
+	private final RegisteredListener mExisting;
 	
 	public DelegatingRegisteredListener(RegisteredListener existing)
 	{

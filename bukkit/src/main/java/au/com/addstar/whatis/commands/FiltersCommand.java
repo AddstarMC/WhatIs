@@ -147,7 +147,7 @@ public class FiltersCommand implements ICommand
 	{
 		if(args.length == 1)
 		{
-			ArrayList<String> matching = new ArrayList<String>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[0].toLowerCase();
 			for(String name : EventHelper.getEventNames())
 			{

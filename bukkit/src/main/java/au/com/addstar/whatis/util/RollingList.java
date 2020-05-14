@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 public class RollingList<T> implements Iterable<T>
 {
-	private T[] mData;
+	private final T[] mData;
 	private int mStart;
 	private int mCount;
 	
@@ -73,7 +73,7 @@ public class RollingList<T> implements Iterable<T>
 		return true;
 	}
 
-	public boolean addAll( Collection<? extends T> c )
+	public boolean addAll(Iterable<? extends T> c )
 	{
 		for(T value : c)
 			add(value);

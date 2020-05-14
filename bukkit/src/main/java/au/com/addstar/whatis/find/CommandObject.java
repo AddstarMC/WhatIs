@@ -6,8 +6,8 @@ import org.bukkit.plugin.Plugin;
 
 public class CommandObject implements IObject
 {
-	private Command mCommand;
-	private String mName;
+	private final Command mCommand;
+	private final String mName;
 	
 	public CommandObject(String name, Command command)
 	{

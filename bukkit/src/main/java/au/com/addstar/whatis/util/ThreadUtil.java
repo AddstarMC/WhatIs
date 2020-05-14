@@ -33,7 +33,7 @@ public class ThreadUtil
 	
 	public static Plugin[] getPlugins(StackTraceElement[] stackTrace)
 	{
-		LinkedHashSet<Plugin> plugins = new LinkedHashSet<Plugin>();
+		LinkedHashSet<Plugin> plugins = new LinkedHashSet<>();
 		for(StackTraceElement frame : stackTrace)
 		{
 			Plugin plugin = getPlugin(frame);

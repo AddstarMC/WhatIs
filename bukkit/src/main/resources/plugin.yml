@@ -1,10 +1,9 @@
 name: WhatIs
-version: ${pom.version}
-author: Schmoller, Narimm
+version: ${plugin.version}
+authors: [Schmoller, Narimm]
 api-version: ${spigot.api.version}
-
-description: WhatIs provides tools to find out what each plugin interfaces with.
-
+description: WhatIs provides tools to find out what each plugin interfaces with - built for ${spigot.version}.
+load: POSTWORLD
 main: au.com.addstar.whatis.WhatIs
 
 permissions:

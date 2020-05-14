@@ -21,8 +21,8 @@ public class QuickMonitor
 		CancelHook hook = new CancelHook();
 		for(Class<? extends Event> eventClass : events)
 			hook.hook(eventClass);
-		
-		new HookRunner<CancelHook>(target, hook, callback);
+
+        new HookRunner<>(target, hook, callback);
 	}
 	
 	public static void checkForCancel(Callback<CancelHook> callback, DurationTarget target, FilterSet filters, Class<? extends Event>... events)
@@ -30,8 +30,8 @@ public class QuickMonitor
 		CancelHook hook = new CancelHook(filters);
 		for(Class<? extends Event> eventClass : events)
 			hook.hook(eventClass);
-		
-		new HookRunner<CancelHook>(target, hook, callback);
+
+        new HookRunner<>(target, hook, callback);
 	}
 	
 	// TODO: Need modify target

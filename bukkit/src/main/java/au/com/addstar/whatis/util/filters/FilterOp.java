@@ -11,7 +11,7 @@ public enum FilterOp
 	GreaterThan(">"),
 	GreaterThanEqual(">=");
 	
-	private String mOperator;
+	private final String mOperator;
 	
 	private FilterOp(String operator)
 	{

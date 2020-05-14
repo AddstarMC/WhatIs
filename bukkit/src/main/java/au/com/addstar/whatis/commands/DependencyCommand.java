@@ -130,9 +130,9 @@ public class DependencyCommand implements ICommand
 			
 			sender.sendMessage(ChatColor.YELLOW + "Plugins dependent on " + plugin.getName() + ":");
 			
-			ArrayList<String> requiredBy = new ArrayList<String>();
-			ArrayList<String> optionalBy = new ArrayList<String>();
-			ArrayList<String> loadBefore = new ArrayList<String>();
+			List<String> requiredBy = new ArrayList<>();
+			List<String> optionalBy = new ArrayList<>();
+			List<String> loadBefore = new ArrayList<>();
 			
 			for(Plugin other : Bukkit.getPluginManager().getPlugins())
 			{
@@ -212,7 +212,7 @@ public class DependencyCommand implements ICommand
 	{
 		if(args.length == 2)
 		{
-			ArrayList<String> matching = new ArrayList<String>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[1].toLowerCase();
 			for(Plugin plugin : Bukkit.getPluginManager().getPlugins())
 			{
