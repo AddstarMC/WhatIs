@@ -96,10 +96,8 @@ public class Finder
 	public static List<CommandObject> findCommands(String name)
 	{
 		SimpleCommandMap map = (SimpleCommandMap)CommandFinder.getCommandMap();
-		
-		Set<Command> unique = new HashSet<>();
-		for(Command command : map.getCommands())
-			unique.add(command);
+
+		Iterable<Command> unique = new HashSet<>(map.getCommands());
 		
 		HashMultimap<String, Command> commands = HashMultimap.create();
 		for(Command command : unique)

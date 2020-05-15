@@ -86,7 +86,7 @@ public class ChunkUtil
 			
 			List<Player> players = new ArrayList<>(rawPlayers.size());
 			for(Object player : rawPlayers)
-				players.add(ChunkUtil.<Player>getBukkitEntity(player));
+				players.add(ChunkUtil.getBukkitEntity(player));
 
 			return players;
 		}
@@ -220,22 +220,9 @@ public class ChunkUtil
 			try
 			{
 				Method method = clazz.getDeclaredMethod(startName, parameterTypes);
-				
-				if(retType instanceof Class<?>)
-				{
-					if(method.getReturnType().equals(retType))
-					{
-						method.setAccessible(true);
-						return method;
-					}
-				}
-				else
-				{
-					if(method.getReturnType().getSimpleName().equals((String)retType))
-					{
-						method.setAccessible(true);
-						return method;
-					}
+				Method result = checkMethod(method,retType);
+				if(result != null) {
+					return result;
 				}
 			}
 			catch(NoSuchMethodException e)
@@ -251,21 +238,9 @@ public class ChunkUtil
 			{
 				if(Arrays.equals(method.getParameterTypes(), parameterTypes))
 				{
-					if(retType instanceof Class<?>)
-					{
-						if(method.getReturnType().equals(retType))
-						{
-							method.setAccessible(true);
-							return method;
-						}
-					}
-					else
-					{
-						if(method.getReturnType().getSimpleName().equals((String)retType))
-						{
-							method.setAccessible(true);
-							return method;
-						}
+					Method result = checkMethod(method,retType);
+					if(result != null) {
+						return result;
 					}
 				}
 			}
@@ -289,7 +264,7 @@ public class ChunkUtil
 					}
 					else
 					{
-						if(!params[i].getSimpleName().equals((String)arguments[i]))
+						if(!params[i].getSimpleName().equals(arguments[i]))
 						{
 							match = false;
 							break;
@@ -299,25 +274,31 @@ public class ChunkUtil
 				
 				if(match)
 				{
-					if(retType instanceof Class<?>)
-					{
-						if(method.getReturnType().equals(retType))
-						{
-							method.setAccessible(true);
-							return method;
-						}
-					}
-					else
-					{
-						if(method.getReturnType().getSimpleName().equals((String)retType))
-						{
-							method.setAccessible(true);
-							return method;
-						}
+					Method result = checkMethod(method,retType);
+					if(result != null) {
+						return result;
 					}
 				}
 			}
 		}
 		throw new NoSuchMethodException("Unable to find method " + startName + " in " + clazz.getName());
+	}
+
+	private static Method checkMethod(Method method, Object retType) throws SecurityException{
+		if(retType instanceof Class<?>)
+		{
+			if(method.getReturnType().equals(retType))
+			{
+				method.setAccessible(true);
+				return method;
+			}
+		} else {
+			if(method.getReturnType().getSimpleName().equals(retType))
+			{
+				method.setAccessible(true);
+				return method;
+			}
+		}
+		return null;
 	}
 }

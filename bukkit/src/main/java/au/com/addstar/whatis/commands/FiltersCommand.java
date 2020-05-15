@@ -41,7 +41,7 @@ public class FiltersCommand implements ICommand
 	@Override
 	public String getDescription()
 	{
-		return "Explains how to use filters, or lists all filters for a class. <filterpart> can be things like 'block' which will show all sub filters for block, or 'block.location' which will show all sub filters for the location";
+		return "Explains how to use filters, or lists all filters for a class. <filterPart> can be things like 'block' which will show all sub filters for block, or 'block.location' which will show all sub filters for the location";
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class FiltersCommand implements ICommand
 			sender.sendMessage(ChatColor.GRAY + "     * < Less than, value of <path> must be less than <value>");
 			sender.sendMessage(ChatColor.GRAY + "     * <= Less than equal, value of <path> must be less than equal to <value>");
 			sender.sendMessage(ChatColor.GRAY + "     * > Greater than, value of <path> must be greater than <value>");
-			sender.sendMessage(ChatColor.GRAY + "     * >= Greather than equal, value of <path> must be greater than or equal to <value>");
+			sender.sendMessage(ChatColor.GRAY + "     * >= Greater than equal, value of <path> must be greater than or equal to <value>");
 			sender.sendMessage(ChatColor.GRAY + " - <value> is the value you are matching with. The format of this depends on what object <path> resolves to");
 			sender.sendMessage("");
 			sender.sendMessage(ChatColor.GRAY + "Example filter:");

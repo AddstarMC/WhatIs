@@ -1,5 +1,6 @@
 package au.com.addstar.whatis.util;
 
+import au.com.addstar.whatis.commands.ICommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -31,30 +32,33 @@ public class StandardCommandDisplayer implements CommandDisplayer
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&6Plugin: &7%s", getSource(command))));
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&6Perm: &7%s", command.getPermission())));
 			
-			if(!command.getAliases().isEmpty())
-			{
-				String aliases = "";
-				boolean first = true;
-				for(String alias : command.getAliases())
-				{
-					if(!aliases.isEmpty())
-						aliases += ChatColor.GRAY + ", ";
-					
-					if(first)
-						aliases += ChatColor.GRAY + alias;
-					else
-						aliases += ChatColor.WHITE + alias;
-					
-					first = !first;
-				}
-				
-				sender.sendMessage(ChatColor.GOLD + "Aliases: " + aliases);
-			}
+			sendAliases(sender,command);
+
 			return true;
 		}
 		return false;
 	}
-	
+
+	private void sendAliases(CommandSender sender,
+							 Command command) {
+		if (!command.getAliases().isEmpty()) {
+			String aliases = "";
+			boolean first = true;
+			for (String alias : command.getAliases()) {
+				if (!aliases.isEmpty())
+					aliases += ChatColor.GRAY + ", ";
+
+				if (first)
+					aliases += ChatColor.GRAY + alias;
+				else
+					aliases += ChatColor.WHITE + alias;
+
+				first = !first;
+			}
+
+			sender.sendMessage(ChatColor.GOLD + "Aliases: " + aliases);
+		}
+	}
 	private void displayMultiCommand(MultipleCommandAlias command, String label, CommandSender sender)
 	{
 		if(command.getAliases().contains(label))
@@ -66,26 +70,7 @@ public class StandardCommandDisplayer implements CommandDisplayer
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&e/%s &7from &e%s", fallback.getName(), CommandFinder.getSource(fallback))));
 		
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&6Perm: &7%s", command.getPermission())));
-		
-		if(!command.getAliases().isEmpty())
-		{
-			String aliases = "";
-			boolean first = true;
-			for(String alias : command.getAliases())
-			{
-				if(!aliases.isEmpty())
-					aliases += ChatColor.GRAY + ", ";
-				
-				if(first)
-					aliases += ChatColor.GRAY + alias;
-				else
-					aliases += ChatColor.WHITE + alias;
-				
-				first = !first;
-			}
-			
-			sender.sendMessage(ChatColor.GOLD + "Aliases: " + aliases);
-		}
+		sendAliases(sender,command);
 	}
 	
 	@Override

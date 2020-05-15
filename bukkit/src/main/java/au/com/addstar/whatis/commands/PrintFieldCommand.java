@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -16,7 +17,6 @@ import org.bukkit.plugin.Plugin;
 
 import au.com.addstar.whatis.util.ReflectionUtil;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class PrintFieldCommand implements ICommand
@@ -149,7 +149,7 @@ public class PrintFieldCommand implements ICommand
 			catch ( Exception e )
 			{
 				e.printStackTrace();
-				throw new IllegalArgumentException("An internal error occured while looking up the field");
+				throw new IllegalArgumentException("An internal error occurred while looking up the field");
 			}
 		}
 		
@@ -190,7 +190,7 @@ public class PrintFieldCommand implements ICommand
 				pathBuilder.append('.');
 				
 				final String path = pathBuilder.toString();
-				return Lists.transform(matchField(pathMatcher.group(1), object.getClass()), fieldName -> path + fieldName);
+				return matchField(pathMatcher.group(1), object.getClass()).stream().map(fieldName -> path + fieldName).collect(Collectors.toList());
 			}
 			
 			pathBuilder.append(pathMatcher.group(0));
@@ -237,10 +237,7 @@ public class PrintFieldCommand implements ICommand
 						}
 					}
 				}
-			} catch( NoSuchFieldException e )
-			{
-				return null;
-			} catch(Exception e)
+			} catch( Exception e )
 			{
 				return null;
 			}
@@ -249,7 +246,7 @@ public class PrintFieldCommand implements ICommand
 		pathBuilder.append('.');
 		
 		final String path = pathBuilder.toString();
-		return Lists.transform(matchField("", object.getClass()), fieldName -> path + fieldName);
+		return matchField("", object.getClass()).stream().map(fieldName -> path + fieldName).collect(Collectors.toList());
 	}
 
 	@Override

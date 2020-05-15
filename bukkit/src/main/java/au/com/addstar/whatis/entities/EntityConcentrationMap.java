@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.BoundingBox;
 
 import java.util.*;
 
@@ -65,7 +66,6 @@ public class EntityConcentrationMap
 		double radius = group.getRadius();
 		int minX = ((int)(group.getLocation().getBlockX() - radius) >> 4);
 		int minZ = ((int)(group.getLocation().getBlockZ() - radius) >> 4);
-		
 		int maxX = ((int)(group.getLocation().getBlockX() + radius) >> 4);
 		int maxZ = ((int)(group.getLocation().getBlockZ() + radius) >> 4);
 		
@@ -102,7 +102,6 @@ public class EntityConcentrationMap
 		double radius = group.getRadius();
 		int minX = ((int)(group.getLocation().getBlockX() - radius) >> 4);
 		int minZ = ((int)(group.getLocation().getBlockZ() - radius) >> 4);
-		
 		int maxX = ((int)(group.getLocation().getBlockX() + radius) >> 4);
 		int maxZ = ((int)(group.getLocation().getBlockZ() + radius) >> 4);
 		
@@ -291,7 +290,7 @@ public class EntityConcentrationMap
 			mChunkGroups.clear();
 			mAllGroups.clear();
 			
-			Bukkit.getScheduler().runTask(mPlugin, () -> onBuildComplete());
+			Bukkit.getScheduler().runTask(mPlugin, EntityConcentrationMap.this::onBuildComplete);
 		}
 	}
 }

@@ -49,7 +49,7 @@ public class HookRunner<T extends EventHookSession>
 		mHook.setRunner(this);
 		mCallback = callback;
 		
-		mTask = Bukkit.getScheduler().runTaskLater(WhatIs.instance, () -> stop(), target.ticks);
+		mTask = Bukkit.getScheduler().runTaskLater(WhatIs.instance, this::stop, target.ticks);
 	}
 	
 	public HookRunner(DurationTarget target, T hook)
@@ -88,7 +88,7 @@ public class HookRunner<T extends EventHookSession>
 				return;
 		}
 		
-		Bukkit.getScheduler().runTask(WhatIs.instance, () -> stop());
+		Bukkit.getScheduler().runTask(WhatIs.instance, this::stop);
 	}
 	
 	public boolean shouldInclude(Event event) {

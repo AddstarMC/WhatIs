@@ -197,15 +197,15 @@ public class WhatCancelledCommand implements ICommand
 		FilterSet filters = null; 
 		if((args.length >= 2 && !hasTicks) || (args.length >= 3 && hasTicks))
 		{
-			String argString = "";
+			StringBuilder argString = new StringBuilder();
 			for(int i = (hasTicks ? 2 : 1); i < args.length; i++)
-				argString += args[i] + " ";
+				argString.append(args[i]).append(" ");
 			
-			argString = argString.trim();
+			argString = new StringBuilder(argString.toString().trim());
 		
 			try
 			{
-				filters = FilterCompiler.compile(eventClass, argString);
+				filters = FilterCompiler.compile(eventClass, argString.toString());
 			}
 			catch(IllegalArgumentException e)
 			{

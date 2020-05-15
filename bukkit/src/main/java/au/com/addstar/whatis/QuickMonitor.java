@@ -64,18 +64,18 @@ public class QuickMonitor
 		{
 			plugin = listener.getPlugin();
 			
-			String location = "";
+			StringBuilder location = new StringBuilder();
 			for(EventCallback callback : EventHelper.resolveListener(eventClass, listener))
 			{
-				if(!location.isEmpty())
-					location += "\n OR \n";
-				location += String.format("[%s%s] %s", callback.priority, callback.ignoreCancelled ? " Ignores Cancel" : "", callback.signature);
+				if(location.length() > 0)
+					location.append("\n OR \n");
+				location.append(String.format("[%s%s] %s", callback.priority, callback.ignoreCancelled ? " Ignores Cancel" : "", callback.signature));
 			}
 			
-			if(location.isEmpty())
-				location = String.format("[%s%s] %s", listener.getPriority(), listener.isIgnoringCancelled() ? " Ignores Cancel" : "", listener.getListener().getClass().getName() + ".???");
+			if(location.length() == 0)
+				location = new StringBuilder(String.format("[%s%s] %s", listener.getPriority(), listener.isIgnoringCancelled() ? " Ignores Cancel" : "", listener.getListener().getClass().getName() + ".???"));
 			
-			handler = location;
+			handler = location.toString();
 			time = System.currentTimeMillis();
 			event = eventClass;
 		}

@@ -10,7 +10,7 @@ public enum SimpleFacing
 	private final int mModX;
 	private final int mModZ;
 	
-	private SimpleFacing(int x, int z)
+	SimpleFacing(int x, int z)
 	{
 		mModX = x;
 		mModZ = z;

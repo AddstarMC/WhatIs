@@ -89,7 +89,7 @@ public class TasksCommand implements ICommand
 				tasks.add(pending);
 		}
 		
-		tasks.sort((o1, o2) -> Integer.compare(o1.getTaskId(), o2.getTaskId()));
+		tasks.sort(Comparator.comparingInt(BukkitTask::getTaskId));
 		
 		if(tasks.isEmpty())
 			sender.sendMessage(" No tasks found");

@@ -2,6 +2,7 @@ package au.com.addstar.whatis.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import org.bukkit.plugin.Plugin;
 
 public class CommandFinder
 {
-	private static final List<CommandDisplayer> mDisplayers = new ArrayList<>();
+	private static final Collection<CommandDisplayer> mDisplayers = new ArrayList<>();
 	
 	public static void init()
 	{
@@ -39,7 +40,7 @@ public class CommandFinder
 		else
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eCommand: &f/%s", label)));
 		
-		if(command.getDescription() != null && !command.getDescription().isEmpty())
+		if(!command.getDescription().isEmpty())
 			sender.sendMessage(ChatColor.GRAY + command.getDescription());
 
 		sender.sendMessage(ChatColor.RED + "Unknown Source");
@@ -47,17 +48,17 @@ public class CommandFinder
 		
 		if(!command.getAliases().isEmpty())
 		{
-			String aliases = "";
+			StringBuilder aliases = new StringBuilder();
 			boolean first = true;
 			for(String alias : command.getAliases())
 			{
-				if(!aliases.isEmpty())
-					aliases += ChatColor.GRAY + ", ";
+				if(aliases.length() > 0)
+					aliases.append(ChatColor.GRAY).append(", ");
 				
 				if(first)
-					aliases += ChatColor.GRAY + alias;
+					aliases.append(ChatColor.GRAY).append(alias);
 				else
-					aliases += ChatColor.WHITE + alias;
+					aliases.append(ChatColor.WHITE).append(alias);
 				
 				first = !first;
 			}

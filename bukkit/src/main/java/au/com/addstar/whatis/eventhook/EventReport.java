@@ -107,16 +107,16 @@ public class EventReport
 		
 		for(EventStep step : mSteps)
 		{
-			String location = "";
+			StringBuilder location = new StringBuilder();
 			for(EventCallback callback : EventHelper.resolveListener(mEventClass, step.getListener()))
 			{
-				if(!location.isEmpty())
-					location += "\n OR \n";
-				location += String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), callback.priority, callback.ignoreCancelled ? " Ignores Cancel" : "", callback.signature);
+				if(location.length() > 0)
+					location.append("\n OR \n");
+				location.append(String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), callback.priority, callback.ignoreCancelled ? " Ignores Cancel" : "", callback.signature));
 			}
 			
-			if(location.isEmpty())
-				location = String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), step.getListener().getPriority(), step.getListener().isIgnoringCancelled() ? " Ignores Cancel" : "", step.getListener().getListener().getClass().getName() + ".???");
+			if(location.length() == 0)
+				location = new StringBuilder(String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), step.getListener().getPriority(), step.getListener().isIgnoringCancelled() ? " Ignores Cancel" : "", step.getListener().getListener().getClass().getName() + ".???"));
 			
 			writer.println(location);
 			if(step.isCancelled())

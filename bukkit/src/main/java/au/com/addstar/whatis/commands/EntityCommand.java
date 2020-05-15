@@ -13,14 +13,13 @@ import au.com.addstar.whatis.WhatIs;
 import au.com.addstar.whatis.entities.EntityCategory;
 import au.com.addstar.whatis.entities.EntityConcentrationMap;
 import au.com.addstar.whatis.entities.EntityGroup;
-import au.com.addstar.whatis.util.Callback;
 
 public class EntityCommand implements ICommand
 {
 	private final WeakHashMap<CommandSender, EntityConcentrationMap> mStoredResults = new WeakHashMap<>();
 	
 	public static final int resultsPerPage = 4;
-	public static final int resutlsPerPageConsole = 10;
+	public static final int resultsPerPageConsole = 10;
 	
 	@Override
 	public String getName()
@@ -66,7 +65,7 @@ public class EntityCommand implements ICommand
 	
 	private void displayResults(CommandSender sender, EntityConcentrationMap map, int page)
 	{
-		int perPage = (sender instanceof Player ? resultsPerPage : resutlsPerPageConsole);
+		int perPage = (sender instanceof Player ? resultsPerPage : resultsPerPageConsole);
 		
 		List<EntityGroup> groups = map.getAllGroups();
 		
@@ -124,7 +123,7 @@ public class EntityCommand implements ICommand
 					sender.sendMessage(ChatColor.GRAY + "  " + cat.name() + ": " + ChatColor.YELLOW + count);
 			}
 			
-			String playerString = "";
+			StringBuilder playerString = new StringBuilder();
 			boolean odd = true;
 			
 			int count = 0;
@@ -149,20 +148,20 @@ public class EntityCommand implements ICommand
 				else if(cause.equals("unknown"))
 					part = " Unknown (probably plugins)";
 				
-				if(!playerString.isEmpty())
-					playerString += ChatColor.GRAY + ", ";
+				if(playerString.length() > 0)
+					playerString.append(ChatColor.GRAY + ", ");
 
 				if(odd)
-					playerString += ChatColor.GRAY;
+					playerString.append(ChatColor.GRAY);
 				else
-					playerString += ChatColor.WHITE;
+					playerString.append(ChatColor.WHITE);
 				
-				playerString += part; 
+				playerString.append(part);
 				odd = !odd;
 			}
 			
 			if(count > maxPlayers)
-				playerString += ChatColor.GRAY + " and " + (count - maxPlayers) + " more";
+				playerString.append(ChatColor.GRAY + " and ").append(count - maxPlayers).append(" more");
 			
 			sender.sendMessage(ChatColor.YELLOW + "Cause: " + playerString);
 

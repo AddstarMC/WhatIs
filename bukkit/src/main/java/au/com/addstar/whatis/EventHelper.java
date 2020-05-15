@@ -3,6 +3,8 @@ package au.com.addstar.whatis;
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.attribute.Attributable;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -72,16 +74,16 @@ public class EventHelper
 
             Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
             
-            String args = "";
+            StringBuilder args = new StringBuilder();
             for(Class<?> clazz : method.getParameterTypes())
             {
-            	if(!args.isEmpty())
-            		args += ", ";
+            	if(args.length() > 0)
+            		args.append(", ");
             	
-            	args += clazz.getSimpleName();
+            	args.append(clazz.getSimpleName());
             }
             
-            callbacks.add(new EventCallback(eventClass, handler.priority(), handler.ignoreCancelled(), String.format("%s.%s(%s)", listener.getClass().getName(), method.getName(), args)));
+            callbacks.add(new EventCallback(eventClass, handler.priority(), handler.ignoreCancelled(), String.format("%s.%s(%s)", listener.getClass().getName(), method.getName(), args.toString())));
 		}
 		
 		return callbacks;
@@ -91,7 +93,7 @@ public class EventHelper
 	{
 		List<EventCallback> callbacks = new ArrayList<>();
 		List<RegisteredListener> all = HandlerList.getRegisteredListeners(plugin);
-		Set<Listener> unique = new HashSet<>();
+		Collection<Listener> unique = new HashSet<>();
 		
 		for(RegisteredListener listener : all)
 		{
@@ -116,8 +118,8 @@ public class EventHelper
 	public static void buildEventMap()
 	{
 		eventMap = new HashMap<>();
-		Set<Class<? extends Event>> unique = new HashSet<>();
-		Set<Listener> listeners = new HashSet<>();
+		Collection<Class<? extends Event>> unique = new HashSet<>();
+		Collection<Listener> listeners = new HashSet<>();
 		
 		for(HandlerList list : HandlerList.getHandlerLists())
 		{
@@ -127,7 +129,7 @@ public class EventHelper
 				{
 					listeners.add(listener.getListener());
 				}
-				catch(NullPointerException e) {}
+				catch(NullPointerException ignore) {}
 			}
 		}
 		
@@ -193,7 +195,7 @@ public class EventHelper
 		
 		if(ent instanceof Damageable)
 		{
-			subMap.put("maxHealth", ((Damageable)ent).getMaxHealth());
+			subMap.put("maxHealth", ((Attributable)ent).getAttribute(Attribute.GENERIC_MAX_HEALTH));
 			subMap.put("health", ((Damageable)ent).getHealth());
 		}
 		

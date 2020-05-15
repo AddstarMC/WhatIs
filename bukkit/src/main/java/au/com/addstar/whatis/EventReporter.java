@@ -25,7 +25,7 @@ import java.util.*;
 
 public class EventReporter
 {
-	private static final Set<Class<? extends Event>> mHookedEvents = new HashSet<>();
+	private static final Collection<Class<? extends Event>> mHookedEvents = new HashSet<>();
 	public static void hookEvent(Class<? extends Event> eventClass, EventHookSession hook)
 	{
 		Validate.isTrue(!mHookedEvents.contains(eventClass), "The specified event is already hooked");
@@ -33,7 +33,7 @@ public class EventReporter
 		mHookedEvents.add(eventClass);
 		HandlerList list = EventHelper.getHandlers(eventClass);
 		
-		Deque<RegisteredListener> toRegister = new LinkedList<>();
+		Queue<RegisteredListener> toRegister = new LinkedList<>();
 		RegisteredListener[] listeners = list.getRegisteredListeners();
 		for(RegisteredListener listener : listeners)
 		{
@@ -52,7 +52,7 @@ public class EventReporter
 		mHookedEvents.remove(eventClass);
 		HandlerList list = EventHelper.getHandlers(eventClass);
 		
-		Deque<RegisteredListener> toRegister = new LinkedList<>();
+		Collection<RegisteredListener> toRegister = new LinkedList<>();
 		for(RegisteredListener listener : list.getRegisteredListeners())
 		{
 			if(!(listener instanceof DelegatingRegisteredListener))
@@ -168,7 +168,7 @@ public class EventReporter
 			catch(IOException e)
 			{
 				e.printStackTrace();
-				sender.sendMessage(ChatColor.RED + "An error occured while saving the report. Please check the console.");
+				sender.sendMessage(ChatColor.RED + "An error occurred while saving the report. Please check the console.");
 			}
 		}
 	}

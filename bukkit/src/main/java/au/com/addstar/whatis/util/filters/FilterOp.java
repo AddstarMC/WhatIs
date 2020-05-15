@@ -13,7 +13,7 @@ public enum FilterOp
 	
 	private final String mOperator;
 	
-	private FilterOp(String operator)
+	FilterOp(String operator)
 	{
 		mOperator = operator;
 	}

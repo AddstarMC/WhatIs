@@ -41,7 +41,7 @@ public class ThreadUtil
 				plugins.add(plugin);
 		}
 		
-		return plugins.toArray(new Plugin[plugins.size()]);
+		return plugins.toArray(new Plugin[0]);
 	}
 	
 	public static String getThreadOwner(ThreadInfo thread)

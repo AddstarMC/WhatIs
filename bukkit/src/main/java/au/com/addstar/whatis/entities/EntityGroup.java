@@ -4,6 +4,7 @@ import au.com.addstar.whatis.util.ChunkUtil;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -29,14 +30,13 @@ public class EntityGroup implements Comparable<EntityGroup>
 	public EntityGroup(Location location)
 	{
 		mId = mNextId++;
-		
 		mLocation = location;
 		mRadius = defaultRadius * defaultRadius;
 		mTypeCounts = new int[EntityCategory.values().length];
 		mEntities = new ArrayList<>();
 		mChunkCauses = new HashSet<>();
 	}
-	
+
 	public void addEntity(Entity entity)
 	{
 		++mTypeCounts[EntityCategory.from(entity.getType()).ordinal()];
@@ -140,7 +140,7 @@ public class EntityGroup implements Comparable<EntityGroup>
 		double mean = 0;
 		Location temp = new Location(null, 0, 0, 0);
 		
-		List<Double> dists = new ArrayList<>(mEntities.size());
+		Collection<Double> dists = new ArrayList<>(mEntities.size());
 		
 		for(Entity ent : mEntities)
 		{
@@ -311,7 +311,7 @@ public class EntityGroup implements Comparable<EntityGroup>
 	@Override
 	public int compareTo( EntityGroup o )
 	{
-		return Integer.valueOf(mCount).compareTo(o.mCount) * -1; // Higher first
+		return Integer.compare(mCount, o.mCount) * -1; // Higher first
 	}
 	
 	@Override

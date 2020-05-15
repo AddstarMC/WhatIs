@@ -57,7 +57,7 @@ public enum EventGroups
 
 	public final Class<? extends Event>[] events;
 	
-	private EventGroups(Class<? extends Event>... events)
+	EventGroups(Class<? extends Event>... events)
 	{
 		this.events = events;
 	}

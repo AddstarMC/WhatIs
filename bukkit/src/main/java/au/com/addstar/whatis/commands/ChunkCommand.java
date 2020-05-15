@@ -115,33 +115,33 @@ public class ChunkCommand implements ICommand
 		else
 		{
 			sender.sendMessage(ChatColor.GOLD + String.format("The chunk %d,%d (%s) is loaded by:", x, z, world.getName()));
-			String playerString = "";
+			StringBuilder playerString = new StringBuilder();
 			boolean odd = true;
 			
 			for(String cause : causes)
 			{
 				if(cause.startsWith("player:"))
 				{
-					if(!playerString.isEmpty())
-						playerString += ChatColor.GRAY + ", ";
+					if(playerString.length() > 0)
+						playerString.append(ChatColor.GRAY + ", ");
 
 					if(odd)
-						playerString += ChatColor.GRAY;
+						playerString.append(ChatColor.GRAY);
 					else
-						playerString += ChatColor.WHITE;
+						playerString.append(ChatColor.WHITE);
 					
-					playerString += cause.substring(7);
+					playerString.append(cause.substring(7));
 					odd = !odd;
 				}
 				else if(cause.equals("spawn"))
 					sender.sendMessage(ChatColor.GRAY + " Spawn Region");
 				else if(cause.equals("unknown:players"))
-					playerString = "Unknown Players";
+					playerString = new StringBuilder("Unknown Players");
 				else if(cause.equals("unknown"))
 					sender.sendMessage(ChatColor.GRAY + " Unknown (probably plugins)");
 			}
 			
-			if(!playerString.isEmpty())
+			if(playerString.length() > 0)
 				sender.sendMessage(ChatColor.GRAY + " " + playerString);
 		}
 		

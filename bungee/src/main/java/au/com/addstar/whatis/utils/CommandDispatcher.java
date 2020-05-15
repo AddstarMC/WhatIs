@@ -16,8 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class
-CommandDispatcher {
+public class CommandDispatcher {
 	public static final Pattern usageArgumentPattern = Pattern.compile("(\\[<.*?>\\])|(\\[.*?\\])|(<.*?>)");
 	
 	private final Map<String, SubCommand> commandMap;
@@ -162,10 +161,10 @@ CommandDispatcher {
 			}
 			
 			if (e.getIndex() >= args.length - 1) {
-				cmdString.append(ChatColor.RED + "?");
+				cmdString.append(ChatColor.RED).append("?");
 			}
 
-			sendMessage(sender,ChatColor.RED + "Error in command: " + cmdString);
+			sendMessage(sender,ChatColor.RED + "Error in command: " + cmdString.toString());
 			sendMessage(sender,ChatColor.RED + " " + e.getMessage());
 			
 			for (String line : e.getInfo()) {

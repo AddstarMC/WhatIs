@@ -209,7 +209,7 @@ public class ThreadLockChecker extends Thread
 			it.remove();
 		}
 		
-		return loopTrace.toArray(new StackTraceElement[loopTrace.size()]);
+		return loopTrace.toArray(new StackTraceElement[0]);
 	}
 	
 	private void printStackTrace(StackTraceElement[] stackTrace)

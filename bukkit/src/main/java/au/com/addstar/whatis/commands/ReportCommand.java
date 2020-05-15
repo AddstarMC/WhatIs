@@ -117,7 +117,7 @@ public class ReportCommand implements ICommand {
                     sender.sendMessage("Report saved to " + file.getPath());
                     return true;
                 } catch (FileNotFoundException e) {
-                    sender.sendMessage(ChatColor.RED + "An internal error occured");
+                    sender.sendMessage(ChatColor.RED + "An internal error occurred");
                     e.printStackTrace();
                     return true;
                 }
@@ -190,7 +190,7 @@ public class ReportCommand implements ICommand {
 
             // Permissions
             List<Permission> perms = plugin.getDescription().getPermissions();
-            writer.println("   Permissions (loadtime): " + perms.size());
+            writer.println("   Permissions (load time): " + perms.size());
             for (Permission perm : perms)
                 writer.println("     - " + perm.getName() + "   Default: " + perm.getDefault());
 

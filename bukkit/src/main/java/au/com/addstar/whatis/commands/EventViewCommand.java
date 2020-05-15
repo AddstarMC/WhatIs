@@ -1,9 +1,6 @@
 package au.com.addstar.whatis.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -118,7 +115,7 @@ public class EventViewCommand implements ICommand
 				count.put(listener.getPlugin(), num);
 			}
 			
-			List<String> lines = new ArrayList<>();
+			Collection<String> lines = new ArrayList<>();
 			
 			for(Entry<Plugin, Integer> entry : count.entrySet())
 				lines.add(ChatColor.translateAlternateColorCodes('&', String.format("&7- &6%s&f %d", entry.getKey().getName(), entry.getValue())));
@@ -145,7 +142,7 @@ public class EventViewCommand implements ICommand
 			
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandlers for &c%s&e: &f%d", eventClass.getSimpleName(), handlers.getRegisteredListeners().length)));
 			
-			List<String> lines = new ArrayList<>();
+			Collection<String> lines = new ArrayList<>();
 			for(RegisteredListener listener : handlers.getRegisteredListeners())
 				lines.add(ChatColor.GRAY + "- " + ChatColor.GOLD + listener.getPlugin().getName() + ChatColor.GRAY + " " + listener.getPriority() + (listener.isIgnoringCancelled() ? " IgnoreCancel" : ""));
 			

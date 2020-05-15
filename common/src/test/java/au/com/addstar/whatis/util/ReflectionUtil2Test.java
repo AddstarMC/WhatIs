@@ -1,19 +1,15 @@
 package au.com.addstar.whatis.util;
 
-import au.com.addstar.whatis.helpers.SeparateClassloaderTestRunner;
 import me.botsko.prism.Prism;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 /**
- * Created for the Charlton IT Project.
- * Created by benjicharlton on 14/05/2020.
+ * Created by Narimm on 14/05/2020.
  */
-@RunWith(SeparateClassloaderTestRunner.class)
 public class ReflectionUtil2Test {
     @Test
     public void getDeclaredField() {

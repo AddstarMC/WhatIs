@@ -1,7 +1,8 @@
 package au.com.addstar.whatis.commands;
 
-import au.com.addstar.whatis.utils.ReflectionUtil;
+import au.com.addstar.whatis.utils.BadArgumentException;
 import au.com.addstar.whatis.utils.SubCommand;
+import au.com.addstar.whatis.util.ReflectionUtil;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class PrintFieldCommand implements SubCommand {
 	private final Pattern pathPattern = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)$");
@@ -164,7 +166,7 @@ public class PrintFieldCommand implements SubCommand {
 				pathBuilder.append('.');
 
 				final String path = pathBuilder.toString();
-				return Lists.transform(matchField(pathMatcher.group(1), object.getClass()), (fieldName) -> path + fieldName);
+				return matchField(pathMatcher.group(1), object.getClass()).stream().map((fieldName) -> path + fieldName).collect(Collectors.toList());
 			}
 
 			pathBuilder.append(pathMatcher.group(0));
@@ -204,17 +206,15 @@ public class PrintFieldCommand implements SubCommand {
 						}
 					}
 				}
-			} catch (NoSuchFieldException e) {
-				return null;
 			} catch (Exception e) {
 				return null;
 			}
-        }
+		}
 
 		pathBuilder.append('.');
 
 		final String path = pathBuilder.toString();
-		return Lists.transform(matchField("", object.getClass()), (fieldName) -> path + fieldName);
+		return matchField("", object.getClass()).stream().map((fieldName) -> path + fieldName).collect(Collectors.toList());
 	}
 
 	@Override
@@ -325,7 +325,7 @@ public class PrintFieldCommand implements SubCommand {
 			}
 		}
 
-		sender.sendMessage(builder.toString());
+		sender.sendMessage(TextComponent.fromLegacyText(builder.toString()));
 
 		return true;
 	}
