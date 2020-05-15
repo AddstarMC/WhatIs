@@ -21,6 +21,7 @@ import org.kitteh.pastegg.PasteBuilder;
 import org.kitteh.pastegg.PasteFile;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class EventReporter
@@ -154,6 +155,10 @@ public class EventReporter
 								sender.sendMessage(ChatColor.GOLD + "[WhatIs]" + ChatColor.WHITE + " https://paste.gg/"+paste.getId());
 								sender.sendMessage(ChatColor.GOLD + "[WhatIs]" + ChatColor.WHITE + " Deletion Key: "+paste.getDeletionKey());
 								sender.sendMessage(ChatColor.GRAY + "Recorded " + hook.getReportCount() + " events");
+								String date = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss").format(paste.getExpires());
+								WhatIs.instance.getLogger().info(
+									"Paste: "+paste.getId() +" / Deletion Key: " + paste.getDeletionKey() + " / Expires: "
+										+ date);
 							}
 						});
 						return;

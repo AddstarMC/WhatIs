@@ -68,13 +68,14 @@ public class EventMonitorCommand implements ICommand
 	@Override
 	public boolean onCommand( CommandSender sender, String label, String[] args )
 	{
-		if(args.length < 2)
-			return false;
-		if(args[0].toLowerCase().equals("rebuildeventmap")){
+		if(args.length == 1 && args[0].toLowerCase().equals("rebuildeventmap")){
 			sender.sendMessage("Event Map current: Events ->" + EventHelper.getEventNames().size());
 			EventHelper.buildEventMap();
 			sender.sendMessage("Event Map rebuilt: Events ->" + EventHelper.getEventNames().size());
 			return true;
+		}
+		if(args.length < 2) {
+			return false;
 		}
 		Class<? extends Event> eventClass = EventHelper.parseEvent(args[0]);
 		
@@ -140,14 +141,22 @@ public class EventMonitorCommand implements ICommand
 	@Override
 	public List<String> onTabComplete( CommandSender sender, String label, String[] args )
 	{
-		if(args.length == 1)
-		{
-			List<String> matching = new ArrayList<>();
+		List<String> matching = new ArrayList<>();
+		if(args.length == 0){
+			matching.addAll(EventHelper.getEventNames());
+			matching.add("rebuildEventMap");
+			return matching;
+		}
+		if(args.length == 1) {
 			String toMatch = args[0].toLowerCase();
+
 			for(String name : EventHelper.getEventNames())
 			{
 				if(name.startsWith(toMatch))
 					matching.add(name);
+				if ("rebuildEventMap".startsWith(toMatch)){
+					matching.add("rebuildEventMap");
+				}
 			}
 			
 			if("plugin".startsWith(toMatch))
@@ -155,7 +164,6 @@ public class EventMonitorCommand implements ICommand
 			
 			return matching;
 		}
-		
 		return null;
 	}
 

@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -246,6 +247,9 @@ public class PrintFieldCommand implements ICommand
 		pathBuilder.append('.');
 		
 		final String path = pathBuilder.toString();
+		if (object == null) {
+			return null;
+		}
 		return matchField("", object.getClass()).stream().map(fieldName -> path + fieldName).collect(Collectors.toList());
 	}
 
