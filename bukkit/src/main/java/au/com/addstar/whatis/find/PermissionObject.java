@@ -5,7 +5,7 @@ import org.bukkit.plugin.Plugin;
 
 public class PermissionObject implements IObject
 {
-	private Permission mPermission;
+	private final Permission mPermission;
 	
 	public PermissionObject(Permission perm)
 	{

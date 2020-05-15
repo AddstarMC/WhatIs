@@ -15,7 +15,9 @@ public class BadArgumentException extends IllegalArgumentException {
 		this.index = index;
 		info = Lists.newArrayList();
 	}
-	
+	public void addInfo(String info){
+		this.info.add(info);
+	}
 	public int getIndex() {
 		return index;
 	}

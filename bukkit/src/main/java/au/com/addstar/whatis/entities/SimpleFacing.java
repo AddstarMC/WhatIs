@@ -7,10 +7,10 @@ public enum SimpleFacing
 	South(0, 1),
 	West(-1, 0);
 	
-	private int mModX;
-	private int mModZ;
+	private final int mModX;
+	private final int mModZ;
 	
-	private SimpleFacing(int x, int z)
+	SimpleFacing(int x, int z)
 	{
 		mModX = x;
 		mModZ = z;

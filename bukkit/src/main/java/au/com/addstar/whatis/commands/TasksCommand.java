@@ -81,7 +81,7 @@ public class TasksCommand implements ICommand
 		else
 			sender.sendMessage(ChatColor.GOLD + "All tasks:");
 		
-		ArrayList<BukkitTask> tasks = new ArrayList<>();
+		List<BukkitTask> tasks = new ArrayList<>();
 		
 		for(BukkitTask pending : Bukkit.getScheduler().getPendingTasks())
 		{
@@ -89,14 +89,7 @@ public class TasksCommand implements ICommand
 				tasks.add(pending);
 		}
 		
-		Collections.sort(tasks, new Comparator<BukkitTask>()
-		{
-			@Override
-			public int compare( BukkitTask o1, BukkitTask o2 )
-			{
-				return Integer.compare(o1.getTaskId(), o2.getTaskId());
-			}
-		});
+		tasks.sort(Comparator.comparingInt(BukkitTask::getTaskId));
 		
 		if(tasks.isEmpty())
 			sender.sendMessage(" No tasks found");

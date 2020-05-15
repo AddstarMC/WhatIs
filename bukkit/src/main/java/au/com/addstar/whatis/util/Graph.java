@@ -18,12 +18,12 @@ public class Graph
 	
 	private double mMin;
 	private double mMax;
-	private TreeMap<Double, ChatColor> mColourStops;
+	private final TreeMap<Double, ChatColor> mColourStops;
 	private boolean mShowLowest = false;
 	
 	public Graph()
 	{
-		mColourStops = new TreeMap<Double, ChatColor>();
+		mColourStops = new TreeMap<>();
 	}
 	
 	public void addColourStop(double value, ChatColor colour)

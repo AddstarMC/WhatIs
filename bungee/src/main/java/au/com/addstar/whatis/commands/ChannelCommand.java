@@ -41,7 +41,7 @@ public class ChannelCommand implements SubCommand {
         sender.sendMessage(TextComponent.fromLegacyText(" -------------------------- "));
         for (String name : ProxyServer.getInstance().getChannels()) {
             sender.sendMessage(TextComponent.fromLegacyText("   "+name));
-        };
+        }
         sender.sendMessage(TextComponent.fromLegacyText(" -------------------------- "));
         return true;
     }

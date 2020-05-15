@@ -4,16 +4,16 @@ import au.com.addstar.whatis.util.RollingList;
 
 public class TickMonitor implements Runnable
 {
-	private RollingList<Long> mTickHistory;
-	private RollingList<Double> mTPSHistory;
+	private final RollingList<Long> mTickHistory;
+	private final RollingList<Double> mTPSHistory;
 	
 	private long mLastTime;
 	private long mLastTPSTime;
 	
 	public TickMonitor(int historySize)
 	{
-		mTickHistory = new RollingList<Long>(40);
-		mTPSHistory = new RollingList<Double>(historySize);
+		mTickHistory = new RollingList<>(40);
+		mTPSHistory = new RollingList<>(historySize);
 		
 		mLastTime = mLastTPSTime = System.nanoTime();
 	}

@@ -1,11 +1,9 @@
 name: WhatIs
-version: ${pom.version}
-author: Schmoller
-
-website: http://dev.bukkit.org/bukkit-plugins/whatis/
-
-description: WhatIs provides tools to find out what each plugin interfaces with.
-
+version: ${plugin.version}
+authors: [Schmoller, Narimm]
+api-version: ${spigot.api.version}
+description: WhatIs provides tools to find out what each plugin interfaces with - built for ${spigot.version}.
+load: POSTWORLD
 main: au.com.addstar.whatis.WhatIs
 
 permissions:

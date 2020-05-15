@@ -3,10 +3,11 @@ package au.com.addstar.whatis.eventhook;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.plugin.RegisteredListener;
+import org.jetbrains.annotations.NotNull;
 
 public class DelegatingRegisteredListener extends RegisteredListener
 {
-	private RegisteredListener mExisting;
+	private final RegisteredListener mExisting;
 	
 	public DelegatingRegisteredListener(RegisteredListener existing)
 	{
@@ -15,7 +16,7 @@ public class DelegatingRegisteredListener extends RegisteredListener
 	}
 
 	@Override
-	public void callEvent( Event event ) throws EventException
+	public void callEvent(@NotNull Event event ) throws EventException
 	{
 		mExisting.callEvent(event);
 	}

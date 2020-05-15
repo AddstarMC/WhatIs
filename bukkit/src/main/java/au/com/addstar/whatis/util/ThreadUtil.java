@@ -33,7 +33,7 @@ public class ThreadUtil
 	
 	public static Plugin[] getPlugins(StackTraceElement[] stackTrace)
 	{
-		LinkedHashSet<Plugin> plugins = new LinkedHashSet<Plugin>();
+		LinkedHashSet<Plugin> plugins = new LinkedHashSet<>();
 		for(StackTraceElement frame : stackTrace)
 		{
 			Plugin plugin = getPlugin(frame);
@@ -41,7 +41,7 @@ public class ThreadUtil
 				plugins.add(plugin);
 		}
 		
-		return plugins.toArray(new Plugin[plugins.size()]);
+		return plugins.toArray(new Plugin[0]);
 	}
 	
 	public static String getThreadOwner(ThreadInfo thread)

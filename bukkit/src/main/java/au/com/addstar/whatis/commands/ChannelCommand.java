@@ -53,7 +53,7 @@ public class ChannelCommand implements ICommand {
     
         for (String name : Bukkit.getMessenger().getOutgoingChannels()){
             sender.sendMessage(" - " + name);
-        };
+        }
         sender.sendMessage(" -------------------------");
         sender.sendMessage(" List of Incoming Channels");
         sender.sendMessage(" -------------------------");
@@ -62,7 +62,7 @@ public class ChannelCommand implements ICommand {
             for(PluginMessageListenerRegistration reg:
                     Bukkit.getMessenger().getIncomingChannelRegistrations(name)){
                 sender.sendMessage("       Plugin - " + reg.getPlugin().getName());
-            };
+            }
         }
         sender.sendMessage(" -------------------------");
         return false;

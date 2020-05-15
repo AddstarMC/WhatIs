@@ -17,6 +17,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This allows sub commands to be handled in a clean easily expandable way.
@@ -30,15 +31,15 @@ import com.google.common.collect.Lists;
  */
 public class CommandDispatcher implements CommandExecutor, TabCompleter
 {
-	private String mRootCommandName;
-	private String mRootCommandDescription;
-	private HashMap<String, ICommand> mCommands;
+	private final String mRootCommandName;
+	private final String mRootCommandDescription;
+	private final HashMap<String, ICommand> mCommands;
 	
 	private ICommand mDefaultCommand = null;
 	
 	public CommandDispatcher(String commandName, String description)
 	{
-		mCommands = new HashMap<String, ICommand>();
+		mCommands = new HashMap<>();
 		
 		mRootCommandName = commandName;
 		mRootCommandDescription = description;
@@ -60,7 +61,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
+	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args)
 	{
 		if(args.length == 0 && mDefaultCommand == null)
 		{
@@ -77,28 +78,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 		{
 			subCommand = args[0].toLowerCase();
 			subArgs = (args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
-			
-			if(mCommands.containsKey(subCommand))
-				com = mCommands.get(subCommand);
-			else
-			{
-				// Check aliases
-	AliasCheck:	for(Entry<String, ICommand> ent : mCommands.entrySet())
-				{
-					if(ent.getValue().getAliases() != null)
-					{
-						String[] aliases = ent.getValue().getAliases();
-						for(String alias : aliases)
-						{
-							if(subCommand.equalsIgnoreCase(alias))
-							{
-								com = ent.getValue();
-								break AliasCheck;
-							}
-						}
-					}
-				}
-			}
+			com = getSubCommand(subCommand);
 		}
 		
 		if(com == null)
@@ -143,9 +123,36 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 		
 		return true;
 	}
+
+	private ICommand getSubCommand(String subCommand){
+
+
+		if(mCommands.containsKey(subCommand))
+			return mCommands.get(subCommand);
+		else
+		{
+			// Check aliases
+			for(Entry<String, ICommand> ent : mCommands.entrySet())
+			{
+				if(ent.getValue().getAliases() != null)
+				{
+					String[] aliases = ent.getValue().getAliases();
+					for(String alias : aliases)
+					{
+						if(subCommand.equalsIgnoreCase(alias))
+						{
+							return ent.getValue();
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	private void displayUsage(CommandSender sender, String label, String subcommand)
 	{
-		String usage = "";
+		StringBuilder usage = new StringBuilder();
 		
 		boolean first = true;
 		boolean odd = true;
@@ -161,15 +168,15 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 				continue;
 			
 			if(odd)
-				usage += ChatColor.WHITE;
+				usage.append(ChatColor.WHITE);
 			else
-				usage += ChatColor.GRAY;
+				usage.append(ChatColor.GRAY);
 			odd = !odd;
 			
 			if(first)
-				usage += command.getName();
+				usage.append(command.getName());
 			else
-				usage += ", " + command.getName();
+				usage.append(", ").append(command.getName());
 			
 			first = false;
 		}
@@ -182,7 +189,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 		if(!first)
 		{
 			sender.sendMessage("Valid commands are:");
-			sender.sendMessage(usage);
+			sender.sendMessage(usage.toString());
 		}
 		else
 			sender.sendMessage("There are no commands available to you");
@@ -191,9 +198,9 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 	}
 	
 	@Override
-	public List<String> onTabComplete( CommandSender sender, Command command, String label, String[] args )
+	public List<String> onTabComplete(@NotNull CommandSender sender,@NotNull  Command command,@NotNull  String label, String[] args )
 	{
-		List<String> results = new ArrayList<String>();
+		List<String> results = new ArrayList<>();
 		if(args.length == 1) // Tab completing the sub command
 		{
 			for(ICommand registeredCommand : mCommands.values())
@@ -229,32 +236,9 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 		{
 			// Find the command to use
 			String subCommand = args[0].toLowerCase();
-			String[] subArgs = (args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
+			String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
 			
-			ICommand com = null;
-			if(mCommands.containsKey(subCommand))
-			{
-				com = mCommands.get(subCommand);
-			}
-			else
-			{
-				// Check aliases
-	AliasCheck:	for(Entry<String, ICommand> ent : mCommands.entrySet())
-				{
-					if(ent.getValue().getAliases() != null)
-					{
-						String[] aliases = ent.getValue().getAliases();
-						for(String alias : aliases)
-						{
-							if(subCommand.equalsIgnoreCase(alias))
-							{
-								com = ent.getValue();
-								break AliasCheck;
-							}
-						}
-					}
-				}
-			}
+			ICommand com = getSubCommand(subCommand);
 			
 			// Was not found
 			if(com == null)
@@ -276,7 +260,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter
 			
 			results = com.onTabComplete(sender, subCommand, subArgs);
 			if(results == null)
-				return new ArrayList<String>();
+				return new ArrayList<>();
 		}
 		return results;
 	}

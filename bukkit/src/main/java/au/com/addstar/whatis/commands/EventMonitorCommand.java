@@ -5,6 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import au.com.addstar.whatis.eventhook.EventOutput;
+import au.com.addstar.whatis.eventhook.FileEventOutput;
+import au.com.addstar.whatis.eventhook.PasteEventOutput;
+import javafx.event.EventHandler;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -39,7 +44,7 @@ public class EventMonitorCommand implements ICommand
 	@Override
 	public String getUsageString( String label, CommandSender sender )
 	{
-		return label + " <eventname> <ticks>";
+		return label + " <eventname> <ticks> ['paste'] <filterString...>";
 	}
 
 	@Override
@@ -63,9 +68,15 @@ public class EventMonitorCommand implements ICommand
 	@Override
 	public boolean onCommand( CommandSender sender, String label, String[] args )
 	{
-		if(args.length < 2)
+		if(args.length == 1 && args[0].toLowerCase().equals("rebuildeventmap")){
+			sender.sendMessage("Event Map current: Events ->" + EventHelper.getEventNames().size());
+			EventHelper.buildEventMap();
+			sender.sendMessage("Event Map rebuilt: Events ->" + EventHelper.getEventNames().size());
+			return true;
+		}
+		if(args.length < 2) {
 			return false;
-		
+		}
 		Class<? extends Event> eventClass = EventHelper.parseEvent(args[0]);
 		
 		if(eventClass == null)
@@ -74,7 +85,7 @@ public class EventMonitorCommand implements ICommand
 			return true;
 		}
 		
-		int count = 0;
+		int count;
 		
 		try
 		{
@@ -87,53 +98,65 @@ public class EventMonitorCommand implements ICommand
 		}
 		
 		FilterSet filter = null;
-		if(args.length > 2)
-		{
-			String argString = StringUtils.join(args, ' ', 2, args.length);
-			
-			try
-			{
-				filter = FilterCompiler.compile(eventClass, argString);
+		EventOutput output ;
+		if(args.length > 2) {
+			int startIndex = 2;
+			if (args[2].toLowerCase().equals("paste")) {
+				output = new PasteEventOutput();
+				startIndex = 3;
+			} else {
+				output = createFileOutput();
 			}
-			catch(IllegalArgumentException e)
-			{
-				sender.sendMessage(ChatColor.RED + e.getMessage());
-				return true;
+			if (args.length > startIndex) {
+				String argString = StringUtils.join(args, ' ', startIndex, args.length);
+
+				try {
+					filter = FilterCompiler.compile(eventClass, argString);
+				} catch (IllegalArgumentException e) {
+					sender.sendMessage(ChatColor.RED + e.getMessage());
+					return true;
+				}
 			}
+		} else {
+			output = createFileOutput();
 		}
-		
-		File parent = new File(WhatIs.instance.getDataFolder(), "eventreports");
-		parent.mkdirs();
-		File dest = new File(parent, new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss").format(new Date()) + ".txt");
-		
+
 		try
 		{
-			EventReporter.monitorEvent(eventClass, count, sender, dest, filter);
+			EventReporter.monitorEvent(eventClass, count, sender, output, filter);
 			sender.sendMessage(ChatColor.GREEN + eventClass.getSimpleName() + " is now being monitored for " + count + " ticks");
 		}
-		catch(IllegalArgumentException e)
+		catch(IllegalArgumentException | IllegalStateException e)
 		{
 			sender.sendMessage(ChatColor.RED + e.getMessage());
 		}
-		catch(IllegalStateException e)
-		{
-			sender.sendMessage(ChatColor.RED + e.getMessage());
-		}
-		
+
 		return true;
 	}
-
+	private FileEventOutput createFileOutput() {
+		File parent = new File(WhatIs.instance.getDataFolder(), "eventreports");
+		parent.mkdirs();
+		return new FileEventOutput(parent, new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss").format(new Date()) + ".txt");
+	}
 	@Override
 	public List<String> onTabComplete( CommandSender sender, String label, String[] args )
 	{
-		if(args.length == 1)
-		{
-			ArrayList<String> matching = new ArrayList<String>();
+		List<String> matching = new ArrayList<>();
+		if(args.length == 0){
+			matching.addAll(EventHelper.getEventNames());
+			matching.add("rebuildEventMap");
+			return matching;
+		}
+		if(args.length == 1) {
 			String toMatch = args[0].toLowerCase();
+
 			for(String name : EventHelper.getEventNames())
 			{
 				if(name.startsWith(toMatch))
 					matching.add(name);
+				if ("rebuildEventMap".startsWith(toMatch)){
+					matching.add("rebuildEventMap");
+				}
 			}
 			
 			if("plugin".startsWith(toMatch))
@@ -141,7 +164,6 @@ public class EventMonitorCommand implements ICommand
 			
 			return matching;
 		}
-		
 		return null;
 	}
 

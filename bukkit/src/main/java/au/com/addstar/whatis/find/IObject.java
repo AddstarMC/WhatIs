@@ -4,11 +4,11 @@ import org.bukkit.plugin.Plugin;
 
 public interface IObject extends Comparable<IObject>
 {
-	public String getType();
+	String getType();
 	
-	public String getName();
+	String getName();
 	
-	public String getDescription();
+	String getDescription();
 	
-	public Plugin getOwner();
+	Plugin getOwner();
 }

@@ -20,10 +20,10 @@ import au.com.addstar.whatis.util.FilterHelper.ClassConnector;
 
 public abstract class FilterCompiler
 {
-	private static Pattern mFilterDefPattern = Pattern.compile("\\[(?:@?[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*(?:=|!=|\\:|!\\:|<|>|<=|>=)@?[a-zA-Z0-9_ \\-\\.]+)(?:,[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*(?:=|!=|\\:|!\\:|<|>|<=|>=)[a-zA-Z0-9_ \\-\\.]+)*\\]");
-	private static Pattern mFilterPattern = Pattern.compile("(@?[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*)(=|!=|\\:|!\\:|<|>|<=|>=)([a-zA-Z0-9_ \\-\\.]+)");
+	private static final Pattern mFilterDefPattern = Pattern.compile("\\[(?:@?[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*(?:=|!=|\\:|!\\:|<|>|<=|>=)@?[a-zA-Z0-9_ \\-\\.]+)(?:,[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*(?:=|!=|\\:|!\\:|<|>|<=|>=)[a-zA-Z0-9_ \\-\\.]+)*\\]");
+	private static final Pattern mFilterPattern = Pattern.compile("(@?[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*)(=|!=|\\:|!\\:|<|>|<=|>=)([a-zA-Z0-9_ \\-\\.]+)");
 	
-	public static FilterSet compile(Class<?> clazz, String filterString)
+	public static FilterSet compile(Class<?> clazz, CharSequence filterString)
 	{
 		Matcher match = mFilterDefPattern.matcher(filterString);
 		if(!match.matches())
@@ -48,13 +48,13 @@ public abstract class FilterCompiler
 			
 			if(handler)
 			{
-				path = getExecutionPath(handlerConnector, name, new ArrayList<MethodHandle>(), new ArrayList<Class<?>>());
+				path = getExecutionPath(handlerConnector, name, new ArrayList<>(), new ArrayList<>());
 				if(path == null)
 					throw new IllegalArgumentException(name + " cannot be found in " + RegisteredListener.class.getName());
 			}
 			else
 			{
-				path = getExecutionPath(connector, name, new ArrayList<MethodHandle>(), new ArrayList<Class<?>>());
+				path = getExecutionPath(connector, name, new ArrayList<>(), new ArrayList<>());
 				if(path == null)
 					throw new IllegalArgumentException(name + " cannot be found in " + clazz.getName());
 			}

@@ -7,7 +7,7 @@ import org.bukkit.plugin.RegisteredListener;
 
 public class ReportingRegisteredListener extends DelegatingRegisteredListener
 {
-	private EventHookSession mSession;
+	private final EventHookSession mSession;
 	public ReportingRegisteredListener(EventHookSession session, RegisteredListener existing)
 	{
 		super(existing);

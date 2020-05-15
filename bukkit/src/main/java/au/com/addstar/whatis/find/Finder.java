@@ -1,9 +1,6 @@
 package au.com.addstar.whatis.find;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,7 +78,7 @@ public class Finder
 		
 		Pattern pattern = Pattern.compile(b.toString());
 		
-		ArrayList<PermissionObject> matches = new ArrayList<>();
+		List<PermissionObject> matches = new ArrayList<>();
 		for(Permission perm : Bukkit.getPluginManager().getPermissions())
 		{
 			Matcher m = pattern.matcher(perm.getName());
@@ -95,14 +92,12 @@ public class Finder
 		Collections.sort(matches);
 		return matches;
 	}
-	
+
 	public static List<CommandObject> findCommands(String name)
 	{
 		SimpleCommandMap map = (SimpleCommandMap)CommandFinder.getCommandMap();
-		
-		HashSet<Command> unique = new HashSet<>();
-		for(Command command : map.getCommands())
-			unique.add(command);
+
+		Iterable<Command> unique = new HashSet<>(map.getCommands());
 		
 		HashMultimap<String, Command> commands = HashMultimap.create();
 		for(Command command : unique)
@@ -139,7 +134,7 @@ public class Finder
 		
 		Pattern pattern = Pattern.compile(name);
 		
-		ArrayList<CommandObject> matches = new ArrayList<>();
+		List<CommandObject> matches = new ArrayList<>();
 		
 		for(String cmd : commands.keys())
 		{
@@ -185,7 +180,7 @@ public class Finder
 		
 		Pattern pattern = Pattern.compile(name);
 		
-		ArrayList<PluginObject> matches = new ArrayList<>();
+		List<PluginObject> matches = new ArrayList<>();
 		for(Plugin plugin : Bukkit.getPluginManager().getPlugins())
 		{
 			Matcher m = pattern.matcher(plugin.getName());
@@ -225,7 +220,7 @@ public class Finder
 		
 		Pattern pattern = Pattern.compile(name);
 		
-		ArrayList<EventObject> matches = new ArrayList<>();
+		List<EventObject> matches = new ArrayList<>();
 		for(Class<? extends Event> clazz : EventHelper.getEvents())
 		{
 			Matcher m = pattern.matcher(clazz.getSimpleName());

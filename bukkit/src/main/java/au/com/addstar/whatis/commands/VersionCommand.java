@@ -151,25 +151,13 @@ public class VersionCommand implements ICommand
 					// Pre 1.7.6
 				}
 			}
-			catch(NoSuchFieldException e)
+			catch(NoSuchFieldException | NoSuchMethodException | IllegalAccessException e)
 			{
 				// Should not happen
 				e.printStackTrace();
 				return -1;
 			}
-			catch ( IllegalAccessException e )
-			{
-				// Should not happen
-				e.printStackTrace();
-				return -1;
-			}
-			catch(NoSuchMethodException e)
-			{
-				// Should not happen
-				e.printStackTrace();
-				return -1;
-			}
-		}
+        }
 		
 		try
 		{

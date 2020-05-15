@@ -128,45 +128,36 @@ public class WhatCancelledCommand implements ICommand
 		try
 		{
 			final int fTicks = ticks;
-			QuickMonitor.checkForCancel(new Callback<CancelHook>()
-			{
-				@Override
-				public void onCompleted( CancelHook data )
+			QuickMonitor.checkForCancel(data -> {
+				Collection<CancelReport> reports = data.getReports();
+
+				if(reports.isEmpty())
+					sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "Nothing cancelled that action or nothing called a relevant event within " + fTicks + " ticks.");
+				else if(reports.size() == 1)
 				{
-					Collection<CancelReport> reports = data.getReports();
-					
-					if(reports.isEmpty())
-						sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "Nothing cancelled that action or nothing called a relevant event within " + fTicks + " ticks.");
-					else if(reports.size() == 1)
+					CancelReport report = reports.iterator().next();
+					sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "That action was cancelled by " + ChatColor.YELLOW + report.plugin.getName());
+					sender.sendMessage(ChatColor.YELLOW + "Event: " + ChatColor.GRAY + report.event.getSimpleName());
+					sender.sendMessage(ChatColor.YELLOW + "Handler: " + ChatColor.GRAY + report.handler);
+				}
+				else
+				{
+					sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "The event was called and cancelled " + reports.size() + " times within " + fTicks + " ticks:");
+					for(CancelReport report : reports)
 					{
-						CancelReport report = reports.iterator().next();
-						sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "That action was cancelled by " + ChatColor.YELLOW + report.plugin.getName());
+						sender.sendMessage(ChatColor.GOLD + DateFormat.getTimeInstance().format(report.time) + ChatColor.WHITE + " " + report.plugin.getName() + ":");
 						sender.sendMessage(ChatColor.YELLOW + "Event: " + ChatColor.GRAY + report.event.getSimpleName());
 						sender.sendMessage(ChatColor.YELLOW + "Handler: " + ChatColor.GRAY + report.handler);
-					}
-					else
-					{
-						sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "The event was called and cancelled " + reports.size() + " times within " + fTicks + " ticks:");
-						for(CancelReport report : reports)
-						{
-							sender.sendMessage(ChatColor.GOLD + DateFormat.getTimeInstance().format(report.time) + ChatColor.WHITE + " " + report.plugin.getName() + ":");
-							sender.sendMessage(ChatColor.YELLOW + "Event: " + ChatColor.GRAY + report.event.getSimpleName());
-							sender.sendMessage(ChatColor.YELLOW + "Handler: " + ChatColor.GRAY + report.handler);
-						}
 					}
 				}
 			}, DurationTarget.playerForTicksOrCancel(ticks, player), action.events);
 			sender.sendMessage(ChatColor.GREEN + "The action " + action.name() + " is now being monitored for " + ticks + " ticks");
 		}
-		catch(IllegalArgumentException e)
+		catch(IllegalArgumentException | IllegalStateException e)
 		{
 			sender.sendMessage(ChatColor.RED + e.getMessage());
 		}
-		catch(IllegalStateException e)
-		{
-			sender.sendMessage(ChatColor.RED + e.getMessage());
-		}
-		
+
 		return true;
 	}
 	
@@ -206,15 +197,15 @@ public class WhatCancelledCommand implements ICommand
 		FilterSet filters = null; 
 		if((args.length >= 2 && !hasTicks) || (args.length >= 3 && hasTicks))
 		{
-			String argString = "";
+			StringBuilder argString = new StringBuilder();
 			for(int i = (hasTicks ? 2 : 1); i < args.length; i++)
-				argString += args[i] + " ";
+				argString.append(args[i]).append(" ");
 			
-			argString = argString.trim();
+			argString = new StringBuilder(argString.toString().trim());
 		
 			try
 			{
-				filters = FilterCompiler.compile(eventClass, argString);
+				filters = FilterCompiler.compile(eventClass, argString.toString());
 			}
 			catch(IllegalArgumentException e)
 			{
@@ -226,43 +217,34 @@ public class WhatCancelledCommand implements ICommand
 		try
 		{
 			final int fTicks = ticks;
-			QuickMonitor.checkForCancel(new Callback<CancelHook>()
-			{
-				@Override
-				public void onCompleted( CancelHook data )
+			QuickMonitor.checkForCancel(data -> {
+				Collection<CancelReport> reports = data.getReports();
+
+				if(reports.isEmpty())
+					sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "Nothing cancelled that event or nothing called that event within " + fTicks + " ticks.");
+				else if(reports.size() == 1)
 				{
-					Collection<CancelReport> reports = data.getReports();
-					
-					if(reports.isEmpty())
-						sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "Nothing cancelled that event or nothing called that event within " + fTicks + " ticks.");
-					else if(reports.size() == 1)
+					CancelReport report = reports.iterator().next();
+					sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "The event was cancelled by " + ChatColor.YELLOW + report.plugin.getName());
+					sender.sendMessage(ChatColor.YELLOW + "Handler: " + ChatColor.GRAY + report.handler);
+				}
+				else
+				{
+					sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "The event was called and cancelled " + reports.size() + " times within " + fTicks + " ticks:");
+					for(CancelReport report : reports)
 					{
-						CancelReport report = reports.iterator().next();
-						sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "The event was cancelled by " + ChatColor.YELLOW + report.plugin.getName());
+						sender.sendMessage(ChatColor.GOLD + DateFormat.getTimeInstance().format(report.time) + ChatColor.WHITE + " " + report.plugin.getName() + ":");
 						sender.sendMessage(ChatColor.YELLOW + "Handler: " + ChatColor.GRAY + report.handler);
-					}
-					else
-					{
-						sender.sendMessage(ChatColor.GOLD + "[WhatIs] " + ChatColor.WHITE + "The event was called and cancelled " + reports.size() + " times within " + fTicks + " ticks:");
-						for(CancelReport report : reports)
-						{
-							sender.sendMessage(ChatColor.GOLD + DateFormat.getTimeInstance().format(report.time) + ChatColor.WHITE + " " + report.plugin.getName() + ":");
-							sender.sendMessage(ChatColor.YELLOW + "Handler: " + ChatColor.GRAY + report.handler);
-						}
 					}
 				}
 			}, DurationTarget.forTicksOrCancel(ticks), filters, eventClass);
 			sender.sendMessage(ChatColor.GREEN + eventClass.getSimpleName() + " is now being monitored for " + ticks + " ticks");
 		}
-		catch(IllegalArgumentException e)
+		catch(IllegalArgumentException | IllegalStateException e)
 		{
 			sender.sendMessage(ChatColor.RED + e.getMessage());
 		}
-		catch(IllegalStateException e)
-		{
-			sender.sendMessage(ChatColor.RED + e.getMessage());
-		}
-		
+
 		return true;
 	}
 	
@@ -285,7 +267,7 @@ public class WhatCancelledCommand implements ICommand
 	{
 		if(args.length == 1)
 		{
-			ArrayList<String> matching = new ArrayList<String>();
+			List<String> matching = new ArrayList<>();
 			if("action".startsWith(args[0].toLowerCase()))
 				matching.add("action");
 			if("event".startsWith(args[0].toLowerCase()))
@@ -294,7 +276,7 @@ public class WhatCancelledCommand implements ICommand
 		}
 		else if(args.length == 2 && args[0].equalsIgnoreCase("event"))
 		{
-			ArrayList<String> matching = new ArrayList<String>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[1].toLowerCase();
 			for(String name : EventHelper.getEventNames())
 			{
@@ -306,7 +288,7 @@ public class WhatCancelledCommand implements ICommand
 		}
 		else if(args.length == 2 && args[0].equalsIgnoreCase("action"))
 		{
-			ArrayList<String> matching = new ArrayList<String>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[1].toLowerCase();
 			for(EventGroups group : EventGroups.values())
 			{

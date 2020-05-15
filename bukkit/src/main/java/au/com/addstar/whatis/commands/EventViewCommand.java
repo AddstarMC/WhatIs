@@ -1,10 +1,6 @@
 package au.com.addstar.whatis.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -90,7 +86,7 @@ public class EventViewCommand implements ICommand
 			}
 		}
 		
-		String raw = "";
+		StringBuilder raw = new StringBuilder();
 		
 		if(args[0].equalsIgnoreCase("count"))
 		{
@@ -104,15 +100,9 @@ public class EventViewCommand implements ICommand
 			
 			HandlerList handlers = EventHelper.getHandlers(eventClass.asSubclass(Event.class));
 			
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandler count for &c%s&e: &f%d", eventClass.getSimpleName(), handlers.getRegisteredListeners().length)));
-			TreeMap<Plugin, Integer> count = new TreeMap<Plugin, Integer>(new Comparator<Plugin>()
-			{
-				@Override
-				public int compare( Plugin o1, Plugin o2 )
-				{
-					return o1.getName().compareToIgnoreCase(o2.getName());
-				}
-			});
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandler count for &c%s&e: &f%d",
+				eventClass.getSimpleName(), handlers.getRegisteredListeners().length)));
+			TreeMap<Plugin, Integer> count = new TreeMap<>((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 			
 			for(RegisteredListener listener : handlers.getRegisteredListeners())
 			{
@@ -125,17 +115,17 @@ public class EventViewCommand implements ICommand
 				count.put(listener.getPlugin(), num);
 			}
 			
-			ArrayList<String> lines = new ArrayList<String>();
+			Collection<String> lines = new ArrayList<>();
 			
 			for(Entry<Plugin, Integer> entry : count.entrySet())
 				lines.add(ChatColor.translateAlternateColorCodes('&', String.format("&7- &6%s&f %d", entry.getKey().getName(), entry.getValue())));
 			
 			for(String line : lines)
 			{
-				if(!raw.isEmpty())
-					raw += "\n";
+				if(raw.length() > 0)
+					raw.append("\n");
 				
-				raw += line;
+				raw.append(line);
 			}
 		}
 		else if(args[0].equalsIgnoreCase("handlers"))
@@ -152,16 +142,16 @@ public class EventViewCommand implements ICommand
 			
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandlers for &c%s&e: &f%d", eventClass.getSimpleName(), handlers.getRegisteredListeners().length)));
 			
-			ArrayList<String> lines = new ArrayList<String>();
+			Collection<String> lines = new ArrayList<>();
 			for(RegisteredListener listener : handlers.getRegisteredListeners())
 				lines.add(ChatColor.GRAY + "- " + ChatColor.GOLD + listener.getPlugin().getName() + ChatColor.GRAY + " " + listener.getPriority() + (listener.isIgnoringCancelled() ? " IgnoreCancel" : ""));
 			
 			for(String line : lines)
 			{
-				if(!raw.isEmpty())
-					raw += "\n";
+				if(raw.length() > 0)
+					raw.append("\n");
 				
-				raw += line;
+				raw.append(line);
 			}
 		}
 		else if(args[0].equalsIgnoreCase("plugin"))
@@ -175,7 +165,7 @@ public class EventViewCommand implements ICommand
 			}
 			
 			List<EventCallback> callbacks = EventHelper.getEventCallbacks(plugin);
-			ArrayList<String> lines = new ArrayList<String>();
+			List<String> lines = new ArrayList<>();
 			
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&eHandlers for plugin &c%s&e: &f%d", plugin.getName(), callbacks.size())));
 			
@@ -186,16 +176,16 @@ public class EventViewCommand implements ICommand
 			
 			for(String line : lines)
 			{
-				if(!raw.isEmpty())
-					raw += "\n";
+				if(raw.length() > 0)
+					raw.append("\n");
 				
-				raw += line;
+				raw.append(line);
 			}
 		}
 		else
 			return false;
 		
-		ChatPage p = ChatPaginator.paginate(raw, page);
+		ChatPage p = ChatPaginator.paginate(raw.toString(), page);
 		if(p.getPageNumber() < p.getTotalPages())
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Page &e%d&7 of &e%d &7(use &e/whatis %s %s %s %d&7 to get the next page)", p.getPageNumber(), p.getTotalPages(), label, args[0], args[1], p.getPageNumber() + 1)));
 		else
@@ -210,7 +200,7 @@ public class EventViewCommand implements ICommand
 	{
 		if(args.length == 1)
 		{
-			ArrayList<String> matching = new ArrayList<String>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[0].toLowerCase();
 
 			if("plugin".startsWith(toMatch))
@@ -224,7 +214,7 @@ public class EventViewCommand implements ICommand
 		}
 		else if(args.length == 2)
 		{
-			ArrayList<String> matching = new ArrayList<String>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[1].toLowerCase();
 			for(String name : EventHelper.getEventNames())
 			{

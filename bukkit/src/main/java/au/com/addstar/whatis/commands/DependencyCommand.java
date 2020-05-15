@@ -1,6 +1,7 @@
 package au.com.addstar.whatis.commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -85,42 +86,42 @@ public class DependencyCommand implements ICommand
 			
 			sender.sendMessage(ChatColor.YELLOW + "Dependencies for " + plugin.getName() + ":");
 			
-			String depString = "";
+			StringBuilder depString = new StringBuilder();
 			for(String depend : safeList(plugin.getDescription().getDepend()))
 			{
-				if(!depString.isEmpty())
-					depString += ", ";
-				depString += depend;
+				if(depString.length() > 0)
+					depString.append(", ");
+				depString.append(depend);
 			}
 			
-			if(depString.isEmpty())
-				depString = "*None*";
+			if(depString.length() == 0)
+				depString = new StringBuilder("*None*");
 			
 			sender.sendMessage(ChatColor.GOLD + "Required: " + ChatColor.WHITE + depString);
 			
-			depString = "";
+			depString = new StringBuilder();
 			for(String depend : safeList(plugin.getDescription().getSoftDepend()))
 			{
-				if(!depString.isEmpty())
-					depString += ", ";
-				depString += depend;
+				if(depString.length() > 0)
+					depString.append(", ");
+				depString.append(depend);
 			}
 			
-			if(depString.isEmpty())
-				depString = "*None*";
+			if(depString.length() == 0)
+				depString = new StringBuilder("*None*");
 			
 			sender.sendMessage(ChatColor.GOLD + "Optional: " + ChatColor.WHITE + depString);
 			
-			depString = "";
+			depString = new StringBuilder();
 			for(String depend : safeList(plugin.getDescription().getLoadBefore()))
 			{
-				if(!depString.isEmpty())
-					depString += ", ";
-				depString += depend;
+				if(depString.length() > 0)
+					depString.append(", ");
+				depString.append(depend);
 			}
 			
-			if(depString.isEmpty())
-				depString = "*None*";
+			if(depString.length() == 0)
+				depString = new StringBuilder("*None*");
 			
 			sender.sendMessage(ChatColor.GOLD + "Loading Before: " + ChatColor.WHITE + depString);
 		}
@@ -130,9 +131,9 @@ public class DependencyCommand implements ICommand
 			
 			sender.sendMessage(ChatColor.YELLOW + "Plugins dependent on " + plugin.getName() + ":");
 			
-			ArrayList<String> requiredBy = new ArrayList<String>();
-			ArrayList<String> optionalBy = new ArrayList<String>();
-			ArrayList<String> loadBefore = new ArrayList<String>();
+			Collection<String> requiredBy = new ArrayList<>();
+			Collection<String> optionalBy = new ArrayList<>();
+			Collection<String> loadBefore = new ArrayList<>();
 			
 			for(Plugin other : Bukkit.getPluginManager().getPlugins())
 			{
@@ -164,42 +165,42 @@ public class DependencyCommand implements ICommand
 				}
 			}
 			
-			String depString = "";
+			StringBuilder depString = new StringBuilder();
 			for(String depend : requiredBy)
 			{
-				if(!depString.isEmpty())
-					depString += ", ";
-				depString += depend;
+				if(depString.length() > 0)
+					depString.append(", ");
+				depString.append(depend);
 			}
 			
-			if(depString.isEmpty())
-				depString = "*None*";
+			if(depString.length() == 0)
+				depString = new StringBuilder("*None*");
 			
 			sender.sendMessage(ChatColor.GOLD + "Required By: " + ChatColor.WHITE + depString);
 			
-			depString = "";
+			depString = new StringBuilder();
 			for(String depend : optionalBy)
 			{
-				if(!depString.isEmpty())
-					depString += ", ";
-				depString += depend;
+				if(depString.length() > 0)
+					depString.append(", ");
+				depString.append(depend);
 			}
 			
-			if(depString.isEmpty())
-				depString = "*None*";
+			if(depString.length() == 0)
+				depString = new StringBuilder("*None*");
 			
 			sender.sendMessage(ChatColor.GOLD + "Used By: " + ChatColor.WHITE + depString);
 			
-			depString = "";
+			depString = new StringBuilder();
 			for(String depend : loadBefore)
 			{
-				if(!depString.isEmpty())
-					depString += ", ";
-				depString += depend;
+				if(depString.length() > 0)
+					depString.append(", ");
+				depString.append(depend);
 			}
 			
-			if(depString.isEmpty())
-				depString = "*None*";
+			if(depString.length() == 0)
+				depString = new StringBuilder("*None*");
 			
 			sender.sendMessage(ChatColor.GOLD + "Loading After: " + ChatColor.WHITE + depString);
 		}
@@ -212,7 +213,7 @@ public class DependencyCommand implements ICommand
 	{
 		if(args.length == 2)
 		{
-			ArrayList<String> matching = new ArrayList<String>();
+			List<String> matching = new ArrayList<>();
 			String toMatch = args[1].toLowerCase();
 			for(Plugin plugin : Bukkit.getPluginManager().getPlugins())
 			{

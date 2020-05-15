@@ -6,8 +6,8 @@ import org.bukkit.plugin.RegisteredListener;
 
 public class FilterSet
 {
-	private List<CompiledFilter> mFilters;
-	private List<CompiledFilter> mHandlerFilters;
+	private final List<CompiledFilter> mFilters;
+	private final List<CompiledFilter> mHandlerFilters;
 	
 	public FilterSet(List<CompiledFilter> filters, List<CompiledFilter> handlerFilters)
 	{

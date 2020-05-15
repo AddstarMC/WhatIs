@@ -11,8 +11,8 @@ import au.com.addstar.whatis.util.Graph;
 
 public class TPSCommand implements ICommand
 {
-	private Graph mTickGraph = new Graph();
-	private Graph mTPSGraph = new Graph();
+	private final Graph mTickGraph = new Graph();
+	private final Graph mTPSGraph = new Graph();
 	
 	public TPSCommand()
 	{

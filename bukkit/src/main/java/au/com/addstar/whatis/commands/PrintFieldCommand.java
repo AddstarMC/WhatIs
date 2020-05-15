@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,7 +18,6 @@ import org.bukkit.plugin.Plugin;
 
 import au.com.addstar.whatis.util.ReflectionUtil;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class PrintFieldCommand implements ICommand
@@ -63,11 +64,11 @@ public class PrintFieldCommand implements ICommand
 		return false;
 	}
 	
-	private Pattern mPathPattern = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)$");
-	private Pattern mPathPatternPartial = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)(\\.)?$");
-	private Pattern mPathSectionPattern = Pattern.compile("(?:\\.([a-zA-Z_][a-zA-Z_0-9]*)(?:\\[([^\\[\\]]+)\\])?)");
+	private final Pattern mPathPattern = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)$");
+	private final Pattern mPathPatternPartial = Pattern.compile("^([a-zA-Z_ 0-9]+)((?:\\.[a-zA-Z_][a-zA-Z_0-9]*(?:\\[[^\\[\\]]+\\])?)*)(\\.)?$");
+	private final Pattern mPathSectionPattern = Pattern.compile("(?:\\.([a-zA-Z_][a-zA-Z_0-9]*)(?:\\[([^\\[\\]]+)\\])?)");
 	
-	private Object resolve(String fullPath) throws IllegalArgumentException, IllegalStateException
+	private Object resolve(CharSequence fullPath) throws IllegalArgumentException, IllegalStateException
 	{
 		Matcher matcher = mPathPattern.matcher(fullPath);
 		
@@ -149,7 +150,7 @@ public class PrintFieldCommand implements ICommand
 			catch ( Exception e )
 			{
 				e.printStackTrace();
-				throw new IllegalArgumentException("An internal error occured while looking up the field");
+				throw new IllegalArgumentException("An internal error occurred while looking up the field");
 			}
 		}
 		
@@ -190,14 +191,7 @@ public class PrintFieldCommand implements ICommand
 				pathBuilder.append('.');
 				
 				final String path = pathBuilder.toString();
-				return Lists.transform(matchField(pathMatcher.group(1), object.getClass()), new Function<String, String>()
-				{
-					@Override
-					public String apply( String fieldName )
-					{
-						return path + fieldName;
-					}
-				});
+				return matchField(pathMatcher.group(1), object.getClass()).stream().map(fieldName -> path + fieldName).collect(Collectors.toList());
 			}
 			
 			pathBuilder.append(pathMatcher.group(0));
@@ -244,16 +238,7 @@ public class PrintFieldCommand implements ICommand
 						}
 					}
 				}
-			}
-			catch(NumberFormatException e)
-			{
-				return null;
-			}
-			catch( NoSuchFieldException e )
-			{
-				return null;
-			}
-			catch ( Exception e )
+			} catch( Exception e )
 			{
 				return null;
 			}
@@ -262,14 +247,10 @@ public class PrintFieldCommand implements ICommand
 		pathBuilder.append('.');
 		
 		final String path = pathBuilder.toString();
-		return Lists.transform(matchField("", object.getClass()), new Function<String, String>()
-		{
-			@Override
-			public String apply( String fieldName )
-			{
-				return path + fieldName;
-			}
-		});
+		if (object == null) {
+			return null;
+		}
+		return matchField("", object.getClass()).stream().map(fieldName -> path + fieldName).collect(Collectors.toList());
 	}
 
 	@Override

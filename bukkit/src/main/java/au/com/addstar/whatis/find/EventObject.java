@@ -5,7 +5,7 @@ import org.bukkit.plugin.Plugin;
 
 public class EventObject implements IObject
 {
-	private Class<? extends Event> mClass;
+	private final Class<? extends Event> mClass;
 	
 	public EventObject(Class<? extends Event> clazz)
 	{

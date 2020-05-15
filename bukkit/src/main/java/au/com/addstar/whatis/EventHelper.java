@@ -3,11 +3,9 @@ package au.com.addstar.whatis;
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.attribute.Attributable;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,7 +21,7 @@ import java.util.*;
 
 public class EventHelper
 {
-	public static int maxDepth = 2;
+	public static final int maxDepth = 2;
 	public static HandlerList getHandlers(Class<? extends Event> clazz)
 	{
 		try
@@ -60,7 +58,7 @@ public class EventHelper
 	
 	public static List<EventCallback> getEventCallbacks(Listener listener)
 	{
-		ArrayList<EventCallback> callbacks = new ArrayList<EventCallback>();
+		List<EventCallback> callbacks = new ArrayList<>();
 		
 		Method[] methods = listener.getClass().getDeclaredMethods();
 		
@@ -76,16 +74,16 @@ public class EventHelper
 
             Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
             
-            String args = "";
+            StringBuilder args = new StringBuilder();
             for(Class<?> clazz : method.getParameterTypes())
             {
-            	if(!args.isEmpty())
-            		args += ", ";
+            	if(args.length() > 0)
+            		args.append(", ");
             	
-            	args += clazz.getSimpleName();
+            	args.append(clazz.getSimpleName());
             }
             
-            callbacks.add(new EventCallback(eventClass, handler.priority(), handler.ignoreCancelled(), String.format("%s.%s(%s)", listener.getClass().getName(), method.getName(), args)));
+            callbacks.add(new EventCallback(eventClass, handler.priority(), handler.ignoreCancelled(), String.format("%s.%s(%s)", listener.getClass().getName(), method.getName(), args.toString())));
 		}
 		
 		return callbacks;
@@ -93,9 +91,9 @@ public class EventHelper
 	
 	public static List<EventCallback> getEventCallbacks(Plugin plugin)
 	{
-		ArrayList<EventCallback> callbacks = new ArrayList<EventHelper.EventCallback>();
+		List<EventCallback> callbacks = new ArrayList<>();
 		List<RegisteredListener> all = HandlerList.getRegisteredListeners(plugin);
-		HashSet<Listener> unique = new HashSet<Listener>();
+		Collection<Listener> unique = new HashSet<>();
 		
 		for(RegisteredListener listener : all)
 		{
@@ -119,9 +117,9 @@ public class EventHelper
 	
 	public static void buildEventMap()
 	{
-		eventMap = new HashMap<String, Class<? extends Event>>();
-		HashSet<Class<? extends Event>> unique = new HashSet<Class<? extends Event>>();
-		HashSet<Listener> listeners = new HashSet<Listener>();
+		eventMap = new HashMap<>();
+		Collection<Class<? extends Event>> unique = new HashSet<>();
+		Collection<Listener> listeners = new HashSet<>();
 		
 		for(HandlerList list : HandlerList.getHandlerLists())
 		{
@@ -131,7 +129,7 @@ public class EventHelper
 				{
 					listeners.add(listener.getListener());
 				}
-				catch(NullPointerException e) {}
+				catch(NullPointerException ignore) {}
 			}
 		}
 		
@@ -180,7 +178,7 @@ public class EventHelper
 	
 	private static Map<String, Object> dumpEntity(Entity ent)
 	{
-		HashMap<String, Object> subMap = new HashMap<String, Object>();
+		Map<String, Object> subMap = new HashMap<>();
 		subMap.put("location", dumpClass(ent.getLocation(), 0));
 		subMap.put("velocity", ent.getVelocity());
 		subMap.put("ticks", ent.getTicksLived());
@@ -197,7 +195,7 @@ public class EventHelper
 		
 		if(ent instanceof Damageable)
 		{
-			subMap.put("maxHealth", ((Damageable)ent).getMaxHealth());
+			subMap.put("maxHealth", ((Attributable)ent).getAttribute(Attribute.GENERIC_MAX_HEALTH));
 			subMap.put("health", ((Damageable)ent).getHealth());
 		}
 		
@@ -208,7 +206,7 @@ public class EventHelper
 		
 		if(ent instanceof HumanEntity)
 		{
-			HumanEntity human = (HumanEntity)ent;
+			AnimalTamer human = (HumanEntity)ent;
 			subMap.put("name", human.getName());
 		}
 		
@@ -272,7 +270,7 @@ public class EventHelper
 		if(depth > maxDepth)
 			return Collections.emptyMap();
 		
-		HashMap<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		
 		Class<?> clazz = object.getClass();
 		
@@ -296,10 +294,10 @@ public class EventHelper
 			ignoreCancelled = ignore;
 			this.signature = signature;
 		}
-		public Class<? extends Event> eventClass;
-		public EventPriority priority;
-		public boolean ignoreCancelled;
-		public String signature;
+		public final Class<? extends Event> eventClass;
+		public final EventPriority priority;
+		public final boolean ignoreCancelled;
+		public final String signature;
 		
 		@Override
 		public String toString()

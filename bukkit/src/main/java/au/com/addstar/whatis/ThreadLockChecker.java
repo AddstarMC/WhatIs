@@ -23,12 +23,12 @@ public class ThreadLockChecker extends Thread
 	
 	private final long mTimeoutTime = 10000;
 	
-	private Thread mServerThread;
-	private Logger mLogger = Bukkit.getLogger();
+	private final Thread mServerThread;
+	private final Logger mLogger = Bukkit.getLogger();
 	
 	private boolean mStop;
 	
-	private ThreadMXBean mManager;
+	private final ThreadMXBean mManager;
 	private StackTraceElement[] mLastTrace;
 	private LockInfo mLastLockInfo;
 	private int mStuckCount;
@@ -209,7 +209,7 @@ public class ThreadLockChecker extends Thread
 			it.remove();
 		}
 		
-		return loopTrace.toArray(new StackTraceElement[loopTrace.size()]);
+		return loopTrace.toArray(new StackTraceElement[0]);
 	}
 	
 	private void printStackTrace(StackTraceElement[] stackTrace)

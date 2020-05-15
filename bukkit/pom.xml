@@ -4,14 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>Whatis-bukkit</artifactId>
-    <name>WhatIs</name>
+    <name>Whatis-bukkit</name>
     <parent>
         <groupId>au.com.addstar</groupId>
         <artifactId>WhatIs-Parent</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <properties>
-        <spigot.version>1.12.2-R0.1-SNAPSHOT</spigot.version>
+        <spigot.api.version>1.13</spigot.api.version>
+        <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
     </properties>
     <repositories>
             <repository>
@@ -24,24 +25,19 @@
             <id>addstar-repo</id>
             <url>http://maven.addstar.com.au/artifactory/ext-release-local</url>
         </repository>
-
         <!-- Other repositories -->
         <repository>
             <id>maven-central</id>
             <url>http://repo1.maven.org/maven2/</url>
         </repository>
-
         <repository>
             <id>sk89q-mvn2</id>
             <url>http://maven.sk89q.com/repo</url>
         </repository>
-
         <repository>
             <id>citizens</id>
             <url>http://repo.citizensnpcs.co/</url>
         </repository>
-
-
     </repositories>
     <dependencies>
         <dependency>
@@ -49,9 +45,27 @@
             <artifactId>bukkit</artifactId>
             <version>${spigot.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.kitteh</groupId>
+            <artifactId>paste-gg-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>au.com.addstar</groupId>
+            <artifactId>Whatis-common</artifactId>
+            <version>1.2.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
     <build>
+        <finalName>whatis-${pom.version}</finalName>
         <resources>
             <resource>
                 <targetPath>.</targetPath>
@@ -68,21 +82,28 @@
             </resource>
         </resources>
         <sourceDirectory>src/main/java</sourceDirectory>
-        <finalName>${project.name}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.8.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>1.4</version>
+                <version>3.2.3</version>
+                <configuration>
+                   <!-- <relocations>
+                        <relocation>
+                            <pattern>org.kitteh</pattern>
+                            <shadedPattern>au.com.addstar.whatis.libs</shadedPattern>
+                        </relocation>
+                    </relocations>-->
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>

@@ -17,12 +17,12 @@ import java.util.Map.Entry;
 
 public class EventReport
 {
-	private Class<? extends Event> mEventClass;
+	private final Class<? extends Event> mEventClass;
 	private EventStep mInitial;
-	private ArrayList<EventStep> mSteps = new ArrayList<EventStep>();
+	private final ArrayList<EventStep> mSteps = new ArrayList<>();
 	private boolean mAllow;
 	private long mTimestamp;
-	private FilterSet mFilter;
+	private final FilterSet mFilter;
 	
 	public EventReport(Class<? extends Event> eventClass, FilterSet filter)
 	{
@@ -107,16 +107,16 @@ public class EventReport
 		
 		for(EventStep step : mSteps)
 		{
-			String location = "";
+			StringBuilder location = new StringBuilder();
 			for(EventCallback callback : EventHelper.resolveListener(mEventClass, step.getListener()))
 			{
-				if(!location.isEmpty())
-					location += "\n OR \n";
-				location += String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), callback.priority, callback.ignoreCancelled ? " Ignores Cancel" : "", callback.signature);
+				if(location.length() > 0)
+					location.append("\n OR \n");
+				location.append(String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), callback.priority, callback.ignoreCancelled ? " Ignores Cancel" : "", callback.signature));
 			}
 			
-			if(location.isEmpty())
-				location = String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), step.getListener().getPriority(), step.getListener().isIgnoringCancelled() ? " Ignores Cancel" : "", step.getListener().getListener().getClass().getName() + ".???");
+			if(location.length() == 0)
+				location = new StringBuilder(String.format("[%s %s%s] %s", step.getListener().getPlugin().getName(), step.getListener().getPriority(), step.getListener().isIgnoringCancelled() ? " Ignores Cancel" : "", step.getListener().getListener().getClass().getName() + ".???"));
 			
 			writer.println(location);
 			if(step.isCancelled())
@@ -126,7 +126,7 @@ public class EventReport
 			
 			if(step.getData() != null)
 			{
-				ArrayList<Entry<String, Object>> changes = new ArrayList<Map.Entry<String,Object>>();
+				List<Entry<String, Object>> changes = new ArrayList<>();
 				getChanges(step.getData(), lastState, changes);
 				
 				if(!changes.isEmpty())
@@ -162,15 +162,15 @@ public class EventReport
 			if(newVal instanceof Map && oldVal instanceof Map)
 				getChanges((Map<String,Object>)newVal, (Map<String,Object>)oldVal, changes);
 			else if((newVal == null && oldVal != null) || (newVal != null && !newVal.equals(oldVal)))
-				changes.add(new AbstractMap.SimpleEntry<String, Object>(key, newVal));
+				changes.add(new AbstractMap.SimpleEntry<>(key, newVal));
 		}
 	}
 	
 	public static class EventStep
 	{
-		private RegisteredListener mListener;
-		private Map<String, Object> mData;
-		private boolean mIsCancelled;
+		private final RegisteredListener mListener;
+		private final Map<String, Object> mData;
+		private final boolean mIsCancelled;
 		
 		public EventStep(RegisteredListener listener, Map<String, Object> data, boolean cancelled)
 		{

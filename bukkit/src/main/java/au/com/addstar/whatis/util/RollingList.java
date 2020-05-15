@@ -1,12 +1,14 @@
 package au.com.addstar.whatis.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 
 public class RollingList<T> implements Iterable<T>
 {
-	private T[] mData;
+	private final T[] mData;
 	private int mStart;
 	private int mCount;
 	
@@ -34,7 +36,7 @@ public class RollingList<T> implements Iterable<T>
 	}
 
 	@Override
-	public Iterator<T> iterator()
+	public @NotNull Iterator<T> iterator()
 	{
 		return new Iterator<T>()
 		{
@@ -73,7 +75,7 @@ public class RollingList<T> implements Iterable<T>
 		return true;
 	}
 
-	public boolean addAll( Collection<? extends T> c )
+	public boolean addAll(Iterable<? extends T> c )
 	{
 		for(T value : c)
 			add(value);
@@ -93,8 +95,7 @@ public class RollingList<T> implements Iterable<T>
 			
 		if(mCount < mData.length || mStart == 0)
 		{
-			for(int i = 0; i < mCount; ++i)
-				copy[i] = mData[i];
+			if (mCount >= 0) System.arraycopy(mData, 0, copy, 0, mCount);
 		}
 		else
 		{

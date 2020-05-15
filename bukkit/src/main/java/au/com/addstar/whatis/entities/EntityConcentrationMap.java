@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.BoundingBox;
 
 import java.util.*;
 
@@ -18,7 +19,7 @@ public class EntityConcentrationMap
 	private final HashMultimap<ChunkCoord, EntityGroup> mChunkGroups;
 	private final Plugin mPlugin;
 	
-	private HashMap<World, List<Entity>> mBuildBuffer;
+	private final HashMap<World, List<Entity>> mBuildBuffer;
 	private boolean mIsBuilding;
 	private Callback<EntityConcentrationMap> mCallback;
 	
@@ -26,9 +27,9 @@ public class EntityConcentrationMap
 	
 	public EntityConcentrationMap(Plugin plugin)
 	{
-		mAllGroups = new HashSet<EntityGroup>();
+		mAllGroups = new HashSet<>();
 		mChunkGroups = HashMultimap.create();
-		mBuildBuffer = new HashMap<World, List<Entity>>();
+		mBuildBuffer = new HashMap<>();
 		
 		mPlugin = plugin;
 		mIsBuilding = false;
@@ -47,7 +48,7 @@ public class EntityConcentrationMap
 			if(groups != null && !groups.isEmpty())
 			{
 				if(allGroups == null)
-					allGroups = new HashSet<EntityGroup>(groups);
+					allGroups = new HashSet<>(groups);
 				else
 					allGroups.addAll(groups);
 			}
@@ -65,7 +66,6 @@ public class EntityConcentrationMap
 		double radius = group.getRadius();
 		int minX = ((int)(group.getLocation().getBlockX() - radius) >> 4);
 		int minZ = ((int)(group.getLocation().getBlockZ() - radius) >> 4);
-		
 		int maxX = ((int)(group.getLocation().getBlockX() + radius) >> 4);
 		int maxZ = ((int)(group.getLocation().getBlockZ() + radius) >> 4);
 		
@@ -102,7 +102,6 @@ public class EntityConcentrationMap
 		double radius = group.getRadius();
 		int minX = ((int)(group.getLocation().getBlockX() - radius) >> 4);
 		int minZ = ((int)(group.getLocation().getBlockZ() - radius) >> 4);
-		
 		int maxX = ((int)(group.getLocation().getBlockX() + radius) >> 4);
 		int maxZ = ((int)(group.getLocation().getBlockZ() + radius) >> 4);
 		
@@ -143,7 +142,7 @@ public class EntityConcentrationMap
 	}
 	
 	// WARNING: BuildThread only
-	private void recordEntity(Entity entity, Location location, ChunkCoord chunk, Collection<EntityGroup> possibles)
+	private void recordEntity(Entity entity, Location location, ChunkCoord chunk, Iterable<EntityGroup> possibles)
 	{
 		EntityGroup group = null;
 		
@@ -203,7 +202,7 @@ public class EntityConcentrationMap
 	// WARNING: BuildThread only
 	private void orderGroups()
 	{
-		mOrdered = new ArrayList<EntityGroup>(mAllGroups.size());
+		mOrdered = new ArrayList<>(mAllGroups.size());
 		
 		for(EntityGroup group : mAllGroups)
 		{
@@ -291,14 +290,7 @@ public class EntityConcentrationMap
 			mChunkGroups.clear();
 			mAllGroups.clear();
 			
-			Bukkit.getScheduler().runTask(mPlugin, new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					onBuildComplete();
-				}
-			});
+			Bukkit.getScheduler().runTask(mPlugin, EntityConcentrationMap.this::onBuildComplete);
 		}
 	}
 }

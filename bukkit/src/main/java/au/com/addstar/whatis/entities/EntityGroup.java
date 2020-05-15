@@ -4,19 +4,17 @@ import au.com.addstar.whatis.util.ChunkUtil;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class EntityGroup implements Comparable<EntityGroup>
 {
-	public static double defaultRadius = 8;
+	public static final double defaultRadius = 8;
 	private static int mNextId = 0;
 	
-	private int mId;
+	private final int mId;
 	
 	private int mCount;
 	private int[] mTypeCounts;
@@ -27,19 +25,18 @@ public class EntityGroup implements Comparable<EntityGroup>
 	
 	private ArrayList<Entity> mEntities;
 	
-	private HashSet<String> mChunkCauses;
+	private final HashSet<String> mChunkCauses;
 	
 	public EntityGroup(Location location)
 	{
 		mId = mNextId++;
-		
 		mLocation = location;
 		mRadius = defaultRadius * defaultRadius;
 		mTypeCounts = new int[EntityCategory.values().length];
-		mEntities = new ArrayList<Entity>();
-		mChunkCauses = new HashSet<String>();
+		mEntities = new ArrayList<>();
+		mChunkCauses = new HashSet<>();
 	}
-	
+
 	public void addEntity(Entity entity)
 	{
 		++mTypeCounts[EntityCategory.from(entity.getType()).ordinal()];
@@ -143,7 +140,7 @@ public class EntityGroup implements Comparable<EntityGroup>
 		double mean = 0;
 		Location temp = new Location(null, 0, 0, 0);
 		
-		ArrayList<Double> dists = new ArrayList<Double>(mEntities.size());
+		Collection<Double> dists = new ArrayList<>(mEntities.size());
 		
 		for(Entity ent : mEntities)
 		{
@@ -314,7 +311,7 @@ public class EntityGroup implements Comparable<EntityGroup>
 	@Override
 	public int compareTo( EntityGroup o )
 	{
-		return Integer.valueOf(mCount).compareTo(o.mCount) * -1; // Higher first
+		return Integer.compare(mCount, o.mCount) * -1; // Higher first
 	}
 	
 	@Override
