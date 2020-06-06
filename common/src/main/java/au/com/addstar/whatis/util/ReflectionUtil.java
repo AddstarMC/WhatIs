@@ -167,7 +167,9 @@ public class ReflectionUtil {
             Field f = ClassLoader.class.getDeclaredField("classes");
             f.setAccessible(true);
             Vector<Class> classes = (Vector<Class>) f.get(loader);
-            for (Class c : classes
+            Class[] classes1 = new Class[classes.size()]; //make a clone avoid a cme
+            classes.copyInto(classes1);
+            for (Class c : classes1
             ) {
                 if (clazz.isAssignableFrom(c)) {
                     if (Modifier.isAbstract(c.getModifiers()) && !includeAbstract) {
