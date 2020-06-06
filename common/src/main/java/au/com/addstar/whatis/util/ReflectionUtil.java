@@ -18,6 +18,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressWarnings({"rawtypes", "unchecked", "ResultOfMethodCallIgnored"})
 public class ReflectionUtil {
     private static Logger logger = Logger.getAnonymousLogger();
 
@@ -118,7 +119,7 @@ public class ReflectionUtil {
         }
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "SameParameterValue"})
     private static void substituteMethodDefs(Class clazz, int recursions) {
         try {
             clazz.getDeclaredMethods();
@@ -132,6 +133,7 @@ public class ReflectionUtil {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static void substituteConstructorDefs(Class clazz, int recursions) {
         try {
             clazz.getDeclaredConstructors();
