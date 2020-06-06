@@ -3,12 +3,14 @@ package au.com.addstar.whatis;
 import au.com.addstar.whatis.commands.*;
 import au.com.addstar.whatis.util.CommandFinder;
 import au.com.addstar.whatis.util.ReflectionUtil;
+import javafx.event.EventHandler;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -52,7 +54,7 @@ public class WhatIs extends JavaPlugin
 		getCommand("whatis").setExecutor(whatIs);
 		getCommand("whatis").setTabCompleter(whatIs);
 		
-		Bukkit.getScheduler().runTaskLaterAsynchronously(this, EventHelper::buildEventMap,10);
+		Bukkit.getScheduler().runTaskLaterAsynchronously(this, (@NotNull Runnable) EventHelper::buildEventMap, 30);
 		
 		mTickMonitor = new TickMonitor(120);
 		Bukkit.getScheduler().runTaskTimer(this, mTickMonitor, 1, 1);

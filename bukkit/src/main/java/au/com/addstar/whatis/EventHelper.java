@@ -1,5 +1,7 @@
 package au.com.addstar.whatis;
 
+import au.com.addstar.whatis.util.ReflectionUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -114,10 +116,20 @@ public class EventHelper
 	}
 	
 	private static HashMap<String, Class<? extends Event>> eventMap;
-	
-	public static void buildEventMap()
+
+
+	public static void buildEventMap(){
+		buildEventMap(false);
+	}
+
+	public static void buildEventMap(boolean alternative)
 	{
 		eventMap = new HashMap<>();
+		if(alternative){
+			 Map<String,Class<? extends Event>> result = ReflectionUtil.getMapAllExtendingClasses(Bukkit.getServer().getClass().getClassLoader(),Event.class,"getHandlerList",false);
+			 eventMap.putAll(result);
+			 return;
+		}
 		Collection<Class<? extends Event>> unique = new HashSet<>();
 		Collection<Listener> listeners = new HashSet<>();
 		
@@ -139,7 +151,6 @@ public class EventHelper
 			for(EventCallback callback : callbacks)
 				unique.add(callback.eventClass);
 		}
-		
 		for(Class<? extends Event> eventClass : unique)
 		{
 			String name = eventClass.getSimpleName();

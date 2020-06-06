@@ -70,7 +70,7 @@ public class EventMonitorCommand implements ICommand
 	{
 		if(args.length == 1 && args[0].toLowerCase().equals("rebuildeventmap")){
 			sender.sendMessage("Event Map current: Events ->" + EventHelper.getEventNames().size());
-			EventHelper.buildEventMap();
+			EventHelper.buildEventMap(true);
 			sender.sendMessage("Event Map rebuilt: Events ->" + EventHelper.getEventNames().size());
 			return true;
 		}

@@ -17,7 +17,6 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEditBookEvent;
@@ -33,7 +32,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -52,7 +51,7 @@ public enum EventGroups
 	Item(PlayerInteractEvent.class, PlayerDropItemEvent.class, PlayerItemConsumeEvent.class, PlayerEditBookEvent.class, PlayerItemBreakEvent.class, PlayerItemHeldEvent.class, PlayerFishEvent.class, PlayerEggThrowEvent.class, EntityShootBowEvent.class),
 	Move(PlayerMoveEvent.class, PlayerTeleportEvent.class, PlayerPortalEvent.class, PlayerRespawnEvent.class, PlayerVelocityEvent.class),
 	Chat(AsyncPlayerChatEvent.class, PlayerCommandPreprocessEvent.class),
-	Entity(PlayerInteractEntityEvent.class, PlayerShearEntityEvent.class, EntityDeathEvent.class, EntityDamageEvent.class, EntityDamageByEntityEvent.class, PlayerFishEvent.class, VehicleEnterEvent.class, VehicleExitEvent.class, EntityShootBowEvent.class, PlayerLeashEntityEvent.class, EntityPickupItemEvent.class),
+	Entity(PlayerInteractEntityEvent.class, PlayerShearEntityEvent.class, EntityDeathEvent.class, EntityDamageEvent.class, EntityDamageByEntityEvent.class, PlayerFishEvent.class, VehicleEnterEvent.class, VehicleExitEvent.class, EntityShootBowEvent.class, PlayerLeashEntityEvent.class, EntityPickupItemEvent.class,PlayerPickupArrowEvent.class),
 	Player(PlayerExpChangeEvent.class, PlayerGameModeChangeEvent.class, PlayerKickEvent.class, PlayerQuitEvent.class, PlayerToggleFlightEvent.class, PlayerToggleSneakEvent.class, PlayerToggleSprintEvent.class, PlayerDeathEvent.class, PlayerLevelChangeEvent.class, FoodLevelChangeEvent.class);
 
 	public final Class<? extends Event>[] events;
