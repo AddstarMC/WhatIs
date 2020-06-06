@@ -128,7 +128,9 @@ public class EventHelper
 		if(alternative){
 			 Map<String,Class<? extends Event>> result = ReflectionUtil.getMapAllExtendingClasses(Bukkit.getServer().getClass().getClassLoader(),Event.class,"getHandlerList",false);
 			 eventMap.putAll(result);
-			 return;
+			 if(eventMap.size()>0) {
+				 return;
+			 }
 		}
 		Collection<Class<? extends Event>> unique = new HashSet<>();
 		Collection<Listener> listeners = new HashSet<>();
