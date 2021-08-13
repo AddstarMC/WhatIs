@@ -22,6 +22,7 @@ import org.kitteh.pastegg.PasteFile;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 public class EventReporter
@@ -147,7 +148,7 @@ public class EventReporter
 						Bukkit.getScheduler().runTaskAsynchronously(WhatIs.instance, () -> {
 							PasteBuilder.PasteResult result = new PasteBuilder()
 								.addFile(new PasteFile("Whatis Event Report - " + mClass.getSimpleName(),((PasteEventOutput) output).getContent()))
-								.expireIn(60*60*1000)
+								.expires(ZonedDateTime.now().plusDays(14))
 								.build();
 							if(result.getPaste().isPresent()) {
 								Paste paste = result.getPaste().get();

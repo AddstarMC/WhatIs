@@ -73,7 +73,7 @@ public enum EntityCategory {
             case GHAST:
             case GIANT:
             case MAGMA_CUBE:
-            case PIG_ZOMBIE:
+            case ZOMBIFIED_PIGLIN:
             case SILVERFISH:
             case SKELETON:
             case SLIME:

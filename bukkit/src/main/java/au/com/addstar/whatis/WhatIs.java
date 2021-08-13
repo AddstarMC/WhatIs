@@ -3,7 +3,6 @@ package au.com.addstar.whatis;
 import au.com.addstar.whatis.commands.*;
 import au.com.addstar.whatis.util.CommandFinder;
 import au.com.addstar.whatis.util.ReflectionUtil;
-import javafx.event.EventHandler;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;

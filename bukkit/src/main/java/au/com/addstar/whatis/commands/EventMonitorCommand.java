@@ -9,7 +9,6 @@ import java.util.List;
 import au.com.addstar.whatis.eventhook.EventOutput;
 import au.com.addstar.whatis.eventhook.FileEventOutput;
 import au.com.addstar.whatis.eventhook.PasteEventOutput;
-import javafx.event.EventHandler;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

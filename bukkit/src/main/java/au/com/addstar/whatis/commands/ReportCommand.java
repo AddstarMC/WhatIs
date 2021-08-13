@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -91,7 +92,7 @@ public class ReportCommand implements ICommand {
                 Bukkit.getScheduler().runTaskAsynchronously(WhatIs.instance, () -> {
                     PasteBuilder.PasteResult result = new PasteBuilder().addFile(report)
                           .name("What Is Report")
-                          .expireIn(60*60*1000)
+                          .expires(ZonedDateTime.now().plusDays(14))
                           .build();
                     if (result.getPaste().isPresent()) {
                         Paste paste = result.getPaste().get();

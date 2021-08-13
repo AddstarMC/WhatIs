@@ -8,17 +8,17 @@
     <parent>
         <groupId>au.com.addstar</groupId>
         <artifactId>WhatIs-Parent</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.17.1-SNAPSHOT</version>
     </parent>
     <properties>
-        <spigot.api.version>1.13</spigot.api.version>
-        <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
+        <spigot.api.version>1.17</spigot.api.version>
+        <spigot.version>1.17.1-R0.1-SNAPSHOT</spigot.version>
     </properties>
     <repositories>
-            <repository>
-                <id>spigot-repo</id>
-                <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-            </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
 
         <!-- Addstar repo -->
         <repository>
@@ -41,8 +41,8 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
             <version>${spigot.version}</version>
             <scope>provided</scope>
             <exclusions>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>au.com.addstar</groupId>
             <artifactId>Whatis-common</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <version>1.17.1-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
@@ -88,32 +88,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <release>16</release>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.3</version>
-                <configuration>
-                   <!-- <relocations>
-                        <relocation>
-                            <pattern>org.kitteh</pattern>
-                            <shadedPattern>au.com.addstar.whatis.libs</shadedPattern>
-                        </relocation>
-                    </relocations>-->
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
-
     </build>
 </project>
